@@ -205,7 +205,15 @@ ${index + 1}. ${p.name}
               <span className="text-blue-200">{(user as any)?.firstName || "الأدمن"}</span>
               <Button 
                 variant="secondary" 
-                onClick={() => window.location.href = "/api/logout"}
+                onClick={() => {
+                  // Check if demo user
+                  if (localStorage.getItem('demo-auth')) {
+                    localStorage.removeItem('demo-auth');
+                    setLocation("/login");
+                  } else {
+                    window.location.href = "/api/logout";
+                  }
+                }}
                 className="bg-white text-blue-600 hover:bg-gray-100"
               >
                 تسجيل خروج

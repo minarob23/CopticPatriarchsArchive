@@ -31,11 +31,23 @@ export default function Login() {
 
     // Demo credentials validation
     if (username === "admin@coptic-patriarchs.org" && password === "CopticPatriarchs2025!") {
+      // Create a demo user session in localStorage for demo purposes
+      const demoUser = {
+        id: "demo-admin",
+        name: "مدير النظام",
+        email: "admin@coptic-patriarchs.org",
+        firstName: "المدير"
+      };
+      
+      localStorage.setItem('demo-auth', JSON.stringify(demoUser));
+      
       // Simulate successful login
       setTimeout(() => {
         setIsModalOpen(false);
         setLocation("/admin");
         setIsLoggingIn(false);
+        // Force page reload to update auth state
+        window.location.href = "/admin";
       }, 1000);
     } else {
       setLoginError("اسم المستخدم أو كلمة المرور غير صحيحة");
