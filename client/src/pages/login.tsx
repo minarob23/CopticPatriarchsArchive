@@ -1,19 +1,47 @@
-import { useEffect } from "react";
+
+import { useEffect, useState } from "react";
 import { useLocation } from "wouter";
 import { useAuth } from "@/hooks/useAuth";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import Loading from "@/components/ui/loading";
 
 export default function Login() {
   const { isAuthenticated, isLoading } = useAuth();
   const [, setLocation] = useLocation();
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
+  const [loginError, setLoginError] = useState("");
+  const [isLoggingIn, setIsLoggingIn] = useState(false);
 
   useEffect(() => {
     if (isAuthenticated) {
       setLocation("/admin");
     }
   }, [isAuthenticated, setLocation]);
+
+  const handleModalLogin = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsLoggingIn(true);
+    setLoginError("");
+
+    // Demo credentials validation
+    if (username === "admin@coptic-patriarchs.org" && password === "CopticPatriarchs2025!") {
+      // Simulate successful login
+      setTimeout(() => {
+        setIsModalOpen(false);
+        setLocation("/admin");
+        setIsLoggingIn(false);
+      }, 1000);
+    } else {
+      setLoginError("اسم المستخدم أو كلمة المرور غير صحيحة");
+      setIsLoggingIn(false);
+    }
+  };
 
   if (isLoading) {
     return <Loading />;
@@ -34,26 +62,18 @@ export default function Login() {
           <h1 className="text-2xl font-bold text-blue-600 font-amiri">
             بطاركة الكنيسة القبطية الأرثوذكسية
           </h1>
-          <p className="text-gray-600 mt-2">لوحة تحكم الإدارة</p>
+          <p className="text-gray-600 mt-2">
+            لوحة تحكم إدارة بطاركة، يرجى تسجيل الدخول باستخدام حسابك المعتمد.
+          </p>
         </div>
 
-        {/* Login Card */}
-        <Card className="shadow-xl border-0">
-          <CardHeader className="text-center bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-t-lg">
-            <CardTitle className="font-amiri text-xl">
-              <i className="fas fa-shield-alt ml-2"></i>
-              تسجيل دخول الإدارة
-            </CardTitle>
+        <Card className="shadow-lg">
+          <CardHeader>
+            <CardTitle className="text-center text-blue-600 font-amiri">تسجيل الدخول</CardTitle>
           </CardHeader>
-          <CardContent className="p-8">
-            <div className="text-center mb-6">
-              <p className="text-gray-600 leading-relaxed">
-                للوصول إلى لوحة تحكم الإدارة وإدارة بيانات البطاركة، يرجى تسجيل الدخول باستخدام حسابك المعتمد.
-              </p>
-            </div>
-
+          <CardContent className="space-y-6">
             {/* Demo Account Info */}
-            <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6" dir="ltr">
+            <div className="bg-blue-50 border border-blue-200 rounded-lg p-4" dir="ltr">
               <div className="flex items-center mb-2">
                 <i className="fas fa-info-circle text-blue-600 ml-2"></i>
                 <span className="text-blue-800 font-semibold text-sm">Demo Account Information</span>
@@ -61,41 +81,94 @@ export default function Login() {
               <div className="text-xs text-blue-700 space-y-1">
                 <div><strong>Username:</strong> admin@coptic-patriarchs.org</div>
                 <div><strong>Password:</strong> CopticPatriarchs2025!</div>
-                <div className="text-blue-600 mt-2">
-                  <i className="fas fa-lightbulb ml-1"></i>
-                  Use your Replit account to sign in through the button below
-                </div>
               </div>
             </div>
 
-            <Button 
-              onClick={() => window.location.href = "/api/login"}
-              className="w-full bg-blue-600 hover:bg-blue-700 text-white py-3 text-lg font-semibold rounded-lg transition-all duration-300 transform hover:scale-105"
-              size="lg"
-            >
-              <i className="fas fa-sign-in-alt ml-2"></i>
-              تسجيل الدخول
-            </Button>
+            {/* Modal Login Button */}
+            <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
+              <DialogTrigger asChild>
+                <Button 
+                  className="w-full bg-blue-600 hover:bg-blue-700 text-white py-3 text-lg font-semibold rounded-lg transition-all duration-300 transform hover:scale-105"
+                >
+                  <i className="fas fa-sign-in-alt ml-2"></i>
+                  تسجيل الدخول
+                </Button>
+              </DialogTrigger>
+              <DialogContent className="sm:max-w-md" dir="rtl">
+                <DialogHeader>
+                  <DialogTitle className="text-center text-blue-600 font-amiri">
+                    تسجيل الدخول للنظام
+                  </DialogTitle>
+                </DialogHeader>
+                <form onSubmit={handleModalLogin} className="space-y-4">
+                  <div>
+                    <Label htmlFor="username">اسم المستخدم</Label>
+                    <Input
+                      id="username"
+                      type="email"
+                      value={username}
+                      onChange={(e) => setUsername(e.target.value)}
+                      placeholder="admin@coptic-patriarchs.org"
+                      required
+                      className="mt-1"
+                    />
+                  </div>
+                  <div>
+                    <Label htmlFor="password">كلمة المرور</Label>
+                    <Input
+                      id="password"
+                      type="password"
+                      value={password}
+                      onChange={(e) => setPassword(e.target.value)}
+                      placeholder="CopticPatriarchs2025!"
+                      required
+                      className="mt-1"
+                    />
+                  </div>
+                  {loginError && (
+                    <div className="text-red-600 text-sm text-center">
+                      {loginError}
+                    </div>
+                  )}
+                  <Button 
+                    type="submit" 
+                    className="w-full bg-blue-600 hover:bg-blue-700"
+                    disabled={isLoggingIn}
+                  >
+                    {isLoggingIn ? (
+                      <>
+                        <i className="fas fa-spinner fa-spin ml-2"></i>
+                        جاري تسجيل الدخول...
+                      </>
+                    ) : (
+                      <>
+                        <i className="fas fa-sign-in-alt ml-2"></i>
+                        دخول
+                      </>
+                    )}
+                  </Button>
+                </form>
+              </DialogContent>
+            </Dialog>
 
-            <div className="mt-6 text-center">
+            {/* Alternative Replit Login */}
+            <div className="text-center">
+              <p className="text-gray-500 text-sm mb-3">أو</p>
               <Button 
-                variant="ghost" 
-                onClick={() => window.location.href = "/"}
-                className="text-gray-600 hover:text-blue-600"
+                onClick={() => window.location.href = "/api/login"}
+                variant="outline"
+                className="w-full border-blue-300 text-blue-600 hover:bg-blue-50"
               >
-                <i className="fas fa-arrow-right ml-2"></i>
-                العودة للصفحة الرئيسية
+                <i className="fas fa-external-link-alt ml-2"></i>
+                تسجيل الدخول بحساب Replit
               </Button>
             </div>
           </CardContent>
         </Card>
 
-        {/* Security Notice */}
-        <div className="mt-6 text-center">
-          <div className="inline-flex items-center text-sm text-gray-500 bg-white px-4 py-2 rounded-full shadow-sm">
-            <i className="fas fa-lock text-green-500 ml-2"></i>
-            اتصال آمن ومشفر
-          </div>
+        {/* Footer */}
+        <div className="text-center mt-8 text-gray-500 text-sm">
+          <p>© 2025 بطاركة الكنيسة القبطية الأرثوذكسية. جميع الحقوق محفوظة.</p>
         </div>
       </div>
     </div>

@@ -50,9 +50,9 @@ export default function Landing() {
     const matchesSearch = !searchQuery || 
       patriarch.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
       patriarch.biography?.toLowerCase().includes(searchQuery.toLowerCase());
-    
+
     const matchesEra = selectedEra === "all" || patriarch.era === selectedEra;
-    
+
     const matchesHeresies = selectedHeresies.length === 0 || 
       selectedHeresies.some(heresy => patriarch.heresiesFought.includes(heresy));
 
@@ -80,7 +80,7 @@ export default function Landing() {
           <div className="absolute top-10 right-10 w-64 h-64 bg-white bg-opacity-10 rounded-full blur-3xl"></div>
           <div className="absolute bottom-10 left-10 w-48 h-48 bg-yellow-300 bg-opacity-20 rounded-full blur-2xl"></div>
         </div>
-        
+
         <div className="relative container mx-auto px-4 py-16">
           <div className="text-center max-w-4xl mx-auto">
             <div className="mb-8">
@@ -102,7 +102,7 @@ export default function Landing() {
             {/* Search Section */}
             <Card className="bg-white bg-opacity-10 backdrop-blur-md border-white border-opacity-20 shadow-2xl">
               <CardContent className="p-8">
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
                   {/* Main Search */}
                   <div className="md:col-span-2">
                     <div className="relative">
@@ -118,6 +118,27 @@ export default function Landing() {
                     </div>
                   </div>
 
+                  {/* Search Button */}
+                  <div>
+                    <Button
+                      onClick={handleSearch}
+                      className="w-full py-4 text-lg bg-gradient-to-r from-yellow-500 to-orange-500 hover:from-yellow-600 hover:to-orange-600 text-white rounded-xl shadow-lg transform hover:scale-105 transition-all duration-300"
+                      disabled={isLoading}
+                    >
+                      {isLoading ? (
+                        <>
+                          <i className="fas fa-spinner fa-spin ml-2"></i>
+                          جاري البحث...
+                        </>
+                      ) : (
+                        <>
+                          <i className="fas fa-search ml-2"></i>
+                          بحث
+                        </>
+                      )}
+                    </Button>
+                  </div>
+
                   {/* Era Filter */}
                   <div>
                     <Select value={selectedEra} onValueChange={setSelectedEra}>
@@ -131,17 +152,6 @@ export default function Landing() {
                         ))}
                       </SelectContent>
                     </Select>
-                  </div>
-
-                  {/* Search Button */}
-                  <div>
-                    <Button
-                      onClick={handleSearch}
-                      className="w-full py-4 text-lg bg-yellow-400 text-black hover:bg-yellow-500 border-none rounded-xl shadow-lg"
-                    >
-                      <i className="fas fa-search ml-2"></i>
-                      بحث
-                    </Button>
                   </div>
                 </div>
 
@@ -229,7 +239,7 @@ export default function Landing() {
                 لوحة الإدارة
               </Button>
             )}
-            
+
             {!isAuthenticated && (
               <Button
                 onClick={() => setLocation("/login")}
@@ -283,7 +293,7 @@ export default function Landing() {
                 قاعدة بيانات تاريخية شاملة للبطاركة الذين حافظوا على الإيمان الأرثوذكسي عبر التاريخ.
               </p>
             </div>
-            
+
             <div>
               <h4 className="text-lg font-semibold mb-4 font-amiri">روابط مهمة</h4>
               <ul className="space-y-2">
@@ -293,7 +303,7 @@ export default function Landing() {
                 <li><button onClick={() => setLocation("/contact")} className="text-blue-200 hover:text-white transition-colors duration-200">اتصل بنا</button></li>
               </ul>
             </div>
-            
+
             <div>
               <h4 className="text-lg font-semibold mb-4 font-amiri">معلومات تقنية</h4>
               <ul className="space-y-2 text-blue-200">
@@ -304,7 +314,7 @@ export default function Landing() {
               </ul>
             </div>
           </div>
-          
+
           <div className="border-t border-blue-400 pt-8 mt-8 text-center">
             <p className="text-blue-200">
               © 2025 بطاركة الكنيسة القبطية الأرثوذكسية. جميع الحقوق محفوظة.
