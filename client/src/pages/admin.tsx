@@ -29,6 +29,7 @@ export default function Admin() {
   const [selectedEra, setSelectedEra] = useState("all");
   const [showForm, setShowForm] = useState(false);
   const [editingPatriarch, setEditingPatriarch] = useState<Patriarch | null>(null);
+  const [currentDateTime, setCurrentDateTime] = useState(new Date());
 
   // Redirect to login if not authenticated
   useEffect(() => {
@@ -37,6 +38,15 @@ export default function Admin() {
       return;
     }
   }, [isAuthenticated, isLoading, setLocation]);
+
+  // Update date and time every second
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setCurrentDateTime(new Date());
+    }, 1000);
+
+    return () => clearInterval(timer);
+  }, []);
 
   const { data: stats } = useQuery<{
     total: number;
@@ -213,7 +223,37 @@ ${index + 1}. ${p.name}
               </div>
               <div>
                 <h2 className="text-2xl font-bold font-amiri">لوحة تحكم الإدارة</h2>
-                <p className="text-blue-100 text-sm">مرحبًا بك {(user as any)?.name || 'المدير'} - إدارة بيانات البطاركة</p>
+                <div className="flex items-center space-x-reverse space-x-3">
+                  <p className="text-blue-100 text-sm">
+                    مرحبًا بك 
+                    <span className="font-semibold text-yellow-200 mx-1">
+                      {(user as any)?.name || 'المدير'}
+                    </span>
+                    - إدارة بيانات البطاركة
+                  </p>
+                  <div className="hidden md:flex items-center bg-white bg-opacity-10 rounded-lg px-3 py-1 backdrop-blur-sm">
+                    <div className="flex items-center space-x-reverse space-x-2">
+                      <i className="fas fa-calendar-alt text-yellow-300 text-sm"></i>
+                      <span className="text-blue-100 text-xs font-medium">
+                        {currentDateTime.toLocaleDateString('ar-EG', {
+                          weekday: 'short',
+                          year: 'numeric',
+                          month: 'short',
+                          day: 'numeric'
+                        })}
+                      </span>
+                      <div className="w-px h-4 bg-blue-300 opacity-50"></div>
+                      <i className="fas fa-clock text-yellow-300 text-sm"></i>
+                      <span className="text-blue-100 text-xs font-medium font-mono">
+                        {currentDateTime.toLocaleTimeString('ar-EG', {
+                          hour: '2-digit',
+                          minute: '2-digit',
+                          second: '2-digit'
+                        })}
+                      </span>
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
             
