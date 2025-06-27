@@ -24,6 +24,7 @@ export default function Home() {
   const { isAuthenticated } = useAuth();
   const [, setLocation] = useLocation();
   const [searchQuery, setSearchQuery] = useState("");
+  const [searchInput, setSearchInput] = useState("");
   const [selectedEra, setSelectedEra] = useState("all");
   const [selectedHeresies, setSelectedHeresies] = useState<string[]>([]);
   const [viewMode, setViewMode] = useState<"cards" | "timeline">("cards");
@@ -32,6 +33,10 @@ export default function Home() {
     queryKey: ["/api/patriarchs", { search: searchQuery, era: selectedEra !== "all" ? selectedEra : undefined }],
     retry: false,
   });
+
+  const handleSearch = () => {
+    setSearchQuery(searchInput);
+  };
 
   // Extract unique heresies for filtering
   const allHeresies = Array.from(
@@ -105,8 +110,9 @@ export default function Home() {
                       <Input
                         type="text"
                         placeholder="ابحث عن بطريرك بالاسم أو السيرة الذاتية..."
-                        value={searchQuery}
-                        onChange={(e) => setSearchQuery(e.target.value)}
+                        value={searchInput}
+                        onChange={(e) => setSearchInput(e.target.value)}
+                        onKeyPress={(e) => e.key === 'Enter' && handleSearch()}
                         className="pl-4 pr-12 py-4 text-lg bg-white bg-opacity-90 border-none rounded-xl shadow-lg focus:shadow-xl transition-all duration-300"
                       />
                     </div>
@@ -125,6 +131,17 @@ export default function Home() {
                         ))}
                       </SelectContent>
                     </Select>
+                  </div>
+
+                  {/* Search Button */}
+                  <div>
+                    <Button
+                      onClick={handleSearch}
+                      className="w-full py-4 text-lg bg-yellow-400 text-black hover:bg-yellow-500 border-none rounded-xl shadow-lg"
+                    >
+                      <i className="fas fa-search ml-2"></i>
+                      بحث
+                    </Button>
                   </div>
                 </div>
 
