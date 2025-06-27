@@ -12,6 +12,14 @@ import PatriarchForm from "@/components/admin/patriarch-form";
 import Loading from "@/components/ui/loading";
 import type { Patriarch } from "@shared/schema";
 
+const eraLabels: Record<string, string> = {
+  apostolic: "العصر الرسولي",
+  golden: "العصر الذهبي",
+  councils: "عصر المجامع",
+  persecution: "عصر الاضطهاد",
+  modern: "العصر الحديث",
+};
+
 export default function Admin() {
   const { isAuthenticated, isLoading, user } = useAuth();
   const { toast } = useToast();
@@ -66,6 +74,105 @@ export default function Admin() {
   const handleCloseForm = () => {
     setShowForm(false);
     setEditingPatriarch(null);
+  };
+
+  const handleExportData = () => {
+    if (!patriarchs || patriarchs.length === 0) {
+      toast({
+        title: "لا توجد بيانات",
+        description: "لا توجد بيانات لتصديرها",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    // Create CSV content
+    const headers = ["الاسم", "الرقم", "سنة البداية", "سنة النهاية", "العصر", "المساهمات", "البدع المحاربة"];
+    const csvContent = [
+      headers.join(","),
+      ...patriarchs.map(p => [
+        `"${p.name}"`,
+        p.orderNumber,
+        p.startYear,
+        p.endYear || "",
+        `"${eraLabels[p.era] || p.era}"`,
+        `"${p.contributions}"`,
+        `"${p.heresiesFought.join('; ')}"`
+      ].join(","))
+    ].join("\n");
+
+    // Create and download file
+    const blob = new Blob(["\uFEFF" + csvContent], { type: "text/csv;charset=utf-8;" });
+    const link = document.createElement("a");
+    link.href = URL.createObjectURL(blob);
+    link.download = `بطاركة_الكنيسة_القبطية_${new Date().toISOString().split('T')[0]}.csv`;
+    link.click();
+
+    toast({
+      title: "تم التصدير",
+      description: "تم تصدير البيانات بنجاح",
+    });
+  };
+
+  const handleGenerateReport = () => {
+    if (!stats || !patriarchs) {
+      toast({
+        title: "لا توجد بيانات",
+        description: "لا توجد بيانات كافية لإنشاء التقرير",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    // Generate comprehensive report
+    const reportContent = `
+تقرير شامل - بطاركة الكنيسة القبطية الأرثوذكسية
+تاريخ التقرير: ${new Date().toLocaleDateString('ar-EG')}
+
+===============================================
+
+الإحصائيات العامة:
+• إجمالي البطاركة: ${stats.total}
+• محاربو البدع: ${stats.totalDefenders}
+• نسبة محاربي البدع: ${((stats.totalDefenders / stats.total) * 100).toFixed(1)}%
+
+التوزيع حسب العصور:
+${Object.entries(stats.byEra).map(([era, count]) => 
+  `• ${eraLabels[era] || era}: ${count} بطريرك`
+).join('\n')}
+
+===============================================
+
+قائمة البطاركة التفصيلية:
+
+${patriarchs.map((p, index) => `
+${index + 1}. ${p.name}
+   الرقم: البابا ${p.orderNumber}
+   الفترة: ${p.startYear} - ${p.endYear || "الآن"} م
+   العصر: ${eraLabels[p.era] || p.era}
+   المساهمات: ${p.contributions}
+   البدع المحاربة: ${p.heresiesFought.length > 0 ? p.heresiesFought.join(', ') : 'لا توجد'}
+`).join('\n')}
+
+===============================================
+
+ملاحظات:
+• هذا التقرير تم إنشاؤه تلقائيًا من قاعدة البيانات
+• البيانات محدثة حتى تاريخ إنشاء التقرير
+• جميع المعلومات مستندة إلى المصادر التاريخية المعتمدة
+`;
+
+    // Create and download report
+    const blob = new Blob([reportContent], { type: "text/plain;charset=utf-8;" });
+    const link = document.createElement("a");
+    link.href = URL.createObjectURL(blob);
+    link.download = `تقرير_بطاركة_الكنيسة_القبطية_${new Date().toISOString().split('T')[0]}.txt`;
+    link.click();
+
+    toast({
+      title: "تم إنشاء التقرير",
+      description: "تم إنشاء التقرير الشامل بنجاح",
+    });
   };
 
   const eras = [
@@ -168,11 +275,17 @@ export default function Admin() {
             <i className="fas fa-plus ml-2"></i>
             إضافة بطريرك جديد
           </Button>
-          <Button variant="secondary">
+          <Button 
+            variant="secondary"
+            onClick={handleExportData}
+          >
             <i className="fas fa-download ml-2"></i>
             تصدير البيانات
           </Button>
-          <Button variant="outline">
+          <Button 
+            variant="outline"
+            onClick={handleGenerateReport}
+          >
             <i className="fas fa-chart-bar ml-2"></i>
             تقرير شامل
           </Button>

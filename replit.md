@@ -117,6 +117,9 @@ RESTful endpoints organized by functionality:
 
 Changelog:
 - June 27, 2025. Initial setup
+- June 27, 2025. Added dedicated login page for admin access
+- June 27, 2025. Implemented data export (CSV) and comprehensive reporting functionality
+- June 27, 2025. Fixed SelectItem empty value issues and improved navigation flow
 
 ## User Preferences
 
