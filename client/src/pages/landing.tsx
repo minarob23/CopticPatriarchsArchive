@@ -1,147 +1,252 @@
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { Card, CardContent } from "@/components/ui/card";
+import { useLocation } from "wouter";
+import { useAuth } from "@/hooks/useAuth";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
-import PatriarchCard from "@/components/patriarch-card";
 import PatriarchTimeline from "@/components/patriarch-timeline";
+import PatriarchCard from "@/components/patriarch-card";
 import Loading from "@/components/ui/loading";
 import type { Patriarch } from "@shared/schema";
 
+const eraLabels: Record<string, string> = {
+  apostolic: "العصر الرسولي",
+  golden: "العصر الذهبي", 
+  councils: "عصر المجامع",
+  persecution: "عصر الاضطهاد",
+  modern: "العصر الحديث",
+};
+
 export default function Landing() {
+  const { isAuthenticated } = useAuth();
+  const [, setLocation] = useLocation();
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedEra, setSelectedEra] = useState("all");
+  const [selectedHeresies, setSelectedHeresies] = useState<string[]>([]);
+  const [viewMode, setViewMode] = useState<"cards" | "timeline">("cards");
 
   const { data: patriarchs, isLoading } = useQuery<Patriarch[]>({
-    queryKey: ["/api/patriarchs", searchQuery, selectedEra],
+    queryKey: ["/api/patriarchs", { search: searchQuery, era: selectedEra !== "all" ? selectedEra : undefined }],
+    retry: false,
   });
 
-  const eras = [
-    { value: "all", label: "جميع البطاركة" },
-    { value: "apostolic", label: "العصر الرسولي" },
-    { value: "golden", label: "العصر الذهبي" },
-    { value: "councils", label: "عصر المجامع" },
-    { value: "persecution", label: "عصر الاضطهاد" },
-    { value: "modern", label: "العصر الحديث" },
-  ];
+  // Extract unique heresies for filtering
+  const allHeresies = Array.from(
+    new Set(
+      (patriarchs || []).flatMap(p => p.heresiesFought)
+    )
+  ).sort();
+
+  // Filter patriarchs based on search criteria
+  const filteredPatriarchs = (patriarchs || []).filter(patriarch => {
+    const matchesSearch = !searchQuery || 
+      patriarch.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      patriarch.biography?.toLowerCase().includes(searchQuery.toLowerCase());
+    
+    const matchesEra = selectedEra === "all" || patriarch.era === selectedEra;
+    
+    const matchesHeresies = selectedHeresies.length === 0 || 
+      selectedHeresies.some(heresy => patriarch.heresiesFought.includes(heresy));
+
+    return matchesSearch && matchesEra && matchesHeresies;
+  });
+
+  const handleHeresyToggle = (heresy: string) => {
+    setSelectedHeresies(prev => 
+      prev.includes(heresy) 
+        ? prev.filter(h => h !== heresy)
+        : [...prev, heresy]
+    );
+  };
 
   if (isLoading) {
     return <Loading />;
   }
 
   return (
-    <div className="min-h-screen bg-gray-50" dir="rtl">
-      {/* Navigation */}
-      <nav className="bg-white shadow-lg border-b-2 border-yellow-400">
-        <div className="container mx-auto px-4">
-          <div className="flex justify-between items-center h-16">
-            <div className="flex items-center space-x-reverse space-x-4">
-              <div className="w-12 h-12 bg-gradient-to-br from-blue-600 to-purple-600 rounded-full flex items-center justify-center">
-                <i className="fas fa-cross text-white text-lg"></i>
-              </div>
-              <div>
-                <h1 className="text-xl font-bold text-blue-600 font-amiri">بطاركة الكنيسة القبطية</h1>
-                <p className="text-sm text-gray-600">الأرثوذكسية</p>
-              </div>
-            </div>
-            
-            <div className="hidden md:flex items-center space-x-reverse space-x-6">
-              <a href="#home" className="text-gray-700 hover:text-blue-600 transition-colors duration-200 font-semibold">الرئيسية</a>
-              <a href="#patriarchs" className="text-gray-700 hover:text-blue-600 transition-colors duration-200">البطاركة</a>
-              <a href="#timeline" className="text-gray-700 hover:text-blue-600 transition-colors duration-200">الخط الزمني</a>
-              
-              <Button 
-                onClick={() => window.location.href = "/login"}
-                className="bg-blue-600 text-white hover:bg-blue-700"
-              >
-                <i className="fas fa-user-shield ml-2"></i>
-                دخول الإدارة
-              </Button>
-            </div>
-            
-            <Button variant="ghost" className="md:hidden">
-              <i className="fas fa-bars text-xl"></i>
-            </Button>
-          </div>
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50" dir="rtl">
+      {/* Hero Section */}
+      <div className="bg-gradient-to-r from-blue-600 via-purple-600 to-blue-800 text-white relative overflow-hidden">
+        <div className="absolute inset-0 bg-black bg-opacity-10"></div>
+        <div className="absolute top-0 left-0 w-full h-full">
+          <div className="absolute top-10 right-10 w-64 h-64 bg-white bg-opacity-10 rounded-full blur-3xl"></div>
+          <div className="absolute bottom-10 left-10 w-48 h-48 bg-yellow-300 bg-opacity-20 rounded-full blur-2xl"></div>
         </div>
-      </nav>
-
-      {/* Main Content */}
-      <main className="container mx-auto px-4 py-8">
-        {/* Hero Section */}
-        <section className="text-center mb-12" id="home">
-          <div className="max-w-4xl mx-auto">
-            <h1 className="text-4xl md:text-5xl font-bold text-blue-600 mb-6 font-amiri">
-              بطاركة الكنيسة القبطية الأرثوذكسية
-            </h1>
-            <p className="text-xl text-gray-600 mb-8 leading-relaxed">
-              قاعدة بيانات شاملة للبطاركة المقدسين الذين حافظوا على الإيمان وتصدوا للبدع والهرطقات عبر التاريخ
-            </p>
-            
-            {/* Search Bar */}
-            <div className="max-w-2xl mx-auto">
-              <div className="relative">
-                <Input
-                  type="text"
-                  placeholder="ابحث عن بطريرك بالاسم..."
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  className="w-full px-6 py-4 text-lg border-2 border-gray-300 rounded-full focus:border-blue-600"
-                />
-                <Button
-                  size="icon"
-                  className="absolute left-4 top-1/2 transform -translate-y-1/2 text-blue-600 hover:text-blue-700"
-                  variant="ghost"
-                >
-                  <i className="fas fa-search text-xl"></i>
-                </Button>
+        
+        <div className="relative container mx-auto px-4 py-16">
+          <div className="text-center max-w-4xl mx-auto">
+            <div className="mb-8">
+              <div className="w-24 h-24 bg-white bg-opacity-20 rounded-full flex items-center justify-center mx-auto mb-6 backdrop-blur-sm">
+                <i className="fas fa-church text-4xl"></i>
               </div>
+              <h1 className="text-5xl md:text-6xl font-bold font-amiri mb-4 bg-gradient-to-r from-yellow-300 to-white bg-clip-text text-transparent">
+                بطاركة الكنيسة القبطية الأرثوذكسية
+              </h1>
+              <p className="text-xl md:text-2xl text-blue-100 mb-6 leading-relaxed">
+                رحلة عبر التاريخ مع أعظم رجال الإيمان في المسيحية الشرقية
+              </p>
+              <p className="text-lg text-blue-200 max-w-3xl mx-auto">
+                اكتشف تاريخ وحياة بطاركة الكنيسة القبطية الأرثوذكسية عبر العصور، 
+                من العصر الرسولي حتى يومنا هذا
+              </p>
             </div>
-          </div>
-        </section>
-        
-        {/* Filter Section */}
-        <section className="mb-8">
-          <div className="flex flex-wrap gap-4 justify-center">
-            {eras.map((era) => (
-              <Button
-                key={era.value}
-                variant={selectedEra === era.value ? "default" : "outline"}
-                onClick={() => setSelectedEra(era.value)}
-                className={selectedEra === era.value ? "golden-border" : ""}
-              >
-                {era.label}
-              </Button>
-            ))}
-          </div>
-        </section>
-        
-        {/* Patriarchs Grid */}
-        <section className="mb-12" id="patriarchs">
-          {patriarchs && patriarchs.length > 0 ? (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-              {patriarchs.map((patriarch) => (
-                <PatriarchCard key={patriarch.id} patriarch={patriarch} />
-              ))}
-            </div>
-          ) : (
-            <Card className="p-8 text-center">
-              <CardContent>
-                <i className="fas fa-search text-4xl text-gray-400 mb-4"></i>
-                <h3 className="text-xl font-semibold text-gray-700 mb-2">لا توجد نتائج</h3>
-                <p className="text-gray-500">لم يتم العثور على بطاركة يطابقون معايير البحث</p>
+
+            {/* Search Section */}
+            <Card className="bg-white bg-opacity-10 backdrop-blur-md border-white border-opacity-20 shadow-2xl">
+              <CardContent className="p-8">
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                  {/* Main Search */}
+                  <div className="md:col-span-2">
+                    <div className="relative">
+                      <i className="fas fa-search absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
+                      <Input
+                        type="text"
+                        placeholder="ابحث عن بطريرك بالاسم أو السيرة الذاتية..."
+                        value={searchQuery}
+                        onChange={(e) => setSearchQuery(e.target.value)}
+                        className="pl-4 pr-12 py-4 text-lg bg-white bg-opacity-90 border-none rounded-xl shadow-lg focus:shadow-xl transition-all duration-300"
+                      />
+                    </div>
+                  </div>
+
+                  {/* Era Filter */}
+                  <div>
+                    <Select value={selectedEra} onValueChange={setSelectedEra}>
+                      <SelectTrigger className="py-4 text-lg bg-white bg-opacity-90 border-none rounded-xl shadow-lg">
+                        <SelectValue placeholder="اختر العصر" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="all">جميع العصور</SelectItem>
+                        {Object.entries(eraLabels).map(([value, label]) => (
+                          <SelectItem key={value} value={value}>{label}</SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                </div>
+
+                {/* Advanced Filters */}
+                {allHeresies.length > 0 && (
+                  <div className="mt-6">
+                    <p className="text-white text-sm font-medium mb-3">
+                      <i className="fas fa-filter ml-2"></i>
+                      تصفية حسب البدع المحاربة:
+                    </p>
+                    <div className="flex flex-wrap gap-2">
+                      {allHeresies.slice(0, 6).map(heresy => (
+                        <Badge
+                          key={heresy}
+                          variant={selectedHeresies.includes(heresy) ? "default" : "outline"}
+                          className={`cursor-pointer transition-all duration-200 ${
+                            selectedHeresies.includes(heresy) 
+                              ? "bg-yellow-400 text-black hover:bg-yellow-500" 
+                              : "bg-white bg-opacity-20 text-white hover:bg-white hover:bg-opacity-30"
+                          }`}
+                          onClick={() => handleHeresyToggle(heresy)}
+                        >
+                          {heresy}
+                        </Badge>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {/* View Mode Toggle */}
+                <div className="flex justify-center gap-4 mt-6">
+                  <Button
+                    variant={viewMode === "cards" ? "default" : "outline"}
+                    onClick={() => setViewMode("cards")}
+                    className={`${viewMode === "cards" ? "bg-yellow-400 text-black" : "bg-white bg-opacity-20 text-white border-white border-opacity-30"} hover:bg-yellow-500 transition-all duration-200`}
+                  >
+                    <i className="fas fa-th-large ml-2"></i>
+                    عرض بطاقات
+                  </Button>
+                  <Button
+                    variant={viewMode === "timeline" ? "default" : "outline"}
+                    onClick={() => setViewMode("timeline")}
+                    className={`${viewMode === "timeline" ? "bg-yellow-400 text-black" : "bg-white bg-opacity-20 text-white border-white border-opacity-30"} hover:bg-yellow-500 transition-all duration-200`}
+                  >
+                    <i className="fas fa-clock ml-2"></i>
+                    الخط الزمني
+                  </Button>
+                </div>
               </CardContent>
             </Card>
-          )}
-        </section>
-        
-        {/* Timeline Section */}
-        <section className="mb-12" id="timeline">
-          <h2 className="text-3xl font-bold text-center mb-8 text-blue-600 font-amiri">الخط الزمني للبطاركة</h2>
-          <PatriarchTimeline patriarchs={patriarchs || []} />
-        </section>
-      </main>
+          </div>
+        </div>
+      </div>
+
+      {/* Results Section */}
+      <div className="container mx-auto px-4 py-12">
+        {/* Stats Bar */}
+        <div className="bg-white rounded-2xl shadow-lg p-6 mb-8">
+          <div className="flex flex-wrap items-center justify-between gap-4">
+            <div className="flex items-center gap-8">
+              <div className="text-center">
+                <p className="text-3xl font-bold text-blue-600">{filteredPatriarchs.length}</p>
+                <p className="text-sm text-gray-600">بطريرك</p>
+              </div>
+              <div className="text-center">
+                <p className="text-3xl font-bold text-purple-600">
+                  {filteredPatriarchs.filter(p => p.heresiesFought.length > 0).length}
+                </p>
+                <p className="text-sm text-gray-600">محارب بدع</p>
+              </div>
+              <div className="text-center">
+                <p className="text-3xl font-bold text-green-600">
+                  {new Set(filteredPatriarchs.map(p => p.era)).size}
+                </p>
+                <p className="text-sm text-gray-600">عصر تاريخي</p>
+              </div>
+            </div>
+
+            {isAuthenticated && (
+              <Button
+                onClick={() => setLocation("/admin")}
+                className="bg-gradient-to-r from-blue-600 to-purple-600 text-white hover:from-blue-700 hover:to-purple-700"
+              >
+                <i className="fas fa-cog ml-2"></i>
+                لوحة الإدارة
+              </Button>
+            )}
+            
+            {!isAuthenticated && (
+              <Button
+                onClick={() => setLocation("/login")}
+                variant="outline"
+                className="border-blue-600 text-blue-600 hover:bg-blue-600 hover:text-white"
+              >
+                <i className="fas fa-sign-in-alt ml-2"></i>
+                دخول الإدارة
+              </Button>
+            )}
+          </div>
+        </div>
+
+        {/* Content Display */}
+        {viewMode === "timeline" ? (
+          <PatriarchTimeline patriarchs={filteredPatriarchs} />
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8">
+            {filteredPatriarchs.map((patriarch) => (
+              <PatriarchCard key={patriarch.id} patriarch={patriarch} />
+            ))}
+          </div>
+        )}
+
+        {filteredPatriarchs.length === 0 && (
+          <Card className="text-center py-16">
+            <CardContent>
+              <i className="fas fa-search text-6xl text-gray-300 mb-4"></i>
+              <h3 className="text-xl font-semibold text-gray-600 mb-2">لا توجد نتائج</h3>
+              <p className="text-gray-500">جرب تغيير معايير البحث أو المرشحات</p>
+            </CardContent>
+          </Card>
+        )}
+      </div>
 
       {/* Footer */}
       <footer className="bg-blue-600 text-white py-12 mt-12">

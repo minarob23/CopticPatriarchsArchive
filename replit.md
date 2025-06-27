@@ -126,6 +126,7 @@ Changelog:
 - June 27, 2025. Enhanced admin interface with beautiful statistics dashboard
 - June 27, 2025. Redesigned homepage with advanced search engine and multiple view modes
 - June 27, 2025. Added demo login credentials and sample patriarch data
+- June 27, 2025. Moved advanced search engine from authenticated homepage to main landing page - now accessible to all users without login
 
 ## User Preferences
 

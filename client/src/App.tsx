@@ -20,7 +20,7 @@ function Router() {
 
   return (
     <Switch>
-      <Route path="/" component={isAuthenticated ? Home : Landing} />
+      <Route path="/" component={Landing} />
       <Route path="/login" component={Login} />
       <Route path="/admin" component={Admin} />
       <Route component={NotFound} />
