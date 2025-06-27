@@ -231,58 +231,26 @@ ${index + 1}. ${p.name}
                     </span>
                     - إدارة بيانات البطاركة
                   </p>
-                  <div className="flex items-center bg-gradient-to-r from-white from-opacity-15 to-yellow-200 to-opacity-20 rounded-xl px-6 py-3 backdrop-blur-md shadow-lg border border-white border-opacity-30">
-                    <div className="flex items-center space-x-reverse space-x-4">
-                      {/* Date Section */}
-                      <div className="flex items-center bg-white bg-opacity-20 rounded-lg px-4 py-2">
-                        <i className="fas fa-calendar-alt text-yellow-300 text-xl ml-3"></i>
-                        <div className="text-center">
-                          <div className="text-white text-lg font-bold leading-tight">
-                            {currentDateTime.toLocaleDateString('ar-EG', {
-                              day: '2-digit',
-                              month: 'short'
-                            })}
-                          </div>
-                          <div className="text-blue-100 text-xs">
-                            {currentDateTime.toLocaleDateString('ar-EG', {
-                              year: 'numeric'
-                            })}
-                          </div>
-                        </div>
-                      </div>
-                      
-                      {/* Separator */}
-                      <div className="w-1 h-12 bg-gradient-to-b from-yellow-300 to-white opacity-60 rounded-full"></div>
-                      
-                      {/* Time Section */}
-                      <div className="flex items-center bg-white bg-opacity-20 rounded-lg px-4 py-2">
-                        <i className="fas fa-clock text-yellow-300 text-xl ml-3"></i>
-                        <div className="text-center">
-                          <div className="text-white text-2xl font-bold font-mono leading-tight tracking-wider">
-                            {currentDateTime.toLocaleTimeString('ar-EG', {
-                              hour: '2-digit',
-                              minute: '2-digit'
-                            })}
-                          </div>
-                          <div className="text-blue-100 text-xs font-mono">
-                            {currentDateTime.toLocaleTimeString('ar-EG', {
-                              second: '2-digit'
-                            })} ثانية
-                          </div>
-                        </div>
-                      </div>
-                      
-                      {/* Day of Week */}
-                      <div className="text-center">
-                        <div className="text-yellow-200 text-sm font-semibold">
-                          {currentDateTime.toLocaleDateString('ar-EG', {
-                            weekday: 'long'
-                          })}
-                        </div>
-                        <div className="text-blue-100 text-xs">
-                          اليوم
-                        </div>
-                      </div>
+                  <div className="hidden md:flex items-center bg-white bg-opacity-10 rounded-lg px-3 py-1 backdrop-blur-sm">
+                    <div className="flex items-center space-x-reverse space-x-2">
+                      <i className="fas fa-calendar-alt text-yellow-300 text-sm"></i>
+                      <span className="text-blue-100 text-xs font-medium">
+                        {currentDateTime.toLocaleDateString('ar-EG', {
+                          weekday: 'short',
+                          year: 'numeric',
+                          month: 'short',
+                          day: 'numeric'
+                        })}
+                      </span>
+                      <div className="w-px h-4 bg-blue-300 opacity-50"></div>
+                      <i className="fas fa-clock text-yellow-300 text-sm"></i>
+                      <span className="text-blue-100 text-xs font-medium font-mono">
+                        {currentDateTime.toLocaleTimeString('ar-EG', {
+                          hour: '2-digit',
+                          minute: '2-digit',
+                          second: '2-digit'
+                        })}
+                      </span>
                     </div>
                   </div>
                 </div>
