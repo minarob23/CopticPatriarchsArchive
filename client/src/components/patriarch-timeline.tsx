@@ -5,6 +5,19 @@ interface PatriarchTimelineProps {
   patriarchs: Patriarch[];
 }
 
+// Mock function for demonstration. Replace with actual implementation.
+const getArabicPatriarchName = (englishName: string): string => {
+  const translations: { [key: string]: string } = {
+    "Pope Shenouda III": "البابا شنودة الثالث",
+    "Pope Tawadros II": "البابا تواضروس الثاني",
+    "Pope Kyrillos VI": "البابا كيرلس السادس",
+    "Pope Macarius III": "البابا مكاريوس الثالث",
+    "Pope John XIX": "البابا يوأنس التاسع عشر",
+  };
+
+  return translations[englishName] || englishName;
+};
+
 export default function PatriarchTimeline({ patriarchs }: PatriarchTimelineProps) {
   // Sort patriarchs by start year
   const sortedPatriarchs = [...patriarchs]
@@ -27,7 +40,7 @@ export default function PatriarchTimeline({ patriarchs }: PatriarchTimelineProps
     <div className="relative">
       {/* Timeline line */}
       <div className="absolute right-1/2 transform translate-x-1/2 w-1 h-full bg-yellow-400"></div>
-      
+
       {/* Timeline items */}
       <div className="space-y-12">
         {sortedPatriarchs.map((patriarch, index) => (
@@ -38,7 +51,7 @@ export default function PatriarchTimeline({ patriarchs }: PatriarchTimelineProps
                 <div className="w-1/2 text-left pl-8">
                   <Card className="border-r-4 border-yellow-400">
                     <CardContent className="p-6">
-                      <h4 className="font-bold text-blue-600 font-amiri">{patriarch.name}</h4>
+                      <h4 className="font-bold text-blue-600 font-amiri">{getArabicPatriarchName(patriarch.name)}</h4>
                       <p className="text-sm text-gray-600">
                         {patriarch.startYear} - {patriarch.endYear || "الآن"} م
                       </p>
@@ -46,24 +59,24 @@ export default function PatriarchTimeline({ patriarchs }: PatriarchTimelineProps
                     </CardContent>
                   </Card>
                 </div>
-                
+
                 {/* Timeline dot */}
                 <div className="absolute right-1/2 transform translate-x-1/2 w-6 h-6 bg-yellow-400 rounded-full border-4 border-white shadow-lg"></div>
-                
+
                 <div className="w-1/2"></div>
               </>
             ) : (
               // Left side
               <>
                 <div className="w-1/2"></div>
-                
+
                 {/* Timeline dot */}
                 <div className="absolute right-1/2 transform translate-x-1/2 w-6 h-6 bg-yellow-400 rounded-full border-4 border-white shadow-lg"></div>
-                
+
                 <div className="w-1/2 text-right pr-8">
                   <Card className="border-l-4 border-yellow-400">
                     <CardContent className="p-6">
-                      <h4 className="font-bold text-blue-600 font-amiri">{patriarch.name}</h4>
+                      <h4 className="font-bold text-blue-600 font-amiri">{getArabicPatriarchName(patriarch.name)}</h4>
                       <p className="text-sm text-gray-600">
                         {patriarch.startYear} - {patriarch.endYear || "الآن"} م
                       </p>

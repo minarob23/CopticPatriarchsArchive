@@ -287,10 +287,10 @@ export default function Landing() {
             <div>
               <h4 className="text-lg font-semibold mb-4 font-amiri">روابط مهمة</h4>
               <ul className="space-y-2">
-                <li><a href="#" className="text-blue-200 hover:text-white transition-colors duration-200">عن الموقع</a></li>
-                <li><a href="#" className="text-blue-200 hover:text-white transition-colors duration-200">تاريخ الكنيسة</a></li>
-                <li><a href="#" className="text-blue-200 hover:text-white transition-colors duration-200">المراجع</a></li>
-                <li><a href="#" className="text-blue-200 hover:text-white transition-colors duration-200">اتصل بنا</a></li>
+                <li><button onClick={() => setLocation("/about")} className="text-blue-200 hover:text-white transition-colors duration-200">عن الموقع</button></li>
+                <li><button onClick={() => setLocation("/church-history")} className="text-blue-200 hover:text-white transition-colors duration-200">تاريخ الكنيسة</button></li>
+                <li><button onClick={() => setLocation("/references")} className="text-blue-200 hover:text-white transition-colors duration-200">المراجع</button></li>
+                <li><button onClick={() => setLocation("/contact")} className="text-blue-200 hover:text-white transition-colors duration-200">اتصل بنا</button></li>
               </ul>
             </div>
             

@@ -1,14 +1,9 @@
 import { useState } from "react";
-import { Card, CardContent } from "@/components/ui/card";
+import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { getArabicPatriarchName } from "@shared/patriarch-names";
 import type { Patriarch } from "@shared/schema";
 
 interface PatriarchCardProps {
@@ -32,124 +27,156 @@ const eraColors: Record<string, string> = {
 };
 
 export default function PatriarchCard({ patriarch }: PatriarchCardProps) {
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const period = `${patriarch.startYear}${patriarch.endYear ? ` - ${patriarch.endYear}` : ""} م`;
-  
+  const arabicName = getArabicPatriarchName(patriarch.name);
+
   return (
-    <>
-    <Card className="patriarch-card overflow-hidden">
-      <div className="h-64 bg-gradient-to-b from-yellow-400 to-yellow-600 flex items-center justify-center">
-        <div className="w-32 h-32 bg-white rounded-full flex items-center justify-center shadow-lg">
-          <i className="fas fa-user-tie text-6xl text-blue-600"></i>
-        </div>
-      </div>
-      
-      <CardContent className="p-6">
-        <h3 className="text-xl font-bold text-blue-600 mb-2 font-amiri">
-          {patriarch.name}
-        </h3>
-        <p className="text-gray-600 mb-2">
-          البابا {patriarch.orderNumber} ({period})
-        </p>
-        <p className="text-sm text-gray-500 mb-4 line-clamp-2">
-          {patriarch.contributions}
-        </p>
-        
-        <div className="flex justify-between items-center">
-          <Badge className={eraColors[patriarch.era] || "bg-gray-100 text-gray-800"}>
+    <Card className="patriarch-card bg-white shadow-lg hover:shadow-2xl border border-gray-200 overflow-hidden group">
+      <CardHeader className="bg-gradient-to-br from-blue-600 to-purple-600 text-white p-6">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center space-x-reverse space-x-4">
+            <div className="w-16 h-16 bg-yellow-400 rounded-full flex items-center justify-center shadow-lg">
+              <i className="fas fa-user text-blue-600 text-2xl"></i>
+            </div>
+            <div>
+              <h3 className="text-xl font-bold font-amiri leading-tight">{arabicName}</h3>
+              <p className="text-blue-100">البابا {patriarch.orderNumber}</p>
+            </div>
+          </div>
+          <Badge className={eraColors[patriarch.era] || "bg-yellow-400 text-black"}>
             {eraLabels[patriarch.era] || patriarch.era}
           </Badge>
-          <Button 
-            variant="ghost" 
-            size="sm" 
-            className="text-blue-600 hover:text-blue-700"
-            onClick={() => setIsModalOpen(true)}
-          >
-            عرض التفاصيل
-            <i className="fas fa-arrow-left mr-1"></i>
-          </Button>
         </div>
-      </CardContent>
-    </Card>
+      </CardHeader>
 
-    {/* Patriarch Details Modal */}
-    <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
-      <DialogContent className="max-w-2xl max-h-[80vh] overflow-y-auto" dir="rtl">
-        <DialogHeader>
-          <DialogTitle className="text-2xl font-bold text-blue-600 font-amiri">
-            {patriarch.name}
-          </DialogTitle>
-          <DialogDescription className="text-lg text-gray-600">
-            البابا {patriarch.orderNumber} ({period})
-          </DialogDescription>
-        </DialogHeader>
-        
-        <div className="space-y-6">
-          {/* Era Badge */}
-          <div className="flex justify-center">
-            <Badge className={`${eraColors[patriarch.era] || "bg-gray-100 text-gray-800"} text-lg px-4 py-2`}>
-              {eraLabels[patriarch.era] || patriarch.era}
-            </Badge>
+      <CardContent className="p-6">
+        <div className="space-y-4">
+          <div className="flex items-center text-gray-600">
+            <i className="fas fa-calendar-alt ml-3 text-blue-600"></i>
+            <span className="font-medium">
+              {patriarch.startYear} - {patriarch.endYear || "الآن"} م
+            </span>
           </div>
-          
-          {/* Patriarch Image */}
-          <div className="flex justify-center">
-            <div className="w-32 h-32 bg-gradient-to-b from-yellow-400 to-yellow-600 rounded-full flex items-center justify-center shadow-lg">
-              <i className="fas fa-user-tie text-6xl text-white"></i>
-            </div>
-          </div>
-          
-          {/* Basic Information */}
-          <div className="bg-gray-50 rounded-lg p-4">
-            <h4 className="font-semibold text-gray-800 mb-2">المعلومات الأساسية</h4>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
-              <div>
-                <span className="font-medium text-gray-600">الترتيب:</span>
-                <span className="mr-2">البابا {patriarch.orderNumber}</span>
-              </div>
-              <div>
-                <span className="font-medium text-gray-600">فترة الحكم:</span>
-                <span className="mr-2">{period}</span>
-              </div>
-              <div className="md:col-span-2">
-                <span className="font-medium text-gray-600">العصر:</span>
-                <span className="mr-2">{eraLabels[patriarch.era] || patriarch.era}</span>
-              </div>
-            </div>
-          </div>
-          
-          {/* Contributions */}
+
           <div>
-            <h4 className="font-semibold text-gray-800 mb-3">المساهمات والأعمال</h4>
-            <div className="bg-blue-50 border-r-4 border-blue-400 p-4 rounded">
-              <p className="text-gray-700 leading-relaxed">
-                {patriarch.contributions}
-              </p>
-            </div>
+            <h4 className="font-semibold text-gray-800 mb-2 flex items-center">
+              <i className="fas fa-star ml-2 text-yellow-500"></i>
+              المساهمات الرئيسية
+            </h4>
+            <p className="text-gray-600 leading-relaxed line-clamp-3">
+              {patriarch.contributions}
+            </p>
           </div>
-          
-          {/* Additional Details */}
-          {patriarch.biography && (
+
+          {patriarch.heresiesFought.length > 0 && (
             <div>
-              <h4 className="font-semibold text-gray-800 mb-3">السيرة والتفاصيل</h4>
-              <div className="bg-gray-50 p-4 rounded-lg">
-                <p className="text-gray-700 leading-relaxed whitespace-pre-wrap">
-                  {patriarch.biography}
-                </p>
+              <h4 className="font-semibold text-gray-800 mb-2 flex items-center">
+                <i className="fas fa-shield-alt ml-2 text-red-500"></i>
+                البدع المحاربة
+              </h4>
+              <div className="flex flex-wrap gap-2">
+                {patriarch.heresiesFought.slice(0, 3).map((heresy, index) => (
+                  <Badge key={index} variant="outline" className="text-xs">
+                    {heresy}
+                  </Badge>
+                ))}
+                {patriarch.heresiesFought.length > 3 && (
+                  <Badge variant="outline" className="text-xs">
+                    +{patriarch.heresiesFought.length - 3} المزيد
+                  </Badge>
+                )}
               </div>
             </div>
           )}
-          
-          {/* Timeline */}
-          <div className="border-t pt-4">
-            <div className="flex items-center justify-center text-sm text-gray-500">
-              <i className="fas fa-clock mr-2"></i>
-              تم تحديث المعلومات في عام 2025
-            </div>
-          </div>
         </div>
-      </DialogContent>
-    </Dialog>
-    </>
+      </CardContent>
+
+      <CardFooter className="p-6 pt-0">
+        <Dialog>
+          <DialogTrigger asChild>
+            <Button 
+              className="w-full bg-gradient-to-r from-blue-600 to-purple-600 text-white hover:from-blue-700 hover:to-purple-700 transition-all duration-300"
+            >
+              <i className="fas fa-book-open ml-2"></i>
+              عرض التفاصيل
+            </Button>
+          </DialogTrigger>
+          <DialogContent className="max-w-4xl max-h-[80vh] overflow-y-auto" dir="rtl">
+            <DialogHeader>
+              <DialogTitle className="text-2xl font-amiri text-blue-600 flex items-center">
+                <div className="w-12 h-12 bg-yellow-400 rounded-full flex items-center justify-center ml-4">
+                  <i className="fas fa-user text-blue-600"></i>
+                </div>
+                {arabicName} - البابا {patriarch.orderNumber}
+              </DialogTitle>
+            </DialogHeader>
+
+            <div className="space-y-6 mt-6">
+              {/* Period */}
+              <div className="bg-blue-50 p-4 rounded-lg">
+                <h3 className="font-semibold text-blue-800 mb-2 flex items-center">
+                  <i className="fas fa-calendar-alt ml-2"></i>
+                  فترة البطريركية
+                </h3>
+                <p className="text-blue-700">
+                  {patriarch.startYear} - {patriarch.endYear || "الآن"} م
+                </p>
+              </div>
+
+              {/* Era */}
+              <div className="bg-purple-50 p-4 rounded-lg">
+                <h3 className="font-semibold text-purple-800 mb-2 flex items-center">
+                  <i className="fas fa-clock ml-2"></i>
+                  العصر التاريخي
+                </h3>
+                <Badge className={eraColors[patriarch.era] || "bg-gray-100 text-gray-800"}>
+                  {eraLabels[patriarch.era] || patriarch.era}
+                </Badge>
+              </div>
+
+              {/* Contributions */}
+              <div className="bg-yellow-50 p-4 rounded-lg">
+                <h3 className="font-semibold text-yellow-800 mb-3 flex items-center">
+                  <i className="fas fa-star ml-2"></i>
+                  المساهمات والإنجازات
+                </h3>
+                <p className="text-yellow-700 leading-relaxed">
+                  {patriarch.contributions}
+                </p>
+              </div>
+
+              {/* Biography */}
+              {patriarch.biography && (
+                <div className="bg-green-50 p-4 rounded-lg">
+                  <h3 className="font-semibold text-green-800 mb-3 flex items-center">
+                    <i className="fas fa-book ml-2"></i>
+                    السيرة الذاتية
+                  </h3>
+                  <p className="text-green-700 leading-relaxed">
+                    {patriarch.biography}
+                  </p>
+                </div>
+              )}
+
+              {/* Heresies Fought */}
+              {patriarch.heresiesFought.length > 0 && (
+                <div className="bg-red-50 p-4 rounded-lg">
+                  <h3 className="font-semibold text-red-800 mb-3 flex items-center">
+                    <i className="fas fa-shield-alt ml-2"></i>
+                    البدع المحاربة
+                  </h3>
+                  <div className="flex flex-wrap gap-2">
+                    {patriarch.heresiesFought.map((heresy, index) => (
+                      <Badge key={index} variant="outline" className="bg-white border-red-300 text-red-700">
+                        {heresy}
+                      </Badge>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
+          </DialogContent>
+        </Dialog>
+      </CardFooter>
+    </Card>
   );
 }
