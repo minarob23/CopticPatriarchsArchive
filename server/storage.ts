@@ -66,7 +66,7 @@ export class DatabaseStorage implements IStorage {
       conditions.push(ilike(patriarchs.name, `%${filters.searchQuery}%`));
     }
 
-    if (filters?.era) {
+    if (filters?.era && filters.era !== "all") {
       conditions.push(eq(patriarchs.era, filters.era));
     }
 

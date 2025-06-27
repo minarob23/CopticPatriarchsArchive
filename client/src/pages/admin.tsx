@@ -16,7 +16,7 @@ export default function Admin() {
   const { isAuthenticated, isLoading, user } = useAuth();
   const { toast } = useToast();
   const [searchQuery, setSearchQuery] = useState("");
-  const [selectedEra, setSelectedEra] = useState("");
+  const [selectedEra, setSelectedEra] = useState("all");
   const [showForm, setShowForm] = useState(false);
   const [editingPatriarch, setEditingPatriarch] = useState<Patriarch | null>(null);
 
@@ -69,7 +69,7 @@ export default function Admin() {
   };
 
   const eras = [
-    { value: "", label: "جميع الفترات" },
+    { value: "all", label: "جميع الفترات" },
     { value: "apostolic", label: "العصر الرسولي" },
     { value: "golden", label: "العصر الذهبي" },
     { value: "councils", label: "عصر المجامع" },

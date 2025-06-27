@@ -11,14 +11,14 @@ import type { Patriarch } from "@shared/schema";
 
 export default function Landing() {
   const [searchQuery, setSearchQuery] = useState("");
-  const [selectedEra, setSelectedEra] = useState("");
+  const [selectedEra, setSelectedEra] = useState("all");
 
   const { data: patriarchs, isLoading } = useQuery<Patriarch[]>({
     queryKey: ["/api/patriarchs", searchQuery, selectedEra],
   });
 
   const eras = [
-    { value: "", label: "جميع البطاركة" },
+    { value: "all", label: "جميع البطاركة" },
     { value: "apostolic", label: "العصر الرسولي" },
     { value: "golden", label: "العصر الذهبي" },
     { value: "councils", label: "عصر المجامع" },
