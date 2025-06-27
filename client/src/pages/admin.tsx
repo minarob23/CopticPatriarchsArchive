@@ -186,16 +186,18 @@ ${index + 1}. ${p.name}
   ];
 
   return (
-    <div className="min-h-screen bg-gray-50" dir="rtl">
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-purple-50" dir="rtl">
       {/* Admin Header */}
-      <div className="admin-panel text-white py-4">
+      <div className="bg-gradient-to-r from-blue-600 to-purple-600 text-white py-6 shadow-lg">
         <div className="container mx-auto px-4">
           <div className="flex justify-between items-center">
             <div className="flex items-center space-x-reverse space-x-4">
-              <i className="fas fa-tachometer-alt text-2xl"></i>
+              <div className="w-12 h-12 bg-white bg-opacity-20 rounded-full flex items-center justify-center">
+                <i className="fas fa-tachometer-alt text-2xl"></i>
+              </div>
               <div>
-                <h2 className="text-xl font-bold font-amiri">لوحة تحكم الإدارة</h2>
-                <p className="text-blue-200 text-sm">إدارة بيانات البطاركة</p>
+                <h2 className="text-2xl font-bold font-amiri">لوحة تحكم الإدارة</h2>
+                <p className="text-blue-100 text-sm">مرحبًا بك {(user as any)?.name || 'المدير'} - إدارة بيانات البطاركة</p>
               </div>
             </div>
             
@@ -216,56 +218,109 @@ ${index + 1}. ${p.name}
 
       {/* Admin Content */}
       <div className="container mx-auto px-4 py-8">
-        {/* Statistics Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
-          <Card className="border-r-4 border-yellow-400">
+        {/* Enhanced Statistics Cards */}
+        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6 mb-8">
+          <Card className="bg-gradient-to-br from-yellow-400 to-yellow-600 text-white shadow-xl hover:shadow-2xl transition-all duration-300 transform hover:scale-105">
             <CardContent className="p-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-gray-600 text-sm">إجمالي البطاركة</p>
-                  <p className="text-3xl font-bold text-blue-600">{stats?.total || 0}</p>
+                  <p className="text-yellow-100 text-sm font-medium">إجمالي البطاركة</p>
+                  <p className="text-4xl font-bold">{stats?.total || 0}</p>
+                  <p className="text-yellow-200 text-xs mt-1">مسجل في قاعدة البيانات</p>
                 </div>
-                <i className="fas fa-users text-yellow-400 text-3xl"></i>
+                <div className="w-16 h-16 bg-white bg-opacity-20 rounded-full flex items-center justify-center">
+                  <i className="fas fa-users text-3xl"></i>
+                </div>
               </div>
             </CardContent>
           </Card>
           
-          <Card className="border-r-4 border-green-500">
+          <Card className="bg-gradient-to-br from-green-500 to-green-700 text-white shadow-xl hover:shadow-2xl transition-all duration-300 transform hover:scale-105">
             <CardContent className="p-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-gray-600 text-sm">العصر الحديث</p>
-                  <p className="text-3xl font-bold text-green-600">{stats?.byEra?.modern || 0}</p>
+                  <p className="text-green-100 text-sm font-medium">العصر الحديث</p>
+                  <p className="text-4xl font-bold">{stats?.byEra?.modern || 0}</p>
+                  <p className="text-green-200 text-xs mt-1">بطريرك</p>
                 </div>
-                <i className="fas fa-calendar text-green-500 text-3xl"></i>
+                <div className="w-16 h-16 bg-white bg-opacity-20 rounded-full flex items-center justify-center">
+                  <i className="fas fa-calendar-alt text-3xl"></i>
+                </div>
               </div>
             </CardContent>
           </Card>
           
-          <Card className="border-r-4 border-purple-500">
+          <Card className="bg-gradient-to-br from-purple-500 to-purple-700 text-white shadow-xl hover:shadow-2xl transition-all duration-300 transform hover:scale-105">
             <CardContent className="p-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-gray-600 text-sm">محاربو البدع</p>
-                  <p className="text-3xl font-bold text-purple-600">{stats?.totalDefenders || 0}</p>
+                  <p className="text-purple-100 text-sm font-medium">محاربو البدع</p>
+                  <p className="text-4xl font-bold">{stats?.totalDefenders || 0}</p>
+                  <p className="text-purple-200 text-xs mt-1">
+                    {stats?.total ? `${((stats.totalDefenders / stats.total) * 100).toFixed(1)}%` : '0%'} من المجموع
+                  </p>
                 </div>
-                <i className="fas fa-shield-alt text-purple-500 text-3xl"></i>
+                <div className="w-16 h-16 bg-white bg-opacity-20 rounded-full flex items-center justify-center">
+                  <i className="fas fa-shield-alt text-3xl"></i>
+                </div>
               </div>
             </CardContent>
           </Card>
           
-          <Card className="border-r-4 border-blue-500">
+          <Card className="bg-gradient-to-br from-blue-500 to-blue-700 text-white shadow-xl hover:shadow-2xl transition-all duration-300 transform hover:scale-105">
             <CardContent className="p-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-gray-600 text-sm">آخر تحديث</p>
-                  <p className="text-sm font-semibold text-blue-600">اليوم</p>
+                  <p className="text-blue-100 text-sm font-medium">العصر الذهبي</p>
+                  <p className="text-4xl font-bold">{stats?.byEra?.golden || 0}</p>
+                  <p className="text-blue-200 text-xs mt-1">أزهى فترات الكنيسة</p>
                 </div>
-                <i className="fas fa-clock text-blue-500 text-3xl"></i>
+                <div className="w-16 h-16 bg-white bg-opacity-20 rounded-full flex items-center justify-center">
+                  <i className="fas fa-crown text-3xl"></i>
+                </div>
               </div>
             </CardContent>
           </Card>
         </div>
+
+        {/* Era Distribution Chart */}
+        <Card className="mb-8 shadow-lg">
+          <CardHeader className="bg-gradient-to-r from-blue-600 to-purple-600 text-white">
+            <CardTitle className="font-amiri text-lg">
+              <i className="fas fa-chart-pie ml-2"></i>
+              توزيع البطاركة حسب العصور التاريخية
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="p-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="space-y-4">
+                {Object.entries(stats?.byEra || {}).map(([era, count]) => (
+                  <div key={era} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                    <div className="flex items-center">
+                      <div className="w-4 h-4 rounded-full bg-blue-500 ml-3"></div>
+                      <span className="font-medium">{eraLabels[era] || era}</span>
+                    </div>
+                    <div className="flex items-center">
+                      <span className="text-2xl font-bold text-blue-600 ml-2">{count}</span>
+                      <span className="text-sm text-gray-500">بطريرك</span>
+                    </div>
+                  </div>
+                ))}
+              </div>
+              <div className="flex items-center justify-center">
+                <div className="w-48 h-48 bg-gradient-to-br from-blue-100 to-purple-100 rounded-full flex items-center justify-center">
+                  <div className="text-center">
+                    <i className="fas fa-church text-6xl text-blue-600 mb-2"></i>
+                    <p className="text-lg font-bold text-gray-700">
+                      {stats?.total || 0} بطريرك
+                    </p>
+                    <p className="text-sm text-gray-500">في التاريخ القبطي</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
         
         {/* Action Buttons */}
         <div className="flex flex-wrap gap-4 mb-8">

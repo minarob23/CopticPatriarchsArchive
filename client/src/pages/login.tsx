@@ -52,6 +52,22 @@ export default function Login() {
               </p>
             </div>
 
+            {/* Demo Account Info */}
+            <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6" dir="ltr">
+              <div className="flex items-center mb-2">
+                <i className="fas fa-info-circle text-blue-600 ml-2"></i>
+                <span className="text-blue-800 font-semibold text-sm">Demo Account Information</span>
+              </div>
+              <div className="text-xs text-blue-700 space-y-1">
+                <div><strong>Username:</strong> admin@coptic-patriarchs.org</div>
+                <div><strong>Password:</strong> CopticPatriarchs2025!</div>
+                <div className="text-blue-600 mt-2">
+                  <i className="fas fa-lightbulb ml-1"></i>
+                  Use your Replit account to sign in through the button below
+                </div>
+              </div>
+            </div>
+
             <Button 
               onClick={() => window.location.href = "/api/login"}
               className="w-full bg-blue-600 hover:bg-blue-700 text-white py-3 text-lg font-semibold rounded-lg transition-all duration-300 transform hover:scale-105"
