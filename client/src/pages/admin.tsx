@@ -35,7 +35,11 @@ export default function Admin() {
     }
   }, [isAuthenticated, isLoading, toast]);
 
-  const { data: stats } = useQuery({
+  const { data: stats } = useQuery<{
+    total: number;
+    byEra: Record<string, number>;
+    totalDefenders: number;
+  }>({
     queryKey: ["/api/admin/stats"],
     retry: false,
   });
@@ -88,7 +92,7 @@ export default function Admin() {
             </div>
             
             <div className="flex items-center space-x-reverse space-x-4">
-              <span className="text-blue-200">{user?.firstName || "الأدمن"}</span>
+              <span className="text-blue-200">{(user as any)?.firstName || "الأدمن"}</span>
               <Button 
                 variant="secondary" 
                 onClick={() => window.location.href = "/api/logout"}
@@ -199,11 +203,12 @@ export default function Admin() {
                   ))}
                 </SelectContent>
               </Select>
-              <Select>
+              <Select defaultValue="all">
                 <SelectTrigger>
                   <SelectValue placeholder="جميع المساهمات" />
                 </SelectTrigger>
                 <SelectContent>
+                  <SelectItem value="all">جميع المساهمات</SelectItem>
                   <SelectItem value="arianism">محاربة الآريوسية</SelectItem>
                   <SelectItem value="nestorianism">محاربة النسطورية</SelectItem>
                   <SelectItem value="monophysitism">محاربة المونوفيزية</SelectItem>

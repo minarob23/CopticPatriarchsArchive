@@ -96,7 +96,10 @@ export class DatabaseStorage implements IStorage {
   async createPatriarch(patriarch: InsertPatriarch): Promise<Patriarch> {
     const [created] = await db
       .insert(patriarchs)
-      .values(patriarch)
+      .values({
+        ...patriarch,
+        heresiesFought: patriarch.heresiesFought || []
+      })
       .returning();
     return created;
   }
