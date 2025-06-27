@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { useLocation } from "wouter";
 import { useAuth } from "@/hooks/useAuth";
 import { useToast } from "@/hooks/use-toast";
 import { isUnauthorizedError } from "@/lib/authUtils";
@@ -22,26 +23,20 @@ const eraLabels: Record<string, string> = {
 
 export default function Admin() {
   const { isAuthenticated, isLoading, user } = useAuth();
+  const [, setLocation] = useLocation();
   const { toast } = useToast();
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedEra, setSelectedEra] = useState("all");
   const [showForm, setShowForm] = useState(false);
   const [editingPatriarch, setEditingPatriarch] = useState<Patriarch | null>(null);
 
-  // Redirect to home if not authenticated
+  // Redirect to login if not authenticated
   useEffect(() => {
     if (!isLoading && !isAuthenticated) {
-      toast({
-        title: "غير مخول",
-        description: "تم تسجيل خروجك. جارٍ تسجيل الدخول مرة أخرى...",
-        variant: "destructive",
-      });
-      setTimeout(() => {
-        window.location.href = "/api/login";
-      }, 500);
+      setLocation("/login");
       return;
     }
-  }, [isAuthenticated, isLoading, toast]);
+  }, [isAuthenticated, isLoading, setLocation]);
 
   const { data: stats } = useQuery<{
     total: number;
@@ -50,14 +45,20 @@ export default function Admin() {
   }>({
     queryKey: ["/api/admin/stats"],
     retry: false,
+    enabled: !!isAuthenticated,
   });
 
   const { data: patriarchs, isLoading: patriarchsLoading } = useQuery<Patriarch[]>({
     queryKey: ["/api/patriarchs", searchQuery, selectedEra],
     retry: false,
+    enabled: !!isAuthenticated,
   });
 
-  if (isLoading || !isAuthenticated) {
+  if (isLoading) {
+    return <Loading />;
+  }
+
+  if (!isAuthenticated) {
     return <Loading />;
   }
 
