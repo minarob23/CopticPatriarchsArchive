@@ -41,13 +41,14 @@ export default function Login() {
       
       localStorage.setItem('demo-auth', JSON.stringify(demoUser));
       
+      // Trigger custom event to notify auth hook
+      window.dispatchEvent(new Event('demo-auth-changed'));
+      
       // Simulate successful login
       setTimeout(() => {
         setIsModalOpen(false);
-        setLocation("/admin");
         setIsLoggingIn(false);
-        // Force page reload to update auth state
-        window.location.href = "/admin";
+        setLocation("/admin");
       }, 1000);
     } else {
       setLoginError("اسم المستخدم أو كلمة المرور غير صحيحة");

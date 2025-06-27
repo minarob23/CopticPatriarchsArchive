@@ -209,6 +209,7 @@ ${index + 1}. ${p.name}
                   // Check if demo user
                   if (localStorage.getItem('demo-auth')) {
                     localStorage.removeItem('demo-auth');
+                    window.dispatchEvent(new Event('demo-auth-changed'));
                     setLocation("/login");
                   } else {
                     window.location.href = "/api/logout";
