@@ -45,7 +45,7 @@ export default function Admin() {
   }>({
     queryKey: ["/api/admin/stats"],
     retry: false,
-    enabled: !!isAuthenticated,
+    enabled: !!isAuthenticated && !localStorage.getItem('demo-auth'),
   });
 
   const { data: patriarchs, isLoading: patriarchsLoading } = useQuery<Patriarch[]>({
@@ -53,6 +53,22 @@ export default function Admin() {
     retry: false,
     enabled: !!isAuthenticated,
   });
+
+  // Demo stats for when using demo authentication
+  const demoStats = {
+    total: 118,
+    byEra: {
+      apostolic: 8,
+      golden: 15,
+      councils: 25,
+      persecution: 30,
+      modern: 40
+    },
+    totalDefenders: 45
+  };
+
+  // Use demo stats if logged in with demo account
+  const finalStats = localStorage.getItem('demo-auth') ? demoStats : stats;
 
   if (isLoading) {
     return <Loading />;
@@ -116,7 +132,7 @@ export default function Admin() {
   };
 
   const handleGenerateReport = () => {
-    if (!stats || !patriarchs) {
+    if (!finalStats || !patriarchs) {
       toast({
         title: "لا توجد بيانات",
         description: "لا توجد بيانات كافية لإنشاء التقرير",
@@ -133,12 +149,12 @@ export default function Admin() {
 ===============================================
 
 الإحصائيات العامة:
-• إجمالي البطاركة: ${stats.total}
-• محاربو البدع: ${stats.totalDefenders}
-• نسبة محاربي البدع: ${((stats.totalDefenders / stats.total) * 100).toFixed(1)}%
+• إجمالي البطاركة: ${finalStats.total}
+• محاربو البدع: ${finalStats.totalDefenders}
+• نسبة محاربي البدع: ${((finalStats.totalDefenders / finalStats.total) * 100).toFixed(1)}%
 
 التوزيع حسب العصور:
-${Object.entries(stats.byEra).map(([era, count]) => 
+${Object.entries(finalStats.byEra).map(([era, count]) => 
   `• ${eraLabels[era] || era}: ${count} بطريرك`
 ).join('\n')}
 
@@ -233,7 +249,7 @@ ${index + 1}. ${p.name}
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-yellow-100 text-sm font-medium">إجمالي البطاركة</p>
-                  <p className="text-4xl font-bold">{stats?.total || 0}</p>
+                  <p className="text-4xl font-bold">{finalStats?.total || 0}</p>
                   <p className="text-yellow-200 text-xs mt-1">مسجل في قاعدة البيانات</p>
                 </div>
                 <div className="w-16 h-16 bg-white bg-opacity-20 rounded-full flex items-center justify-center">
@@ -248,7 +264,7 @@ ${index + 1}. ${p.name}
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-green-100 text-sm font-medium">العصر الحديث</p>
-                  <p className="text-4xl font-bold">{stats?.byEra?.modern || 0}</p>
+                  <p className="text-4xl font-bold">{finalStats?.byEra?.modern || 0}</p>
                   <p className="text-green-200 text-xs mt-1">بطريرك</p>
                 </div>
                 <div className="w-16 h-16 bg-white bg-opacity-20 rounded-full flex items-center justify-center">
@@ -263,9 +279,9 @@ ${index + 1}. ${p.name}
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-purple-100 text-sm font-medium">محاربو البدع</p>
-                  <p className="text-4xl font-bold">{stats?.totalDefenders || 0}</p>
+                  <p className="text-4xl font-bold">{finalStats?.totalDefenders || 0}</p>
                   <p className="text-purple-200 text-xs mt-1">
-                    {stats?.total ? `${((stats.totalDefenders / stats.total) * 100).toFixed(1)}%` : '0%'} من المجموع
+                    {finalStats?.total ? `${((finalStats.totalDefenders / finalStats.total) * 100).toFixed(1)}%` : '0%'} من المجموع
                   </p>
                 </div>
                 <div className="w-16 h-16 bg-white bg-opacity-20 rounded-full flex items-center justify-center">
@@ -280,7 +296,7 @@ ${index + 1}. ${p.name}
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-blue-100 text-sm font-medium">العصر الذهبي</p>
-                  <p className="text-4xl font-bold">{stats?.byEra?.golden || 0}</p>
+                  <p className="text-4xl font-bold">{finalStats?.byEra?.golden || 0}</p>
                   <p className="text-blue-200 text-xs mt-1">أزهى فترات الكنيسة</p>
                 </div>
                 <div className="w-16 h-16 bg-white bg-opacity-20 rounded-full flex items-center justify-center">
@@ -302,7 +318,7 @@ ${index + 1}. ${p.name}
           <CardContent className="p-6">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div className="space-y-4">
-                {Object.entries(stats?.byEra || {}).map(([era, count]) => (
+                {Object.entries(finalStats?.byEra || {}).map(([era, count]) => (
                   <div key={era} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
                     <div className="flex items-center">
                       <div className="w-4 h-4 rounded-full bg-blue-500 ml-3"></div>
@@ -320,7 +336,7 @@ ${index + 1}. ${p.name}
                   <div className="text-center">
                     <i className="fas fa-church text-6xl text-blue-600 mb-2"></i>
                     <p className="text-lg font-bold text-gray-700">
-                      {stats?.total || 0} بطريرك
+                      {finalStats?.total || 0} بطريرك
                     </p>
                     <p className="text-sm text-gray-500">في التاريخ القبطي</p>
                   </div>
