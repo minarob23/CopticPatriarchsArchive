@@ -3,7 +3,6 @@ import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
-import { getArabicPatriarchName } from "@shared/patriarch-names";
 import type { Patriarch } from "@shared/schema";
 
 interface PatriarchCardProps {
@@ -27,7 +26,7 @@ const eraColors: Record<string, string> = {
 };
 
 export default function PatriarchCard({ patriarch }: PatriarchCardProps) {
-  const arabicName = getArabicPatriarchName(patriarch.name);
+  const displayName = patriarch.arabicName || patriarch.name;
 
   return (
     <Card className="patriarch-card bg-white shadow-lg hover:shadow-2xl border border-gray-200 overflow-hidden group">
@@ -38,7 +37,7 @@ export default function PatriarchCard({ patriarch }: PatriarchCardProps) {
               <i className="fas fa-user text-blue-600 text-2xl"></i>
             </div>
             <div>
-              <h3 className="text-xl font-bold font-amiri leading-tight">{arabicName}</h3>
+              <h3 className="text-xl font-bold font-amiri leading-tight">{displayName}</h3>
               <p className="text-blue-100">البابا {patriarch.orderNumber}</p>
             </div>
           </div>
@@ -106,7 +105,7 @@ export default function PatriarchCard({ patriarch }: PatriarchCardProps) {
                 <div className="w-12 h-12 bg-yellow-400 rounded-full flex items-center justify-center ml-4">
                   <i className="fas fa-user text-blue-600"></i>
                 </div>
-                {arabicName} - البابا {patriarch.orderNumber}
+                {displayName} - البابا {patriarch.orderNumber}
               </DialogTitle>
             </DialogHeader>
 

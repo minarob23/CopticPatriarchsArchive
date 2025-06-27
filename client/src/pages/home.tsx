@@ -123,9 +123,9 @@ export default function Home() {
                     <Button
                       onClick={handleSearch}
                       className="w-full py-4 text-lg bg-gradient-to-r from-yellow-500 to-orange-500 hover:from-yellow-600 hover:to-orange-600 text-white rounded-xl shadow-lg transform hover:scale-105 transition-all duration-300"
-                      disabled={loading}
+                      disabled={isLoading}
                     >
-                      {loading ? (
+                      {isLoading ? (
                         <>
                           <i className="fas fa-spinner fa-spin ml-2"></i>
                           جاري البحث...

@@ -6,16 +6,8 @@ interface PatriarchTimelineProps {
 }
 
 // Mock function for demonstration. Replace with actual implementation.
-const getArabicPatriarchName = (englishName: string): string => {
-  const translations: { [key: string]: string } = {
-    "Pope Shenouda III": "البابا شنودة الثالث",
-    "Pope Tawadros II": "البابا تواضروس الثاني",
-    "Pope Kyrillos VI": "البابا كيرلس السادس",
-    "Pope Macarius III": "البابا مكاريوس الثالث",
-    "Pope John XIX": "البابا يوأنس التاسع عشر",
-  };
-
-  return translations[englishName] || englishName;
+const getDisplayName = (patriarch: { arabicName?: string | null; name: string }): string => {
+  return patriarch.arabicName || patriarch.name;
 };
 
 export default function PatriarchTimeline({ patriarchs }: PatriarchTimelineProps) {
@@ -51,7 +43,7 @@ export default function PatriarchTimeline({ patriarchs }: PatriarchTimelineProps
                 <div className="w-1/2 text-left pl-8">
                   <Card className="border-r-4 border-yellow-400">
                     <CardContent className="p-6">
-                      <h4 className="font-bold text-blue-600 font-amiri">{getArabicPatriarchName(patriarch.name)}</h4>
+                      <h4 className="font-bold text-blue-600 font-amiri">{getDisplayName(patriarch)}</h4>
                       <p className="text-sm text-gray-600">
                         {patriarch.startYear} - {patriarch.endYear || "الآن"} م
                       </p>
@@ -76,7 +68,7 @@ export default function PatriarchTimeline({ patriarchs }: PatriarchTimelineProps
                 <div className="w-1/2 text-right pr-8">
                   <Card className="border-l-4 border-yellow-400">
                     <CardContent className="p-6">
-                      <h4 className="font-bold text-blue-600 font-amiri">{getArabicPatriarchName(patriarch.name)}</h4>
+                      <h4 className="font-bold text-blue-600 font-amiri">{getDisplayName(patriarch)}</h4>
                       <p className="text-sm text-gray-600">
                         {patriarch.startYear} - {patriarch.endYear || "الآن"} م
                       </p>

@@ -120,7 +120,7 @@ export default function PatriarchTable({ patriarchs, onEdit }: PatriarchTablePro
                       </div>
                     </div>
                     <div className="mr-4">
-                      <div className="text-sm font-medium text-gray-900">{patriarch.name}</div>
+                      <div className="text-sm font-medium text-gray-900">{patriarch.arabicName || patriarch.name}</div>
                       <div className="text-sm text-gray-500">البابا {patriarch.orderNumber}</div>
                     </div>
                   </div>

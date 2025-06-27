@@ -37,6 +37,7 @@ export const users = pgTable("users", {
 export const patriarchs = pgTable("patriarchs", {
   id: integer("id").primaryKey().generatedAlwaysAsIdentity(),
   name: text("name").notNull(),
+  arabicName: varchar("arabic_name", { length: 255 }),
   orderNumber: integer("order_number").notNull(),
   startYear: integer("start_year").notNull(),
   endYear: integer("end_year"),
@@ -51,6 +52,7 @@ export const patriarchs = pgTable("patriarchs", {
 
 export const insertPatriarchSchema = createInsertSchema(patriarchs).omit({
   id: true,
+  isActive: true,
   createdAt: true,
   updatedAt: true,
 });

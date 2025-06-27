@@ -49,6 +49,7 @@ export default function PatriarchForm({ patriarch, onClose }: PatriarchFormProps
     resolver: zodResolver(insertPatriarchSchema),
     defaultValues: {
       name: patriarch?.name || "",
+      arabicName: patriarch?.arabicName || "",
       orderNumber: patriarch?.orderNumber || 1,
       startYear: patriarch?.startYear || new Date().getFullYear(),
       endYear: patriarch?.endYear || undefined,
@@ -56,7 +57,6 @@ export default function PatriarchForm({ patriarch, onClose }: PatriarchFormProps
       contributions: patriarch?.contributions || "",
       biography: patriarch?.biography || "",
       heresiesFought: patriarch?.heresiesFought || [],
-      isActive: patriarch?.isActive ?? true,
     },
   });
 
@@ -126,7 +126,21 @@ export default function PatriarchForm({ patriarch, onClose }: PatriarchFormProps
                   name="name"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>اسم البطريرك</FormLabel>
+                      <FormLabel>الاسم الإنجليزي</FormLabel>
+                      <FormControl>
+                        <Input placeholder="مثال: Pope Athanasius the Great" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="arabicName"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>الاسم العربي</FormLabel>
                       <FormControl>
                         <Input placeholder="مثال: البابا أثناسيوس الرسولي" {...field} />
                       </FormControl>
