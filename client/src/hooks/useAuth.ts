@@ -5,44 +5,16 @@ import { useState, useEffect } from "react";
 export function useAuth() {
   const [demoUser, setDemoUser] = useState(null);
 
-  // Check for demo authentication and watch for changes
+  // Check for demo authentication
   useEffect(() => {
-    const checkDemoAuth = () => {
-      const demoAuth = localStorage.getItem('demo-auth');
-      if (demoAuth) {
-        try {
-          setDemoUser(JSON.parse(demoAuth));
-        } catch (e) {
-          localStorage.removeItem('demo-auth');
-          setDemoUser(null);
-        }
-      } else {
-        setDemoUser(null);
+    const demoAuth = localStorage.getItem('demo-auth');
+    if (demoAuth) {
+      try {
+        setDemoUser(JSON.parse(demoAuth));
+      } catch (e) {
+        localStorage.removeItem('demo-auth');
       }
-    };
-
-    // Initial check
-    checkDemoAuth();
-
-    // Listen for storage changes (when localStorage is updated in another tab/window)
-    const handleStorageChange = (e: StorageEvent) => {
-      if (e.key === 'demo-auth') {
-        checkDemoAuth();
-      }
-    };
-
-    // Listen for custom events (when localStorage is updated in the same tab)
-    const handleCustomAuth = () => {
-      checkDemoAuth();
-    };
-
-    window.addEventListener('storage', handleStorageChange);
-    window.addEventListener('demo-auth-changed', handleCustomAuth);
-
-    return () => {
-      window.removeEventListener('storage', handleStorageChange);
-      window.removeEventListener('demo-auth-changed', handleCustomAuth);
-    };
+    }
   }, []);
 
   const { data: user, isLoading } = useQuery({
