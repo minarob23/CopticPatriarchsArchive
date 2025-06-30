@@ -129,7 +129,10 @@ Changelog:
 - June 27, 2025. Moved advanced search engine from authenticated homepage to main landing page - now accessible to all users without login
 - June 27, 2025. Added patriarch details modal and updated year references to 2025
 - June 30, 2025. Successfully completed migration from Replit Agent to Replit environment with PostgreSQL database setup
-- June 30, 2025. Populated database with 81 patriarch records covering all historical eras from apostolic to modern times
+- June 30, 2025. Populated database with 80 patriarch records covering all historical eras from apostolic to modern times
+- June 30, 2025. Updated admin interface to display Arabic content for contributions, biography, and heresies fought
+- June 30, 2025. Enhanced patriarch management table with comprehensive display of historical eras and heresies
+- June 30, 2025. Confirmed Replit Auth integration working properly for admin access control
 
 ## User Preferences
 

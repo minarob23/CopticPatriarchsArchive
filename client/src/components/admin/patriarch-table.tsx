@@ -102,10 +102,11 @@ export default function PatriarchTable({ patriarchs, onEdit }: PatriarchTablePro
         <table className="w-full">
           <thead className="bg-gray-50">
             <tr>
-              <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">الاسم</th>
-              <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">الفترة</th>
-              <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">المساهمة</th>
-              <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">العصر</th>
+              <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">البطريرك</th>
+              <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">فترة الخدمة</th>
+              <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">المساهمات الرئيسية</th>
+              <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">العصر التاريخي</th>
+              <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">البدع المحاربة</th>
               <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">الإجراءات</th>
             </tr>
           </thead>
@@ -135,6 +136,20 @@ export default function PatriarchTable({ patriarchs, onEdit }: PatriarchTablePro
                   <Badge className={eraColors[patriarch.era] || "bg-gray-100 text-gray-800"}>
                     {eraLabels[patriarch.era] || patriarch.era}
                   </Badge>
+                </td>
+                <td className="px-6 py-4 text-sm text-gray-900">
+                  <div className="flex flex-wrap gap-1">
+                    {patriarch.heresiesFought.slice(0, 2).map((heresy, index) => (
+                      <Badge key={index} variant="outline" className="text-xs">
+                        {heresy}
+                      </Badge>
+                    ))}
+                    {patriarch.heresiesFought.length > 2 && (
+                      <Badge variant="outline" className="text-xs">
+                        +{patriarch.heresiesFought.length - 2}
+                      </Badge>
+                    )}
+                  </div>
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
                   <div className="flex space-x-reverse space-x-2">

@@ -26,10 +26,20 @@ interface PatriarchFormProps {
 }
 
 const heresiesOptions = [
-  { id: "arianism", label: "الآريوسية" },
-  { id: "nestorianism", label: "النسطورية" },
-  { id: "monophysitism", label: "المونوفيزية" },
-  { id: "gnosticism", label: "الغنوصية" },
+  { id: "Arianism", label: "الآريوسية" },
+  { id: "Nestorianism", label: "النسطورية" },
+  { id: "Chalcedonianism", label: "الخلقيدونية" },
+  { id: "Gnosticism", label: "الغنوصية" },
+  { id: "Paganism", label: "الوثنية" },
+  { id: "Roman Persecution", label: "الاضطهاد الروماني" },
+  { id: "Manichaeism", label: "المانوية" },
+  { id: "Donatism", label: "الدوناتية" },
+  { id: "Islamic Extremism", label: "التطرف الإسلامي" },
+  { id: "Secularism", label: "العلمانية" },
+  { id: "Protestant Missions", label: "الإرساليات البروتستانتية" },
+  { id: "Modernism", label: "الحداثة" },
+  { id: "Communism", label: "الشيوعية" },
+  { id: "Atheism", label: "الإلحاد" },
 ];
 
 const eraOptions = [
@@ -40,13 +50,24 @@ const eraOptions = [
   { value: "modern", label: "العصر الحديث" },
 ];
 
+type PatriarchFormData = {
+  name: string;
+  arabicName?: string;
+  orderNumber: number;
+  startYear: number;
+  endYear?: number;
+  era: string;
+  contributions: string;
+  biography?: string;
+  heresiesFought: string[];
+};
+
 export default function PatriarchForm({ patriarch, onClose }: PatriarchFormProps) {
   const { toast } = useToast();
   const queryClient = useQueryClient();
   const isEditing = !!patriarch;
 
-  const form = useForm<InsertPatriarch>({
-    resolver: zodResolver(insertPatriarchSchema),
+  const form = useForm<PatriarchFormData>({
     defaultValues: {
       name: patriarch?.name || "",
       arabicName: patriarch?.arabicName || "",
@@ -61,7 +82,7 @@ export default function PatriarchForm({ patriarch, onClose }: PatriarchFormProps
   });
 
   const mutation = useMutation({
-    mutationFn: async (data: InsertPatriarch) => {
+    mutationFn: async (data: PatriarchFormData) => {
       const url = isEditing 
         ? `/api/admin/patriarchs/${patriarch.id}` 
         : "/api/admin/patriarchs";
@@ -99,7 +120,7 @@ export default function PatriarchForm({ patriarch, onClose }: PatriarchFormProps
     },
   });
 
-  const onSubmit = (data: InsertPatriarch) => {
+  const onSubmit = (data: PatriarchFormData) => {
     mutation.mutate(data);
   };
 
@@ -261,11 +282,12 @@ export default function PatriarchForm({ patriarch, onClose }: PatriarchFormProps
                                   <Checkbox
                                     checked={field.value?.includes(heresy.id)}
                                     onCheckedChange={(checked) => {
+                                      const currentValue = field.value || [];
                                       return checked
-                                        ? field.onChange([...field.value, heresy.id])
+                                        ? field.onChange([...currentValue, heresy.id])
                                         : field.onChange(
-                                            field.value?.filter(
-                                              (value) => value !== heresy.id
+                                            currentValue.filter(
+                                              (value: string) => value !== heresy.id
                                             )
                                           );
                                     }}
