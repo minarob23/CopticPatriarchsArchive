@@ -55,7 +55,7 @@ export default function Admin() {
   }>({
     queryKey: ["/api/admin/stats"],
     retry: false,
-    enabled: !!isAuthenticated && !localStorage.getItem('demo-auth'),
+    enabled: !!isAuthenticated,
   });
 
   const { data: patriarchs, isLoading: patriarchsLoading } = useQuery<Patriarch[]>({
@@ -77,8 +77,8 @@ export default function Admin() {
     totalDefenders: 45
   };
 
-  // Use demo stats if logged in with demo account
-  const finalStats = localStorage.getItem('demo-auth') ? demoStats : stats;
+  // Always use real stats from database
+  const finalStats = stats;
 
   if (isLoading) {
     return <Loading />;
