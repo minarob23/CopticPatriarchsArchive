@@ -21,6 +21,15 @@ const eraLabels: Record<string, string> = {
   modern: "العصر الحديث",
 };
 
+const eras = [
+  { value: "all", label: "جميع العصور" },
+  { value: "apostolic", label: "العصر الرسولي" },
+  { value: "golden", label: "العصر الذهبي" },
+  { value: "councils", label: "عصر المجامع" },
+  { value: "persecution", label: "عصر الاضطهاد" },
+  { value: "modern", label: "العصر الحديث" },
+];
+
 export default function Admin() {
   const { isAuthenticated, isLoading, user } = useAuth();
   const [, setLocation] = useLocation();
@@ -48,36 +57,33 @@ export default function Admin() {
     return () => clearInterval(timer);
   }, []);
 
-  const { data: stats } = useQuery<{
-    total: number;
-    byEra: Record<string, number>;
-    totalDefenders: number;
-  }>({
-    queryKey: ["/api/admin/stats"],
+  const { data: allPatriarchs, isLoading: patriarchsLoading } = useQuery<Patriarch[]>({
+    queryKey: ["/api/patriarchs"],
     retry: false,
     enabled: !!isAuthenticated,
   });
 
-  const { data: patriarchs, isLoading: patriarchsLoading } = useQuery<Patriarch[]>({
-    queryKey: ["/api/patriarchs", searchQuery, selectedEra],
-    retry: false,
-    enabled: !!isAuthenticated,
-  });
+  // Filter patriarchs based on search and era
+  const patriarchs = allPatriarchs?.filter(patriarch => {
+    const matchesSearch = !searchQuery || 
+      patriarch.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      patriarch.arabicName?.toLowerCase().includes(searchQuery.toLowerCase());
+    
+    const matchesEra = selectedEra === "all" || patriarch.era === selectedEra;
+    
+    return matchesSearch && matchesEra;
+  }) || [];
 
-  // Demo stats for when using demo authentication
-  const demoStats = {
-    total: 118,
-    byEra: {
-      apostolic: 8,
-      golden: 15,
-      councils: 25,
-      persecution: 30,
-      modern: 40
-    },
-    totalDefenders: 45
-  };
+  // Calculate stats from all patriarchs data (not filtered)
+  const stats = allPatriarchs ? {
+    total: allPatriarchs.length,
+    byEra: allPatriarchs.reduce((acc: Record<string, number>, patriarch) => {
+      acc[patriarch.era] = (acc[patriarch.era] || 0) + 1;
+      return acc;
+    }, {}),
+    totalDefenders: allPatriarchs.filter(p => p.heresiesFought.length > 0).length
+  } : null;
 
-  // Always use real stats from database
   const finalStats = stats;
 
   if (isLoading) {

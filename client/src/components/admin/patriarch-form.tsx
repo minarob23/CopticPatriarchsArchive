@@ -93,7 +93,6 @@ export default function PatriarchForm({ patriarch, onClose }: PatriarchFormProps
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/patriarchs"] });
-      queryClient.invalidateQueries({ queryKey: ["/api/admin/stats"] });
       toast({
         title: isEditing ? "تم التحديث" : "تم الإنشاء",
         description: isEditing ? "تم تحديث البطريرك بنجاح" : "تم إنشاء البطريرك بنجاح",
