@@ -65,7 +65,17 @@ export default function Login() {
 
   return (
     <div className="min-h-screen bg-gray-50 flex items-center justify-center" dir="rtl">
-      <div className="w-full max-w-md">
+      {/* Home Button */}
+      <Button
+        onClick={() => setLocation("/")}
+        variant="outline"
+        className="fixed top-4 right-4 z-10 bg-white/90 backdrop-blur-sm border-blue-300 text-blue-600 hover:bg-blue-50"
+      >
+        <i className="fas fa-home ml-2"></i>
+        الصفحة الرئيسية
+      </Button>
+      
+      <div className="w-full max-w-md"></div>
         {/* Logo Section */}
         <div className="text-center mb-8">
           <div className="w-20 h-20 bg-gradient-to-br from-blue-600 to-purple-600 rounded-full flex items-center justify-center mx-auto mb-4">
