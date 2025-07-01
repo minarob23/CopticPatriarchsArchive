@@ -82,7 +82,17 @@ export default function Admin() {
       acc[patriarch.era] = (acc[patriarch.era] || 0) + 1;
       return acc;
     }, {}),
-    totalDefenders: allPatriarchs.filter(p => p.heresiesFought.length > 0).length
+    totalDefenders: allPatriarchs.filter(p => {
+      let heresies: string[] = [];
+      try {
+        heresies = Array.isArray(p.heresiesFought) 
+          ? p.heresiesFought 
+          : JSON.parse(p.heresiesFought || '[]');
+      } catch (e) {
+        heresies = [];
+      }
+      return heresies.length > 0;
+    }).length
   } : null;
 
   const finalStats = stats;
@@ -131,7 +141,17 @@ export default function Admin() {
         p.endYear || "",
         `"${eraLabels[p.era] || p.era}"`,
         `"${p.contributions}"`,
-        `"${p.heresiesFought.join('; ')}"`
+        `"${(() => {
+          let heresies: string[] = [];
+          try {
+            heresies = Array.isArray(p.heresiesFought) 
+              ? p.heresiesFought 
+              : JSON.parse(p.heresiesFought || '[]');
+          } catch (e) {
+            heresies = [];
+          }
+          return heresies.join('; ');
+        })()}"`
       ].join(","))
     ].join("\n");
 
@@ -185,7 +205,17 @@ ${index + 1}. ${p.name}
    الفترة: ${p.startYear} - ${p.endYear || "الآن"} م
    العصر: ${eraLabels[p.era] || p.era}
    المساهمات: ${p.contributions}
-   البدع المحاربة: ${p.heresiesFought.length > 0 ? p.heresiesFought.join(', ') : 'لا توجد'}
+   البدع المحاربة: ${(() => {
+     let heresies: string[] = [];
+     try {
+       heresies = Array.isArray(p.heresiesFought) 
+         ? p.heresiesFought 
+         : JSON.parse(p.heresiesFought || '[]');
+     } catch (e) {
+       heresies = [];
+     }
+     return heresies.length > 0 ? heresies.join(', ') : 'لا توجد';
+   })()}
 `).join('\n')}
 
 ===============================================
