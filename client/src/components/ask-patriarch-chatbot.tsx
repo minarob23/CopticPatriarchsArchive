@@ -153,11 +153,11 @@ export default function AskPatriarchChatbot() {
           </div>
 
           {/* Fixed Bottom Panel */}
-          <div className="bg-gradient-to-br from-amber-50 via-orange-50 to-amber-50 dark:from-amber-950/20 dark:via-orange-950/20 dark:to-amber-950/20 border-t border-amber-200 dark:border-amber-800 p-3 flex-shrink-0 min-h-fit">
+          <div className="bg-gradient-to-br from-amber-50 via-orange-50 to-amber-50 dark:from-amber-950/20 dark:via-orange-950/20 dark:to-amber-950/20 border-t border-amber-200 dark:border-amber-800 p-4 flex-shrink-0">
             {/* Suggested Questions */}
-            <div className="mb-3">
-              <div className="flex items-center gap-2 mb-2">
-                <Lightbulb className="h-3 w-3 text-amber-600 animate-pulse" />
+            <div className="mb-4">
+              <div className="flex items-center gap-2 mb-3">
+                <Lightbulb className="h-4 w-4 text-amber-600 animate-pulse" />
                 <span className="text-sm text-amber-700 dark:text-amber-300 font-medium">أسئلة مقترحة:</span>
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
@@ -166,36 +166,36 @@ export default function AskPatriarchChatbot() {
                     key={index}
                     variant="outline"
                     size="sm"
-                    className="text-right justify-start h-auto py-2 px-3 text-amber-700 dark:text-amber-300 border-amber-300 dark:border-amber-700 hover:bg-gradient-to-r hover:from-amber-50 hover:to-orange-50 dark:hover:from-amber-950/30 dark:hover:to-orange-950/30 transition-all duration-300 text-xs whitespace-normal"
+                    className="text-right justify-start h-auto py-2.5 px-3 text-amber-700 dark:text-amber-300 border-amber-300 dark:border-amber-700 hover:bg-gradient-to-r hover:from-amber-50 hover:to-orange-50 dark:hover:from-amber-950/30 dark:hover:to-orange-950/30 transition-all duration-300 text-xs whitespace-normal min-h-[44px] items-center"
                     onClick={() => setQuestion(suggestion)}
                     disabled={askPatriarchMutation.isPending}
                   >
-                    <span className="text-xs leading-relaxed">{suggestion}</span>
+                    <span className="text-xs leading-relaxed text-center w-full">{suggestion}</span>
                   </Button>
                 ))}
               </div>
             </div>
 
             {/* Question Input */}
-            <form onSubmit={handleSubmit}>
-              <div className="flex gap-2 items-end">
+            <form onSubmit={handleSubmit} className="w-full">
+              <div className="flex gap-3 items-stretch w-full">
                 <Input
                   value={question}
                   onChange={(e) => setQuestion(e.target.value)}
                   placeholder="اكتب سؤالك هنا..."
-                  className="flex-1 text-right border-amber-300 dark:border-amber-700 focus:border-amber-500 focus:ring-amber-500 transition-all duration-300 rounded-md shadow-sm text-sm h-9 px-3"
+                  className="flex-1 text-right border-amber-300 dark:border-amber-700 focus:border-amber-500 focus:ring-amber-500 transition-all duration-300 rounded-lg shadow-sm text-sm h-12 px-4 bg-white dark:bg-gray-800"
                   disabled={askPatriarchMutation.isPending}
                   dir="rtl"
                 />
                 <Button
                   type="submit"
                   disabled={!question.trim() || askPatriarchMutation.isPending}
-                  className="bg-gradient-to-r from-amber-600 to-orange-600 hover:from-amber-700 hover:to-orange-700 text-white px-3 rounded-md shadow-md hover:shadow-lg transition-all duration-300 h-9 min-w-[36px]"
+                  className="bg-gradient-to-r from-amber-600 to-orange-600 hover:from-amber-700 hover:to-orange-700 text-white px-4 rounded-lg shadow-md hover:shadow-lg transition-all duration-300 h-12 min-w-[48px] flex items-center justify-center"
                 >
                   {askPatriarchMutation.isPending ? (
-                    <Loader2 className="h-4 w-4 animate-spin" />
+                    <Loader2 className="h-5 w-5 animate-spin" />
                   ) : (
-                    <Send className="h-4 w-4" />
+                    <Send className="h-5 w-5" />
                   )}
                 </Button>
               </div>
