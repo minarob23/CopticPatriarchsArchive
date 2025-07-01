@@ -116,17 +116,28 @@ export default function Chatbot({ className }: ChatbotProps) {
   };
 
   return (
-    <div className={`fixed bottom-6 left-6 z-50 ${className}`}>
+    <div className={`fixed bottom-6 left-6 z-50 chatbot-float ${className}`}>
       <Dialog open={isOpen} onOpenChange={setIsOpen}>
         <DialogTrigger asChild>
           <Button 
-            className="h-14 w-14 rounded-full bg-gradient-to-r from-blue-600 to-purple-600 text-white shadow-2xl hover:shadow-3xl transform hover:scale-110 transition-all duration-300 relative group"
+            className="h-16 w-16 rounded-full bg-gradient-to-r from-blue-600 to-purple-600 text-white shadow-2xl hover:shadow-3xl transform hover:scale-110 transition-all duration-300 relative group ring-4 ring-blue-200 ring-opacity-50"
             size="lg"
           >
-            <div className="absolute inset-0 rounded-full bg-gradient-to-r from-blue-400 to-purple-400 opacity-20 animate-pulse"></div>
-            <i className="fas fa-comments text-xl relative z-10"></i>
-            <div className="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full h-6 w-6 flex items-center justify-center animate-bounce">
-              <i className="fas fa-cross text-xs"></i>
+            {/* Animated background */}
+            <div className="absolute inset-0 rounded-full bg-gradient-to-r from-blue-400 to-purple-400 opacity-30 animate-pulse"></div>
+            
+            {/* Main icon */}
+            <i className="fas fa-robot text-2xl relative z-10"></i>
+            
+            {/* Cross badge */}
+            <div className="absolute -top-2 -right-2 bg-yellow-500 text-blue-800 text-xs rounded-full h-7 w-7 flex items-center justify-center animate-bounce shadow-lg">
+              <i className="fas fa-cross text-sm font-bold"></i>
+            </div>
+            
+            {/* Floating label */}
+            <div className="absolute -top-12 left-1/2 transform -translate-x-1/2 bg-black bg-opacity-75 text-white text-xs px-3 py-1 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-300 whitespace-nowrap">
+              اسأل البطريرك
+              <div className="absolute top-full left-1/2 transform -translate-x-1/2 w-0 h-0 border-l-4 border-r-4 border-t-4 border-transparent border-t-black border-opacity-75"></div>
             </div>
           </Button>
         </DialogTrigger>

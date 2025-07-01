@@ -277,8 +277,8 @@ export default function Home() {
         )}
       </div>
 
-      {/* Chatbot */}
-      <Chatbot />
+      {/* Chatbot - Fixed positioning and enhanced visibility */}
+      <Chatbot className="animate-pulse-slow" />
     </div>
   );
 }
