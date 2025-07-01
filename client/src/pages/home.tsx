@@ -42,7 +42,12 @@ export default function Home() {
   // Extract unique heresies for filtering
   const allHeresies = Array.from(
     new Set(
-      (patriarchs || []).flatMap(p => p.heresiesFought)
+      (patriarchs || []).flatMap(p => {
+        const heresies = Array.isArray(p.heresiesFought) 
+          ? p.heresiesFought 
+          : JSON.parse(p.heresiesFought || '[]');
+        return heresies;
+      })
     )
   ).sort();
 
@@ -55,7 +60,12 @@ export default function Home() {
     const matchesEra = selectedEra === "all" || patriarch.era === selectedEra;
 
     const matchesHeresies = selectedHeresies.length === 0 || 
-      selectedHeresies.some(heresy => patriarch.heresiesFought.includes(heresy));
+      selectedHeresies.some(heresy => {
+        const heresies = Array.isArray(patriarch.heresiesFought) 
+          ? patriarch.heresiesFought 
+          : JSON.parse(patriarch.heresiesFought || '[]');
+        return heresies.includes(heresy);
+      });
 
     return matchesSearch && matchesEra && matchesHeresies;
   });

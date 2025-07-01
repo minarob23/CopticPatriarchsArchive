@@ -67,26 +67,31 @@ export default function PatriarchCard({ patriarch }: PatriarchCardProps) {
             </p>
           </div>
 
-          {patriarch.heresiesFought.length > 0 && (
-            <div>
-              <h4 className="font-semibold text-gray-800 mb-2 flex items-center">
-                <i className="fas fa-shield-alt ml-2 text-red-500"></i>
-                البدع المحاربة
-              </h4>
-              <div className="flex flex-wrap gap-2">
-                {patriarch.heresiesFought.slice(0, 3).map((heresy, index) => (
-                  <Badge key={index} variant="outline" className="text-xs">
-                    {getArabicHeresyName(heresy)}
-                  </Badge>
-                ))}
-                {patriarch.heresiesFought.length > 3 && (
-                  <Badge variant="outline" className="text-xs">
-                    +{patriarch.heresiesFought.length - 3} المزيد
-                  </Badge>
-                )}
+          {(() => {
+            const heresies = Array.isArray(patriarch.heresiesFought) 
+              ? patriarch.heresiesFought 
+              : JSON.parse(patriarch.heresiesFought || '[]');
+            return heresies.length > 0 && (
+              <div>
+                <h4 className="font-semibold text-gray-800 mb-2 flex items-center">
+                  <i className="fas fa-shield-alt ml-2 text-red-500"></i>
+                  البدع المحاربة
+                </h4>
+                <div className="flex flex-wrap gap-2">
+                  {heresies.slice(0, 3).map((heresy, index) => (
+                    <Badge key={index} variant="outline" className="text-xs">
+                      {getArabicHeresyName(heresy)}
+                    </Badge>
+                  ))}
+                  {heresies.length > 3 && (
+                    <Badge variant="outline" className="text-xs">
+                      +{heresies.length - 3} المزيد
+                    </Badge>
+                  )}
+                </div>
               </div>
-            </div>
-          )}
+            );
+          })()}
         </div>
       </CardContent>
 
@@ -158,21 +163,26 @@ export default function PatriarchCard({ patriarch }: PatriarchCardProps) {
               )}
 
               {/* Heresies Fought */}
-              {patriarch.heresiesFought.length > 0 && (
-                <div className="bg-red-50 p-4 rounded-lg">
-                  <h3 className="font-semibold text-red-800 mb-3 flex items-center">
-                    <i className="fas fa-shield-alt ml-2"></i>
-                    البدع المحاربة
-                  </h3>
-                  <div className="flex flex-wrap gap-2">
-                    {patriarch.heresiesFought.map((heresy, index) => (
-                      <Badge key={index} variant="outline" className="bg-white border-red-300 text-red-700">
-                        {getArabicHeresyName(heresy)}
-                      </Badge>
-                    ))}
+              {(() => {
+                const heresies = Array.isArray(patriarch.heresiesFought) 
+                  ? patriarch.heresiesFought 
+                  : JSON.parse(patriarch.heresiesFought || '[]');
+                return heresies.length > 0 && (
+                  <div className="bg-red-50 p-4 rounded-lg">
+                    <h3 className="font-semibold text-red-800 mb-3 flex items-center">
+                      <i className="fas fa-shield-alt ml-2"></i>
+                      البدع المحاربة
+                    </h3>
+                    <div className="flex flex-wrap gap-2">
+                      {heresies.map((heresy, index) => (
+                        <Badge key={index} variant="outline" className="bg-white border-red-300 text-red-700">
+                          {getArabicHeresyName(heresy)}
+                        </Badge>
+                      ))}
+                    </div>
                   </div>
-                </div>
-              )}
+                );
+              })()}
             </div>
           </DialogContent>
         </Dialog>

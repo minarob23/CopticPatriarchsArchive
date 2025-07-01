@@ -139,16 +139,25 @@ export default function PatriarchTable({ patriarchs, onEdit }: PatriarchTablePro
                 </td>
                 <td className="px-6 py-4 text-sm text-gray-900">
                   <div className="flex flex-wrap gap-1">
-                    {patriarch.heresiesFought.slice(0, 2).map((heresy, index) => (
-                      <Badge key={index} variant="outline" className="text-xs">
-                        {getArabicHeresyName(heresy)}
-                      </Badge>
-                    ))}
-                    {patriarch.heresiesFought.length > 2 && (
-                      <Badge variant="outline" className="text-xs">
-                        +{patriarch.heresiesFought.length - 2}
-                      </Badge>
-                    )}
+                    {(() => {
+                      const heresies = Array.isArray(patriarch.heresiesFought) 
+                        ? patriarch.heresiesFought 
+                        : JSON.parse(patriarch.heresiesFought || '[]');
+                      return (
+                        <>
+                          {heresies.slice(0, 2).map((heresy, index) => (
+                            <Badge key={index} variant="outline" className="text-xs">
+                              {getArabicHeresyName(heresy)}
+                            </Badge>
+                          ))}
+                          {heresies.length > 2 && (
+                            <Badge variant="outline" className="text-xs">
+                              +{heresies.length - 2}
+                            </Badge>
+                          )}
+                        </>
+                      );
+                    })()}
                   </div>
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
