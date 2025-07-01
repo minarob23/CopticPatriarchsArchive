@@ -4,7 +4,6 @@ import { storage } from "./storage";
 import { setupAuth, isAuthenticated } from "./replitAuth";
 import { insertPatriarchSchema, updatePatriarchSchema } from "@shared/schema";
 import { z } from "zod";
-import { handleChatbotMessage } from "./chatbot";
 
 export async function registerRoutes(app: Express): Promise<Server> {
   // Auth middleware
@@ -31,7 +30,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         era: era as string,
         heresies: heresies ? (heresies as string).split(',') : undefined,
       };
-
+      
       const patriarchs = await storage.getPatriarchs(filters);
       res.json(patriarchs);
     } catch (error) {
@@ -86,7 +85,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
       const validatedData = updatePatriarchSchema.parse(req.body);
       const patriarch = await storage.updatePatriarch(id, validatedData);
-
+      
       if (!patriarch) {
         return res.status(404).json({ message: "Patriarch not found" });
       }
@@ -133,9 +132,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.status(500).json({ message: "Failed to fetch stats" });
     }
   });
-
-  // Chatbot endpoint
-  app.post("/api/chatbot", handleChatbotMessage);
 
   const httpServer = createServer(app);
   return httpServer;
