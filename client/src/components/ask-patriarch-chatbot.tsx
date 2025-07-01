@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -26,6 +26,15 @@ export default function AskPatriarchChatbot() {
   ]);
   
   const [question, setQuestion] = useState('');
+  const messagesEndRef = useRef<HTMLDivElement>(null);
+
+  const scrollToBottom = () => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  };
+
+  useEffect(() => {
+    scrollToBottom();
+  }, [messages]);
 
   const askPatriarchMutation = useMutation({
     mutationFn: async (question: string) => {
@@ -95,61 +104,70 @@ export default function AskPatriarchChatbot() {
         
         <div className="flex-1 flex flex-col relative overflow-hidden">
           {/* Chat Messages */}
-          <div className="flex-1 p-2 overflow-hidden min-h-0">
-            <ScrollArea className="h-full p-3 bg-white dark:bg-gray-900 rounded-lg border border-amber-200 dark:border-amber-800">
-            <div className="space-y-3 pb-6">
-              {messages.map((message, index) => (
-                <div
-                  key={message.id}
-                  className={`flex ${message.type === 'user' ? 'justify-end' : 'justify-start'} animate-in slide-in-from-bottom-3 duration-500`}
-                  style={{ animationDelay: `${index * 100}ms` }}
-                >
+          <div className="flex-1 overflow-hidden bg-white dark:bg-gray-900 m-2 rounded-lg border border-amber-200 dark:border-amber-800">
+            <ScrollArea className="h-full w-full">
+              <div className="p-4 space-y-4 min-h-full">
+                {messages.map((message, index) => (
                   <div
-                    className={`max-w-[85%] p-2 rounded-xl shadow-md transition-all duration-300 hover:scale-[1.01] hover:shadow-lg ${
-                      message.type === 'user'
-                        ? 'bg-gradient-to-br from-blue-600 to-blue-700 text-white shadow-blue-200 dark:shadow-blue-900/30'
-                        : 'bg-gradient-to-br from-amber-50 to-orange-50 dark:from-amber-900 dark:to-orange-900 text-amber-900 dark:text-amber-100 border border-amber-300 dark:border-amber-700 shadow-amber-200 dark:shadow-amber-900/30'
-                    }`}
+                    key={message.id}
+                    className={`flex ${message.type === 'user' ? 'justify-end' : 'justify-start'} animate-in slide-in-from-bottom-3 duration-500`}
+                    style={{ animationDelay: `${index * 100}ms` }}
                   >
-                    {message.type === 'patriarch' && (
-                      <div className="flex items-center gap-1 mb-1 animate-in fade-in duration-300">
-                        <Crown className="h-3 w-3 text-amber-600 animate-pulse" />
-                        <span className="font-semibold text-xs bg-gradient-to-r from-amber-700 to-orange-700 bg-clip-text text-transparent">البطريرك الخبير</span>
-                        <Sparkles className="h-2 w-2 text-amber-500 animate-spin" />
+                    <div
+                      className={`max-w-[85%] p-4 rounded-xl shadow-md transition-all duration-300 hover:scale-[1.01] hover:shadow-lg ${
+                        message.type === 'user'
+                          ? 'bg-gradient-to-br from-blue-600 to-blue-700 text-white shadow-blue-200 dark:shadow-blue-900/30'
+                          : 'bg-gradient-to-br from-amber-50 to-orange-50 dark:from-amber-900 dark:to-orange-900 text-amber-900 dark:text-amber-100 border border-amber-300 dark:border-amber-700 shadow-amber-200 dark:shadow-amber-900/30'
+                      }`}
+                    >
+                      {message.type === 'patriarch' && (
+                        <div className="flex items-center gap-2 mb-2 animate-in fade-in duration-300">
+                          <Crown className="h-4 w-4 text-amber-600 animate-pulse" />
+                          <span className="font-semibold text-sm bg-gradient-to-r from-amber-700 to-orange-700 bg-clip-text text-transparent">البطريرك الخبير</span>
+                          <Sparkles className="h-3 w-3 text-amber-500 animate-spin" />
+                        </div>
+                      )}
+                      <div 
+                        className="whitespace-pre-wrap leading-relaxed text-sm"
+                        dangerouslySetInnerHTML={{
+                          __html: message.content
+                            .replace(/\*\*(.*?)\*\*/g, '<strong class="font-bold text-amber-800 dark:text-amber-200">$1</strong>')
+                            .replace(/\*(.*?)\*/g, '<em class="italic">$1</em>')
+                        }}
+                      />
+                      <div className="text-xs opacity-70 mt-2 text-left">
+                        {message.timestamp.toLocaleTimeString('ar-EG')}
                       </div>
-                    )}
-                    <p className="whitespace-pre-wrap leading-relaxed text-sm">
-                      {message.content}
-                    </p>
-                    <div className="text-xs opacity-70 mt-1">
-                      {message.timestamp.toLocaleTimeString('ar-EG')}
                     </div>
                   </div>
-                </div>
-              ))}
-              
-              {askPatriarchMutation.isPending && (
-                <div className="flex justify-start animate-in slide-in-from-bottom-3 duration-500">
-                  <div className="bg-gradient-to-br from-amber-100 to-orange-100 dark:from-amber-900 dark:to-orange-900 text-amber-900 dark:text-amber-100 border border-amber-300 dark:border-amber-700 p-2 rounded-xl shadow-md">
-                    <div className="flex items-center gap-2">
-                      <div className="relative">
-                        <Loader2 className="h-4 w-4 animate-spin text-amber-600" />
-                        <div className="absolute inset-0 animate-ping">
-                          <Loader2 className="h-4 w-4 text-amber-400 opacity-30" />
+                ))}
+                
+                {askPatriarchMutation.isPending && (
+                  <div className="flex justify-start animate-in slide-in-from-bottom-3 duration-500">
+                    <div className="bg-gradient-to-br from-amber-100 to-orange-100 dark:from-amber-900 dark:to-orange-900 text-amber-900 dark:text-amber-100 border border-amber-300 dark:border-amber-700 p-4 rounded-xl shadow-md">
+                      <div className="flex items-center gap-3">
+                        <div className="relative">
+                          <Loader2 className="h-5 w-5 animate-spin text-amber-600" />
+                          <div className="absolute inset-0 animate-ping">
+                            <Loader2 className="h-5 w-5 text-amber-400 opacity-30" />
+                          </div>
+                        </div>
+                        <span className="text-sm font-medium">البطريرك يعد الإجابة...</span>
+                        <div className="flex gap-1">
+                          <div className="w-2 h-2 bg-amber-500 rounded-full animate-bounce"></div>
+                          <div className="w-2 h-2 bg-amber-500 rounded-full animate-bounce" style={{animationDelay: '0.1s'}}></div>
+                          <div className="w-2 h-2 bg-amber-500 rounded-full animate-bounce" style={{animationDelay: '0.2s'}}></div>
                         </div>
                       </div>
-                      <span className="text-xs font-medium">البطريرك يعد الإجابة...</span>
-                      <div className="flex gap-1">
-                        <div className="w-1.5 h-1.5 bg-amber-500 rounded-full animate-bounce"></div>
-                        <div className="w-1.5 h-1.5 bg-amber-500 rounded-full animate-bounce" style={{animationDelay: '0.1s'}}></div>
-                        <div className="w-1.5 h-1.5 bg-amber-500 rounded-full animate-bounce" style={{animationDelay: '0.2s'}}></div>
-                      </div>
                     </div>
                   </div>
-                </div>
-              )}
-            </div>
-          </ScrollArea>
+                )}
+                
+                {/* Extra padding at bottom to ensure last message is visible */}
+                <div className="h-4"></div>
+                <div ref={messagesEndRef} />
+              </div>
+            </ScrollArea>
           </div>
 
           {/* Fixed Bottom Panel */}
