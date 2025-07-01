@@ -68,9 +68,19 @@ export default function PatriarchCard({ patriarch }: PatriarchCardProps) {
           </div>
 
           {(() => {
-            const heresies = Array.isArray(patriarch.heresiesFought) 
-              ? patriarch.heresiesFought 
-              : JSON.parse(patriarch.heresiesFought || '[]');
+            let heresies: string[] = [];
+            try {
+              if (Array.isArray(patriarch.heresiesFought)) {
+                heresies = patriarch.heresiesFought as string[];
+              } else if (typeof patriarch.heresiesFought === 'string') {
+                heresies = JSON.parse(patriarch.heresiesFought) as string[];
+              } else if (patriarch.heresiesFought) {
+                heresies = patriarch.heresiesFought as string[];
+              }
+            } catch (e) {
+              heresies = [];
+            }
+            
             return heresies.length > 0 && (
               <div>
                 <h4 className="font-semibold text-gray-800 mb-2 flex items-center">
@@ -164,9 +174,19 @@ export default function PatriarchCard({ patriarch }: PatriarchCardProps) {
 
               {/* Heresies Fought */}
               {(() => {
-                const heresies = Array.isArray(patriarch.heresiesFought) 
-                  ? patriarch.heresiesFought 
-                  : JSON.parse(patriarch.heresiesFought || '[]');
+                let heresies: string[] = [];
+                try {
+                  if (Array.isArray(patriarch.heresiesFought)) {
+                    heresies = patriarch.heresiesFought as string[];
+                  } else if (typeof patriarch.heresiesFought === 'string') {
+                    heresies = JSON.parse(patriarch.heresiesFought) as string[];
+                  } else if (patriarch.heresiesFought) {
+                    heresies = patriarch.heresiesFought as string[];
+                  }
+                } catch (e) {
+                  heresies = [];
+                }
+                
                 return heresies.length > 0 && (
                   <div className="bg-red-50 p-4 rounded-lg">
                     <h3 className="font-semibold text-red-800 mb-3 flex items-center">
