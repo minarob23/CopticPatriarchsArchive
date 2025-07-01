@@ -77,7 +77,7 @@ export default function Login() {
       
       <div className="w-full max-w-md">
         {/* Logo Section */}
-        <div className="text-center mb-8"></div>
+        <div className="text-center mb-8">
           <div className="w-20 h-20 bg-gradient-to-br from-blue-600 to-purple-600 rounded-full flex items-center justify-center mx-auto mb-4">
             <i className="fas fa-cross text-white text-2xl"></i>
           </div>
