@@ -1,53 +1,60 @@
+
 import {
-  pgTable,
+  sqliteTable,
   text,
-  varchar,
-  timestamp,
-  jsonb,
-  index,
   integer,
-  boolean,
-} from "drizzle-orm/pg-core";
+  blob,
+  index,
+} from "drizzle-orm/sqlite-core";
 import { createInsertSchema } from "drizzle-zod";
 import { z } from "zod";
 
 // Session storage table for Replit Auth
-export const sessions = pgTable(
+export const sessions = sqliteTable(
   "sessions",
   {
-    sid: varchar("sid").primaryKey(),
-    sess: jsonb("sess").notNull(),
-    expire: timestamp("expire").notNull(),
+    sid: text("sid").primaryKey(),
+    sess: text("sess").notNull(), // JSON as text in SQLite
+    expire: integer("expire", { mode: 'timestamp' }).notNull(),
   },
   (table) => [index("IDX_session_expire").on(table.expire)],
 );
 
 // User storage table for Replit Auth
-export const users = pgTable("users", {
-  id: varchar("id").primaryKey().notNull(),
-  email: varchar("email").unique(),
-  firstName: varchar("first_name"),
-  lastName: varchar("last_name"),
-  profileImageUrl: varchar("profile_image_url"),
-  createdAt: timestamp("created_at").defaultNow(),
-  updatedAt: timestamp("updated_at").defaultNow(),
+export const users = sqliteTable("users", {
+  id: text("id").primaryKey().notNull(),
+  email: text("email").unique(),
+  firstName: text("first_name"),
+  lastName: text("last_name"),
+  profileImageUrl: text("profile_image_url"),
+  createdAt: integer("created_at", { mode: 'timestamp' }).default(new Date()),
+  updatedAt: integer("updated_at", { mode: 'timestamp' }).default(new Date()),
 });
 
 // Patriarchs table
-export const patriarchs = pgTable("patriarchs", {
-  id: integer("id").primaryKey().generatedAlwaysAsIdentity(),
+export const patriarchs = sqliteTable("patriarchs", {
+  id: integer("id").primaryKey({ autoIncrement: true }),
   name: text("name").notNull(),
-  arabicName: varchar("arabic_name", { length: 255 }),
+  arabicName: text("arabic_name"),
   orderNumber: integer("order_number").notNull(),
   startYear: integer("start_year").notNull(),
   endYear: integer("end_year"),
-  era: varchar("era").notNull(), // apostolic, golden, councils, persecution, modern
+  era: text("era").notNull(), // apostolic, golden, councils, persecution, modern
   contributions: text("contributions").notNull(),
   biography: text("biography"),
-  heresiesFought: text("heresies_fought").array().notNull().default([]),
-  isActive: boolean("is_active").notNull().default(true),
-  createdAt: timestamp("created_at").defaultNow(),
-  updatedAt: timestamp("updated_at").defaultNow(),
+  heresiesFought: text("heresies_fought").notNull().default("[]"), // JSON array as text
+  isActive: integer("is_active", { mode: 'boolean' }).notNull().default(true),
+  createdAt: integer("created_at", { mode: 'timestamp' }).default(new Date()),
+  updatedAt: integer("updated_at", { mode: 'timestamp' }).default(new Date()),
+});
+
+// Settings table for storing API keys and configuration
+export const settings = sqliteTable("settings", {
+  id: integer("id").primaryKey({ autoIncrement: true }),
+  key: text("key").notNull().unique(),
+  value: text("value"),
+  createdAt: integer("created_at", { mode: 'timestamp' }).default(new Date()),
+  updatedAt: integer("updated_at", { mode: 'timestamp' }).default(new Date()),
 });
 
 export const insertPatriarchSchema = createInsertSchema(patriarchs).omit({
@@ -63,15 +70,5 @@ export type User = typeof users.$inferSelect;
 export type Patriarch = typeof patriarchs.$inferSelect;
 export type InsertPatriarch = z.infer<typeof insertPatriarchSchema>;
 export type UpdatePatriarch = z.infer<typeof updatePatriarchSchema>;
-
-// Settings table for storing API keys and configuration
-export const settings = pgTable("settings", {
-  id: integer("id").primaryKey().generatedAlwaysAsIdentity(),
-  key: varchar("key").notNull().unique(),
-  value: text("value"),
-  createdAt: timestamp("created_at").defaultNow(),
-  updatedAt: timestamp("updated_at").defaultNow(),
-});
-
 export type Setting = typeof settings.$inferSelect;
 export type InsertSetting = typeof settings.$inferInsert;

@@ -17,7 +17,7 @@ export interface IStorage {
   // User operations for Replit Auth
   getUser(id: string): Promise<User | undefined>;
   upsertUser(user: UpsertUser): Promise<User>;
-  
+
   // Patriarch operations
   getPatriarchs(filters?: {
     searchQuery?: string;
@@ -33,7 +33,7 @@ export interface IStorage {
     byEra: Record<string, number>;
     totalDefenders: number;
   }>;
-  
+
   // Settings operations
   getSetting(key: string): Promise<Setting | undefined>;
   setSetting(key: string, value: string): Promise<Setting>;
