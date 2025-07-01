@@ -174,51 +174,37 @@ export default function AskPatriarchChatbot() {
           <div className="bg-gradient-to-br from-amber-50 via-orange-50 to-amber-50 dark:from-amber-950/20 dark:via-orange-950/20 dark:to-amber-950/20 border-t border-amber-200 dark:border-amber-800 p-4 flex-shrink-0">
             {/* Suggested Questions */}
             <div className="mb-6">
-              <div className="flex items-center gap-3 mb-4">
-                <div className="relative">
-                  <Lightbulb className="h-5 w-5 text-amber-600 animate-pulse drop-shadow-sm" />
-                  <div className="absolute -inset-1 bg-amber-400/20 rounded-full blur-sm animate-pulse"></div>
+              <div className="text-center mb-5">
+                <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-gradient-to-r from-slate-100 to-slate-200 dark:from-slate-800 dark:to-slate-700 border border-slate-300 dark:border-slate-600">
+                  <MessageCircle className="h-4 w-4 text-slate-600 dark:text-slate-400" />
+                  <span className="text-sm font-medium text-slate-700 dark:text-slate-300">اختر سؤالاً للبدء</span>
                 </div>
-                <span className="text-base text-amber-800 dark:text-amber-200 font-semibold bg-gradient-to-r from-amber-600 to-orange-600 bg-clip-text text-transparent">
-                  أسئلة مقترحة للبدء
-                </span>
-                <div className="flex-1 h-px bg-gradient-to-r from-amber-300 via-orange-300 to-transparent"></div>
               </div>
               
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <div className="space-y-2">
                 {suggestedQuestions.map((suggestion, index) => (
-                  <div
+                  <Button
                     key={index}
-                    className="group relative overflow-hidden rounded-xl border border-amber-200/60 dark:border-amber-700/60 bg-gradient-to-br from-white via-amber-50/30 to-orange-50/30 dark:from-gray-800 dark:via-amber-950/20 dark:to-orange-950/20 hover:shadow-lg hover:shadow-amber-500/10 dark:hover:shadow-amber-500/5 transition-all duration-300 hover:scale-[1.02] hover:-translate-y-0.5"
+                    variant="outline"
+                    onClick={() => setQuestion(suggestion)}
+                    disabled={askPatriarchMutation.isPending}
+                    className="w-full h-auto p-4 text-right justify-between group bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-700 hover:border-amber-400 dark:hover:border-amber-500 hover:bg-gradient-to-r hover:from-amber-50 hover:to-orange-50 dark:hover:from-amber-950/20 dark:hover:to-orange-950/20 transition-all duration-200 rounded-lg"
                   >
-                    <Button
-                      variant="ghost"
-                      className="w-full h-auto p-4 text-right justify-start bg-transparent hover:bg-transparent group-hover:bg-gradient-to-br group-hover:from-amber-100/40 group-hover:to-orange-100/40 dark:group-hover:from-amber-900/20 dark:group-hover:to-orange-900/20 transition-all duration-300 min-h-[60px] relative z-10"
-                      onClick={() => setQuestion(suggestion)}
-                      disabled={askPatriarchMutation.isPending}
-                    >
-                      <div className="flex items-start gap-3 w-full">
-                        <div className="flex-shrink-0 w-8 h-8 rounded-full bg-gradient-to-br from-amber-500 to-orange-500 flex items-center justify-center text-white text-sm font-bold shadow-md group-hover:shadow-lg group-hover:scale-110 transition-all duration-300">
-                          {index + 1}
-                        </div>
-                        <span className="text-sm leading-relaxed text-amber-800 dark:text-amber-200 font-medium group-hover:text-amber-900 dark:group-hover:text-amber-100 transition-colors duration-300 text-right flex-1">
-                          {suggestion}
-                        </span>
-                      </div>
-                    </Button>
-                    
-                    {/* Decorative elements */}
-                    <div className="absolute top-0 right-0 w-16 h-16 bg-gradient-to-bl from-amber-400/10 to-transparent rounded-full -translate-y-8 translate-x-8 group-hover:scale-150 transition-transform duration-500"></div>
-                    <div className="absolute bottom-0 left-0 w-12 h-12 bg-gradient-to-tr from-orange-400/10 to-transparent rounded-full translate-y-6 -translate-x-6 group-hover:scale-150 transition-transform duration-500"></div>
-                    
-                    {/* Hover glow effect */}
-                    <div className="absolute inset-0 bg-gradient-to-r from-amber-500/0 via-amber-500/5 to-orange-500/0 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-                  </div>
+                    <span className="text-sm text-slate-700 dark:text-slate-300 group-hover:text-amber-800 dark:group-hover:text-amber-200 font-normal leading-relaxed flex-1 text-right">
+                      {suggestion}
+                    </span>
+                    <div className="flex-shrink-0 w-6 h-6 rounded-full bg-slate-100 dark:bg-slate-800 group-hover:bg-amber-100 dark:group-hover:bg-amber-900/50 flex items-center justify-center ml-3 transition-colors duration-200">
+                      <span className="text-xs font-bold text-slate-500 dark:text-slate-400 group-hover:text-amber-600 dark:group-hover:text-amber-400">
+                        {index + 1}
+                      </span>
+                    </div>
+                  </Button>
                 ))}
               </div>
               
-              {/* Decorative line */}
-              <div className="mt-4 h-px bg-gradient-to-r from-transparent via-amber-300/50 to-transparent"></div>
+              <div className="mt-4 text-center">
+                <div className="inline-block w-12 h-px bg-gradient-to-r from-transparent via-slate-300 dark:via-slate-600 to-transparent"></div>
+              </div>
             </div>
 
             {/* Question Input */}
