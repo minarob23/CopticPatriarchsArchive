@@ -95,9 +95,9 @@ export default function AskPatriarchChatbot() {
         
         <div className="flex-1 flex flex-col relative overflow-hidden">
           {/* Chat Messages */}
-          <div className="flex-1 p-2 pb-32 overflow-hidden">
+          <div className="flex-1 p-2 overflow-hidden">
             <ScrollArea className="h-full p-2 bg-white dark:bg-gray-900 rounded-lg border border-amber-200 dark:border-amber-800">
-            <div className="space-y-2">
+            <div className="space-y-2 pb-4">
               {messages.map((message, index) => (
                 <div
                   key={message.id}
@@ -153,7 +153,7 @@ export default function AskPatriarchChatbot() {
           </div>
 
           {/* Fixed Bottom Panel */}
-          <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-br from-amber-50 via-orange-50 to-amber-50 dark:from-amber-950/20 dark:via-orange-950/20 dark:to-amber-950/20 border-t border-amber-200 dark:border-amber-800 p-1.5">
+          <div className="bg-gradient-to-br from-amber-50 via-orange-50 to-amber-50 dark:from-amber-950/20 dark:via-orange-950/20 dark:to-amber-950/20 border-t border-amber-200 dark:border-amber-800 p-1.5 flex-shrink-0">
             {/* Suggested Questions */}
             <div className="mb-1.5">
               <div className="flex items-center gap-1 mb-1">
