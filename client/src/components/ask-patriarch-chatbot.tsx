@@ -197,14 +197,9 @@ export default function AskPatriarchChatbot() {
                       onClick={() => setQuestion(suggestion)}
                       disabled={askPatriarchMutation.isPending}
                     >
-                      <div className="flex items-start gap-3 w-full">
-                        <div className="flex-shrink-0 w-8 h-8 rounded-full bg-gradient-to-br from-amber-500 to-orange-500 flex items-center justify-center text-white text-sm font-bold shadow-md group-hover:shadow-lg group-hover:scale-110 transition-all duration-300">
-                          {index + 1}
-                        </div>
-                        <span className="text-sm leading-relaxed text-amber-800 dark:text-amber-200 font-medium group-hover:text-amber-900 dark:group-hover:text-amber-100 transition-colors duration-300 text-right flex-1">
-                          {suggestion}
-                        </span>
-                      </div>
+                      <span className="text-sm leading-relaxed text-amber-800 dark:text-amber-200 font-medium group-hover:text-amber-900 dark:group-hover:text-amber-100 transition-colors duration-300 text-right w-full">
+                        {suggestion}
+                      </span>
                     </Button>
                     
                     {/* Decorative elements */}
