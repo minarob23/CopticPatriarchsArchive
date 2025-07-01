@@ -1,3 +1,7 @@
+The code changes enhance the visual appeal of the suggested questions with advanced animations and styling.
+```
+
+```replit_final_file
 import { useState, useEffect, useRef } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -24,7 +28,7 @@ export default function AskPatriarchChatbot() {
       timestamp: new Date()
     }
   ]);
-  
+
   const [question, setQuestion] = useState('');
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
@@ -72,7 +76,7 @@ export default function AskPatriarchChatbot() {
       content: question,
       timestamp: new Date()
     };
-    
+
     setMessages(prev => [...prev, userMessage]);
     const currentQuestion = question;
     setQuestion('');
@@ -101,7 +105,7 @@ export default function AskPatriarchChatbot() {
             استكشف تاريخ الكنيسة القبطية الأرثوذكسية مع خبير ذكي يعرف كل شيء عن البطاركة
           </p>
         </div>
-        
+
         <div className="flex-1 flex flex-col relative overflow-hidden">
           {/* Chat Messages */}
           <div className="flex-1 overflow-hidden bg-white dark:bg-gray-900 m-2 rounded-lg border border-amber-200 dark:border-amber-800">
@@ -141,7 +145,7 @@ export default function AskPatriarchChatbot() {
                     </div>
                   </div>
                 ))}
-                
+
                 {askPatriarchMutation.isPending && (
                   <div className="flex justify-start animate-in slide-in-from-bottom-3 duration-500">
                     <div className="bg-gradient-to-br from-amber-100 to-orange-100 dark:from-amber-900 dark:to-orange-900 text-amber-900 dark:text-amber-100 border border-amber-300 dark:border-amber-700 p-4 rounded-xl shadow-md">
@@ -162,7 +166,7 @@ export default function AskPatriarchChatbot() {
                     </div>
                   </div>
                 )}
-                
+
                 {/* Extra padding at bottom to ensure last message is visible */}
                 <div className="h-4"></div>
                 <div ref={messagesEndRef} />
@@ -184,39 +188,65 @@ export default function AskPatriarchChatbot() {
                 </span>
                 <div className="flex-1 h-px bg-gradient-to-r from-amber-300 via-orange-300 to-transparent"></div>
               </div>
-              
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 {suggestedQuestions.map((suggestion, index) => (
                   <div
                     key={index}
-                    className="group relative overflow-hidden rounded-xl border border-amber-200/60 dark:border-amber-700/60 bg-gradient-to-br from-white via-amber-50/30 to-orange-50/30 dark:from-gray-800 dark:via-amber-950/20 dark:to-orange-950/20 hover:shadow-lg hover:shadow-amber-500/10 dark:hover:shadow-amber-500/5 transition-all duration-300 hover:scale-[1.02] hover:-translate-y-0.5"
+                    className="group relative overflow-hidden rounded-2xl border border-amber-200/50 dark:border-amber-700/50 bg-gradient-to-br from-white/90 via-amber-50/40 to-orange-50/40 dark:from-gray-800/90 dark:via-amber-950/30 dark:to-orange-950/30 backdrop-blur-sm hover:shadow-2xl hover:shadow-amber-500/20 dark:hover:shadow-amber-500/10 transition-all duration-500 hover:scale-[1.05] hover:-translate-y-2 animate-in slide-in-from-bottom-8 fade-in-0"
+                    style={{ 
+                      animationDelay: `${index * 150}ms`,
+                      animationDuration: '600ms',
+                      animationFillMode: 'both'
+                    }}
                   >
+                    {/* Shimmer effect */}
+                    <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000 ease-out"></div>
+
+                    {/* Animated border */}
+                    <div className="absolute inset-0 rounded-2xl bg-gradient-to-r from-amber-400 via-orange-400 to-amber-400 opacity-0 group-hover:opacity-30 transition-opacity duration-500 animate-pulse"></div>
+                    <div className="absolute inset-[1px] rounded-2xl bg-gradient-to-br from-white/90 via-amber-50/40 to-orange-50/40 dark:from-gray-800/90 dark:via-amber-950/30 dark:to-orange-950/30"></div>
+
                     <Button
                       variant="ghost"
-                      className="w-full h-auto p-4 text-right justify-start bg-transparent hover:bg-transparent group-hover:bg-gradient-to-br group-hover:from-amber-100/40 group-hover:to-orange-100/40 dark:group-hover:from-amber-900/20 dark:group-hover:to-orange-900/20 transition-all duration-300 min-h-[60px] relative z-10"
+                      className="relative w-full h-auto p-5 text-right justify-start bg-transparent hover:bg-transparent transition-all duration-500 min-h-[70px] z-10 group-hover:scale-105"
                       onClick={() => setQuestion(suggestion)}
                       disabled={askPatriarchMutation.isPending}
                     >
-                      <div className="flex items-start gap-3 w-full">
-                        <div className="flex-shrink-0 w-8 h-8 rounded-full bg-gradient-to-br from-amber-500 to-orange-500 flex items-center justify-center text-white text-sm font-bold shadow-md group-hover:shadow-lg group-hover:scale-110 transition-all duration-300">
-                          {index + 1}
-                        </div>
-                        <span className="text-sm leading-relaxed text-amber-800 dark:text-amber-200 font-medium group-hover:text-amber-900 dark:group-hover:text-amber-100 transition-colors duration-300 text-right flex-1">
+                      {/* Floating icons */}
+                      <div className="absolute top-3 right-3 opacity-20 group-hover:opacity-60 transition-all duration-500 group-hover:rotate-12 group-hover:scale-110">
+                        <Lightbulb className="h-4 w-4 text-amber-600 animate-pulse" />
+                      </div>
+
+                      <div className="w-full">
+                        <span className="text-sm leading-relaxed text-amber-800 dark:text-amber-200 font-medium group-hover:text-amber-900 dark:group-hover:text-amber-100 transition-all duration-500 text-right block group-hover:translate-x-1">
                           {suggestion}
                         </span>
+
+                        {/* Animated underline */}
+                        <div className="h-0.5 bg-gradient-to-r from-amber-500 to-orange-500 mt-2 w-0 group-hover:w-full transition-all duration-500 ease-out"></div>
                       </div>
                     </Button>
-                    
-                    {/* Decorative elements */}
-                    <div className="absolute top-0 right-0 w-16 h-16 bg-gradient-to-bl from-amber-400/10 to-transparent rounded-full -translate-y-8 translate-x-8 group-hover:scale-150 transition-transform duration-500"></div>
-                    <div className="absolute bottom-0 left-0 w-12 h-12 bg-gradient-to-tr from-orange-400/10 to-transparent rounded-full translate-y-6 -translate-x-6 group-hover:scale-150 transition-transform duration-500"></div>
-                    
-                    {/* Hover glow effect */}
-                    <div className="absolute inset-0 bg-gradient-to-r from-amber-500/0 via-amber-500/5 to-orange-500/0 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+
+                    {/* Floating particles */}
+                    <div className="absolute top-2 left-2 w-2 h-2 bg-amber-400 rounded-full opacity-0 group-hover:opacity-60 group-hover:animate-bounce transition-all duration-500" style={{ animationDelay: '0ms' }}></div>
+                    <div className="absolute bottom-3 right-8 w-1.5 h-1.5 bg-orange-500 rounded-full opacity-0 group-hover:opacity-70 group-hover:animate-bounce transition-all duration-500" style={{ animationDelay: '200ms' }}></div>
+                    <div className="absolute top-1/2 left-1 w-1 h-1 bg-amber-300 rounded-full opacity-0 group-hover:opacity-50 group-hover:animate-ping transition-all duration-500" style={{ animationDelay: '400ms' }}></div>
+
+                    {/* Morphing background blobs */}
+                    <div className="absolute top-0 right-0 w-20 h-20 bg-gradient-to-bl from-amber-400/20 to-transparent rounded-full -translate-y-10 translate-x-10 group-hover:scale-150 group-hover:rotate-45 transition-all duration-700 ease-out"></div>
+                    <div className="absolute bottom-0 left-0 w-16 h-16 bg-gradient-to-tr from-orange-400/20 to-transparent rounded-full translate-y-8 -translate-x-8 group-hover:scale-150 group-hover:-rotate-45 transition-all duration-700 ease-out"></div>
+                    <div className="absolute top-1/2 left-1/2 w-12 h-12 bg-gradient-to-r from-amber-300/10 to-orange-300/10 rounded-full -translate-x-6 -translate-y-6 group-hover:scale-200 group-hover:rotate-180 transition-all duration-1000 ease-out"></div>
+
+                    {/* Ripple effect on hover */}
+                    <div className="absolute inset-0 rounded-2xl bg-gradient-to-r from-amber-500/0 via-amber-500/10 to-orange-500/0 opacity-0 group-hover:opacity-100 group-hover:animate-pulse transition-all duration-300"></div>
+
+                    {/* Glow effect */}
+                    <div className="absolute -inset-1 bg-gradient-to-r from-amber-500 via-orange-500 to-amber-500 rounded-2xl opacity-0 group-hover:opacity-20 blur-sm transition-all duration-500 -z-10"></div>
                   </div>
                 ))}
               </div>
-              
+
               {/* Decorative line */}
               <div className="mt-4 h-px bg-gradient-to-r from-transparent via-amber-300/50 to-transparent"></div>
             </div>
