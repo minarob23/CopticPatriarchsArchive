@@ -3,6 +3,7 @@ import { createServer, type Server } from "http";
 import { storage } from "./storage";
 import { setupAuth, isAuthenticated } from "./replitAuth";
 import { insertPatriarchSchema, updatePatriarchSchema } from "@shared/schema";
+import { askChatbot } from "./chatbot";
 import { z } from "zod";
 
 export async function registerRoutes(app: Express): Promise<Server> {
@@ -130,6 +131,23 @@ export async function registerRoutes(app: Express): Promise<Server> {
     } catch (error) {
       console.error("Error fetching stats:", error);
       res.status(500).json({ message: "Failed to fetch stats" });
+    }
+  });
+
+  // Chatbot route
+  app.post('/api/chatbot/ask', async (req, res) => {
+    try {
+      const { question } = req.body;
+      
+      if (!question || typeof question !== 'string') {
+        return res.status(400).json({ message: "Question is required" });
+      }
+
+      const answer = await askChatbot(question);
+      res.json({ answer });
+    } catch (error) {
+      console.error("Error in chatbot endpoint:", error);
+      res.status(500).json({ message: "Failed to process question" });
     }
   });
 

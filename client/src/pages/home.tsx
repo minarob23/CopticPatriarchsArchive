@@ -10,6 +10,7 @@ import { Badge } from "@/components/ui/badge";
 import PatriarchTimeline from "@/components/patriarch-timeline";
 import PatriarchCard from "@/components/patriarch-card";
 import Loading from "@/components/ui/loading";
+import Chatbot from "@/components/chatbot";
 import type { Patriarch } from "@shared/schema";
 import { getArabicHeresyName } from "@shared/patriarch-names";
 
@@ -29,6 +30,7 @@ export default function Home() {
   const [selectedEra, setSelectedEra] = useState("all");
   const [selectedHeresies, setSelectedHeresies] = useState<string[]>([]);
   const [viewMode, setViewMode] = useState<"cards" | "timeline">("cards");
+  const [isChatbotOpen, setIsChatbotOpen] = useState(false);
 
   const { data: patriarchs, isLoading } = useQuery<Patriarch[]>({
     queryKey: ["/api/patriarchs", { search: searchQuery, era: selectedEra !== "all" ? selectedEra : undefined }],
@@ -275,6 +277,12 @@ export default function Home() {
           </Card>
         )}
       </div>
+
+      {/* Chatbot */}
+      <Chatbot 
+        isOpen={isChatbotOpen} 
+        onToggle={() => setIsChatbotOpen(!isChatbotOpen)} 
+      />
     </div>
   );
 }
