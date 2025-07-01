@@ -354,38 +354,126 @@ ${index + 1}. ${p.name}
           </Card>
         </div>
 
-        {/* Era Distribution Chart */}
-        <Card className="mb-8 shadow-lg">
-          <CardHeader className="bg-gradient-to-r from-blue-600 to-purple-600 text-white">
-            <CardTitle className="font-amiri text-lg">
-              <i className="fas fa-chart-pie ml-2"></i>
-              توزيع البطاركة حسب العصور التاريخية
+        {/* Enhanced Era Distribution Chart */}
+        <Card className="mb-8 shadow-xl border-0 overflow-hidden">
+          <CardHeader className="bg-gradient-to-r from-amber-600 via-orange-600 to-red-600 text-white relative">
+            <div className="absolute inset-0 bg-black bg-opacity-10"></div>
+            <CardTitle className="font-amiri text-xl relative z-10 flex items-center">
+              <i className="fas fa-history ml-3 text-2xl"></i>
+              توزيع البطاركة الـ 118 حسب العصور التاريخية
+              <span className="mr-auto bg-white bg-opacity-20 px-3 py-1 rounded-full text-sm">
+                {finalStats?.total || 0} بطريرك
+              </span>
             </CardTitle>
           </CardHeader>
-          <CardContent className="p-6">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div className="space-y-4">
-                {Object.entries(finalStats?.byEra || {}).map(([era, count]) => (
-                  <div key={era} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
-                    <div className="flex items-center">
-                      <div className="w-4 h-4 rounded-full bg-blue-500 ml-3"></div>
-                      <span className="font-medium">{eraLabels[era] || era}</span>
-                    </div>
-                    <div className="flex items-center">
-                      <span className="text-2xl font-bold text-blue-600 ml-2">{count}</span>
-                      <span className="text-sm text-gray-500">بطريرك</span>
-                    </div>
-                  </div>
-                ))}
+          <CardContent className="p-8 bg-gradient-to-br from-gray-50 to-blue-50">
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+              {/* Historical Eras List */}
+              <div className="lg:col-span-2 space-y-3">
+                {Object.entries(finalStats?.byEra || {})
+                  .sort(([,a], [,b]) => (b as number) - (a as number))
+                  .map(([era, count], index) => {
+                    const eraColors = {
+                      'العصر الرسولي': 'from-purple-500 to-purple-700',
+                      'العصر الذهبي': 'from-yellow-500 to-amber-600',
+                      'عصر المجامع': 'from-blue-500 to-blue-700',
+                      'عصر الاضطهاد': 'from-red-500 to-red-700',
+                      'العصر القبطي المستقل': 'from-green-500 to-green-700',
+                      'العصر البيزنطي': 'from-indigo-500 to-indigo-700',
+                      'العصر الإسلامي المبكر': 'from-teal-500 to-teal-700',
+                      'العصر العباسي المبكر': 'from-cyan-500 to-cyan-700',
+                      'العصر العباسي': 'from-slate-500 to-slate-700',
+                      'العصر الفاطمي المبكر': 'from-emerald-500 to-emerald-700',
+                      'العصر الفاطمي': 'from-lime-500 to-lime-700',
+                      'العصر الفاطمي المتأخر': 'from-orange-500 to-orange-700',
+                      'العصر الأيوبي المبكر': 'from-rose-500 to-rose-700',
+                      'العصر الأيوبي': 'from-pink-500 to-pink-700',
+                      'العصر الأيوبي المتأخر': 'from-fuchsia-500 to-fuchsia-700',
+                      'العصر المملوكي المبكر': 'from-violet-500 to-violet-700',
+                      'العصر المملوكي': 'from-sky-500 to-sky-700',
+                      'العصر المملوكي المتأخر': 'from-blue-600 to-blue-800',
+                      'العصر العثماني المبكر': 'from-indigo-600 to-indigo-800',
+                      'العصر العثماني': 'from-purple-600 to-purple-800',
+                      'العصر العثماني المتأخر': 'from-pink-600 to-pink-800',
+                      'العصر الحديث المبكر': 'from-green-600 to-green-800',
+                      'عصر محمد علي': 'from-yellow-600 to-yellow-800',
+                      'عصر التحديث': 'from-orange-600 to-orange-800',
+                      'العصر الحديث': 'from-red-600 to-red-800',
+                      'العصر المعاصر': 'from-emerald-600 to-emerald-800'
+                    };
+                    
+                    const gradient = eraColors[era as keyof typeof eraColors] || 'from-gray-500 to-gray-700';
+                    const percentage = ((count as number) / (finalStats?.total || 1) * 100).toFixed(1);
+                    
+                    return (
+                      <div key={era} 
+                           className={`relative overflow-hidden rounded-xl bg-gradient-to-r ${gradient} p-5 text-white shadow-lg transform hover:scale-105 transition-all duration-300 hover:shadow-xl`}>
+                        <div className="absolute inset-0 bg-black bg-opacity-10"></div>
+                        <div className="relative z-10 flex items-center justify-between">
+                          <div className="flex-1">
+                            <h3 className="font-bold text-lg mb-1 font-amiri">{era}</h3>
+                            <div className="flex items-center space-x-reverse space-x-3">
+                              <span className="text-3xl font-bold">{count}</span>
+                              <span className="text-sm opacity-90">بطريرك</span>
+                              <div className="mr-auto bg-white bg-opacity-20 px-2 py-1 rounded-full text-xs font-medium">
+                                {percentage}%
+                              </div>
+                            </div>
+                          </div>
+                          <div className="flex items-center">
+                            <div className="w-12 h-12 bg-white bg-opacity-20 rounded-full flex items-center justify-center backdrop-blur-sm">
+                              <span className="text-xl font-bold">{index + 1}</span>
+                            </div>
+                          </div>
+                        </div>
+                        
+                        {/* Progress bar */}
+                        <div className="mt-3 bg-white bg-opacity-20 rounded-full h-2 overflow-hidden">
+                          <div 
+                            className="h-full bg-white bg-opacity-80 rounded-full transition-all duration-1000 ease-out"
+                            style={{ width: `${percentage}%` }}
+                          ></div>
+                        </div>
+                      </div>
+                    );
+                  })}
               </div>
-              <div className="flex items-center justify-center">
-                <div className="w-48 h-48 bg-gradient-to-br from-blue-100 to-purple-100 rounded-full flex items-center justify-center">
+              
+              {/* Summary Statistics */}
+              <div className="space-y-6">
+                <div className="bg-white rounded-xl p-6 shadow-lg border border-gray-200">
                   <div className="text-center">
-                    <i className="fas fa-church text-6xl text-blue-600 mb-2"></i>
-                    <p className="text-lg font-bold text-gray-700">
-                      {finalStats?.total || 0} بطريرك
-                    </p>
-                    <p className="text-sm text-gray-500">في التاريخ القبطي</p>
+                    <div className="w-20 h-20 bg-gradient-to-br from-amber-400 to-orange-500 rounded-full flex items-center justify-center mx-auto mb-4 shadow-lg">
+                      <i className="fas fa-church text-3xl text-white"></i>
+                    </div>
+                    <h3 className="text-2xl font-bold text-gray-800 mb-2">مجموع البطاركة</h3>
+                    <p className="text-5xl font-black text-amber-600 mb-2">{finalStats?.total || 0}</p>
+                    <p className="text-gray-600 text-sm">بطريرك عبر التاريخ</p>
+                  </div>
+                </div>
+                
+                <div className="bg-white rounded-xl p-6 shadow-lg border border-gray-200">
+                  <h4 className="font-bold text-gray-800 mb-4 flex items-center">
+                    <i className="fas fa-clock ml-2 text-blue-600"></i>
+                    معلومات تاريخية
+                  </h4>
+                  <div className="space-y-3 text-sm">
+                    <div className="flex justify-between items-center py-2 border-b border-gray-100">
+                      <span className="text-gray-600">أول بطريرك:</span>
+                      <span className="font-medium text-gray-800">القديس مرقس الرسول (61م)</span>
+                    </div>
+                    <div className="flex justify-between items-center py-2 border-b border-gray-100">
+                      <span className="text-gray-600">البطريرك الحالي:</span>
+                      <span className="font-medium text-gray-800">تواضروس الثاني (2012م)</span>
+                    </div>
+                    <div className="flex justify-between items-center py-2 border-b border-gray-100">
+                      <span className="text-gray-600">مدة التاريخ:</span>
+                      <span className="font-medium text-gray-800">1964 سنة</span>
+                    </div>
+                    <div className="flex justify-between items-center py-2">
+                      <span className="text-gray-600">عدد العصور:</span>
+                      <span className="font-medium text-gray-800">{Object.keys(finalStats?.byEra || {}).length} عصر</span>
+                    </div>
                   </div>
                 </div>
               </div>
