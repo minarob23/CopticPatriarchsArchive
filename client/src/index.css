@@ -54,15 +54,42 @@
 /* Chatbot floating effect */
 @keyframes float {
   0%, 100% {
-    transform: translateY(0px);
+    transform: translateY(0px) scale(1);
   }
   50% {
-    transform: translateY(-5px);
+    transform: translateY(-8px) scale(1.05);
   }
 }
 
 .chatbot-float {
   animation: float 3s ease-in-out infinite;
+}
+
+/* Enhanced chatbot visibility */
+@keyframes glow {
+  0%, 100% {
+    box-shadow: 0 0 20px rgba(59, 130, 246, 0.6), 0 0 40px rgba(147, 51, 234, 0.4);
+  }
+  50% {
+    box-shadow: 0 0 30px rgba(59, 130, 246, 0.8), 0 0 60px rgba(147, 51, 234, 0.6);
+  }
+}
+
+.chatbot-glow {
+  animation: glow 2s ease-in-out infinite;
+}
+
+/* Ensure chatbot is always visible */
+.chatbot-container {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  z-index: 9999;
+  pointer-events: none;
+}
+
+.chatbot-container > div {
+  pointer-events: all;
 }
 
 .dark {

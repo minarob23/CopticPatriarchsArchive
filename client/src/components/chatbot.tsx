@@ -116,18 +116,23 @@ export default function Chatbot({ className }: ChatbotProps) {
   };
 
   return (
-    <div className={`fixed bottom-6 left-6 z-50 chatbot-float ${className}`}>
+    <div className={`fixed bottom-4 left-4 z-[9999] chatbot-float ${className}`} style={{ zIndex: 9999 }}>
       <Dialog open={isOpen} onOpenChange={setIsOpen}>
         <DialogTrigger asChild>
           <Button 
-            className="h-16 w-16 rounded-full bg-gradient-to-r from-blue-600 to-purple-600 text-white shadow-2xl hover:shadow-3xl transform hover:scale-110 transition-all duration-300 relative group ring-4 ring-blue-200 ring-opacity-50"
+            className="h-20 w-20 rounded-full bg-gradient-to-r from-blue-600 to-purple-600 text-white shadow-2xl hover:shadow-3xl transform hover:scale-110 transition-all duration-300 relative group ring-4 ring-blue-200 ring-opacity-75 border-4 border-white chatbot-glow"
             size="lg"
+            style={{ 
+              position: 'relative',
+              zIndex: 10000,
+              boxShadow: '0 20px 40px rgba(59, 130, 246, 0.5), 0 0 0 4px rgba(59, 130, 246, 0.3)'
+            }}
           >
             {/* Animated background */}
             <div className="absolute inset-0 rounded-full bg-gradient-to-r from-blue-400 to-purple-400 opacity-30 animate-pulse"></div>
             
             {/* Main icon */}
-            <i className="fas fa-robot text-2xl relative z-10"></i>
+            <i className="fas fa-comments text-3xl relative z-10 drop-shadow-lg"></i>
             
             {/* Cross badge */}
             <div className="absolute -top-2 -right-2 bg-yellow-500 text-blue-800 text-xs rounded-full h-7 w-7 flex items-center justify-center animate-bounce shadow-lg">
