@@ -93,9 +93,10 @@ export default function AskPatriarchChatbot() {
           </p>
         </div>
         
-        <div className="p-2 flex-1 flex flex-col">
+        <div className="flex-1 flex flex-col relative">
           {/* Chat Messages */}
-          <ScrollArea className="flex-1 mb-2 p-2 bg-white dark:bg-gray-900 rounded-lg border border-amber-200 dark:border-amber-800 min-h-0">
+          <div className="flex-1 p-2 pb-20">
+            <ScrollArea className="h-full p-2 bg-white dark:bg-gray-900 rounded-lg border border-amber-200 dark:border-amber-800">
             <div className="space-y-2">
               {messages.map((message, index) => (
                 <div
@@ -149,61 +150,57 @@ export default function AskPatriarchChatbot() {
               )}
             </div>
           </ScrollArea>
-
-          {/* Suggested Questions */}
-          <div className="mb-2">
-            <div className="flex items-center gap-1 mb-2 animate-in fade-in duration-300">
-              <Lightbulb className="h-3 w-3 text-amber-600 animate-pulse" />
-              <span className="text-xs text-amber-700 dark:text-amber-300 font-medium">
-                أسئلة مقترحة:
-              </span>
-            </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
-              {suggestedQuestions.map((suggestion, index) => (
-                <Button
-                  key={index}
-                  variant="outline"
-                  size="sm"
-                  className="text-right justify-start h-auto p-2 text-amber-700 dark:text-amber-300 border-amber-300 dark:border-amber-700 hover:bg-gradient-to-r hover:from-amber-50 hover:to-orange-50 dark:hover:from-amber-950/30 dark:hover:to-orange-950/30 transition-all duration-300 hover:scale-105 hover:shadow-md animate-in slide-in-from-bottom-2 duration-500 text-xs"
-                  style={{ animationDelay: `${index * 100}ms` }}
-                  onClick={() => setQuestion(suggestion)}
-                  disabled={askPatriarchMutation.isPending}
-                >
-                  <div className="flex items-center gap-1">
-                    <Sparkles className="h-2 w-2 opacity-50" />
-                    <span>{suggestion}</span>
-                  </div>
-                </Button>
-              ))}
-            </div>
           </div>
 
-          <Separator className="my-1 bg-amber-300 dark:bg-amber-700" />
-
-          {/* Question Input */}
-          <form onSubmit={handleSubmit} className="animate-in slide-in-from-bottom-2 duration-500">
-            <div className="flex gap-1.5 items-center">
-              <Input
-                value={question}
-                onChange={(e) => setQuestion(e.target.value)}
-                placeholder="اكتب سؤالك هنا..."
-                className="flex-1 text-right border-amber-300 dark:border-amber-700 focus:border-amber-500 focus:ring-amber-500 transition-all duration-300 focus:scale-[1.01] rounded-md shadow-sm text-sm h-8 px-2"
-                disabled={askPatriarchMutation.isPending}
-                dir="rtl"
-              />
-              <Button
-                type="submit"
-                disabled={!question.trim() || askPatriarchMutation.isPending}
-                className="bg-gradient-to-r from-amber-600 to-orange-600 hover:from-amber-700 hover:to-orange-700 text-white px-2 rounded-md shadow-md hover:shadow-lg transition-all duration-300 hover:scale-105 active:scale-95 h-8 min-w-[32px]"
-              >
-                {askPatriarchMutation.isPending ? (
-                  <Loader2 className="h-3 w-3 animate-spin" />
-                ) : (
-                  <Send className="h-3 w-3 transition-transform duration-200 hover:translate-x-1" />
-                )}
-              </Button>
+          {/* Fixed Bottom Panel */}
+          <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-br from-amber-50 via-orange-50 to-amber-50 dark:from-amber-950/20 dark:via-orange-950/20 dark:to-amber-950/20 border-t border-amber-200 dark:border-amber-800 p-2">
+            {/* Suggested Questions */}
+            <div className="mb-2">
+              <div className="flex items-center gap-1 mb-1">
+                <Lightbulb className="h-3 w-3 text-amber-600 animate-pulse" />
+                <span className="text-xs text-amber-700 dark:text-amber-300 font-medium">أسئلة مقترحة:</span>
+              </div>
+              <div className="grid grid-cols-2 gap-1">
+                {suggestedQuestions.map((suggestion, index) => (
+                  <Button
+                    key={index}
+                    variant="outline"
+                    size="sm"
+                    className="text-right justify-start h-auto p-1 text-amber-700 dark:text-amber-300 border-amber-300 dark:border-amber-700 hover:bg-gradient-to-r hover:from-amber-50 hover:to-orange-50 dark:hover:from-amber-950/30 dark:hover:to-orange-950/30 transition-all duration-300 text-xs"
+                    onClick={() => setQuestion(suggestion)}
+                    disabled={askPatriarchMutation.isPending}
+                  >
+                    <span className="truncate">{suggestion}</span>
+                  </Button>
+                ))}
+              </div>
             </div>
-          </form>
+
+            {/* Question Input */}
+            <form onSubmit={handleSubmit}>
+              <div className="flex gap-2 items-center">
+                <Input
+                  value={question}
+                  onChange={(e) => setQuestion(e.target.value)}
+                  placeholder="اكتب سؤالك هنا..."
+                  className="flex-1 text-right border-amber-300 dark:border-amber-700 focus:border-amber-500 focus:ring-amber-500 transition-all duration-300 rounded-md shadow-sm text-sm h-8 px-2"
+                  disabled={askPatriarchMutation.isPending}
+                  dir="rtl"
+                />
+                <Button
+                  type="submit"
+                  disabled={!question.trim() || askPatriarchMutation.isPending}
+                  className="bg-gradient-to-r from-amber-600 to-orange-600 hover:from-amber-700 hover:to-orange-700 text-white px-2 rounded-md shadow-md hover:shadow-lg transition-all duration-300 h-8 min-w-[32px]"
+                >
+                  {askPatriarchMutation.isPending ? (
+                    <Loader2 className="h-3 w-3 animate-spin" />
+                  ) : (
+                    <Send className="h-3 w-3" />
+                  )}
+                </Button>
+              </div>
+            </form>
+          </div>
         </div>
       </div>
     </div>
