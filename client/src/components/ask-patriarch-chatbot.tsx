@@ -178,23 +178,23 @@ export default function AskPatriarchChatbot() {
             </div>
           </div>
 
-          <Separator className="my-1.5 bg-amber-300 dark:bg-amber-700" />
+          <Separator className="my-1 bg-amber-300 dark:bg-amber-700" />
 
           {/* Question Input */}
           <form onSubmit={handleSubmit} className="animate-in slide-in-from-bottom-2 duration-500">
-            <div className="flex gap-1.5 items-center mb-1">
+            <div className="flex gap-1.5 items-center">
               <Input
                 value={question}
                 onChange={(e) => setQuestion(e.target.value)}
                 placeholder="اكتب سؤالك هنا..."
-                className="flex-1 text-right border-amber-300 dark:border-amber-700 focus:border-amber-500 focus:ring-amber-500 transition-all duration-300 focus:scale-[1.01] rounded-md shadow-sm text-sm h-7 px-2"
+                className="flex-1 text-right border-amber-300 dark:border-amber-700 focus:border-amber-500 focus:ring-amber-500 transition-all duration-300 focus:scale-[1.01] rounded-md shadow-sm text-sm h-8 px-2"
                 disabled={askPatriarchMutation.isPending}
                 dir="rtl"
               />
               <Button
                 type="submit"
                 disabled={!question.trim() || askPatriarchMutation.isPending}
-                className="bg-gradient-to-r from-amber-600 to-orange-600 hover:from-amber-700 hover:to-orange-700 text-white px-2 rounded-md shadow-md hover:shadow-lg transition-all duration-300 hover:scale-105 active:scale-95 h-7 min-w-[28px]"
+                className="bg-gradient-to-r from-amber-600 to-orange-600 hover:from-amber-700 hover:to-orange-700 text-white px-2 rounded-md shadow-md hover:shadow-lg transition-all duration-300 hover:scale-105 active:scale-95 h-8 min-w-[32px]"
               >
                 {askPatriarchMutation.isPending ? (
                   <Loader2 className="h-3 w-3 animate-spin" />
@@ -203,10 +203,6 @@ export default function AskPatriarchChatbot() {
                 )}
               </Button>
             </div>
-            
-            <p className="text-xs text-amber-600 dark:text-amber-400 text-center">
-              💡 يمكنك أن تسأل عن أي بطريرك أو فترة تاريخية أو موضوع متعلق بتاريخ الكنيسة القبطية
-            </p>
           </form>
         </div>
       </div>
