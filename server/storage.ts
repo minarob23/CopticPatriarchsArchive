@@ -1,11 +1,14 @@
 import {
   users,
   patriarchs,
+  settings,
   type User,
   type UpsertUser,
   type Patriarch,
   type InsertPatriarch,
   type UpdatePatriarch,
+  type Setting,
+  type InsertSetting,
 } from "@shared/schema";
 import { db } from "./db";
 import { eq, ilike, and, inArray, desc } from "drizzle-orm";
@@ -30,6 +33,10 @@ export interface IStorage {
     byEra: Record<string, number>;
     totalDefenders: number;
   }>;
+  
+  // Settings operations
+  getSetting(key: string): Promise<Setting | undefined>;
+  setSetting(key: string, value: string): Promise<Setting>;
 }
 
 export class DatabaseStorage implements IStorage {
@@ -144,6 +151,27 @@ export class DatabaseStorage implements IStorage {
     });
 
     return { total, byEra, totalDefenders };
+  }
+
+  // Settings operations
+  async getSetting(key: string): Promise<Setting | undefined> {
+    const [setting] = await db
+      .select()
+      .from(settings)
+      .where(eq(settings.key, key));
+    return setting;
+  }
+
+  async setSetting(key: string, value: string): Promise<Setting> {
+    const [setting] = await db
+      .insert(settings)
+      .values({ key, value })
+      .onConflictDoUpdate({
+        target: settings.key,
+        set: { value, updatedAt: new Date() }
+      })
+      .returning();
+    return setting;
   }
 }
 

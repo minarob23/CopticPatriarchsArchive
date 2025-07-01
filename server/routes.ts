@@ -2,6 +2,7 @@ import type { Express } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
 import { setupAuth, isAuthenticated } from "./replitAuth";
+import { askPatriarch, setGeminiApiKey, testGeminiConnection } from "./gemini";
 import { insertPatriarchSchema, updatePatriarchSchema } from "@shared/schema";
 import { z } from "zod";
 
@@ -130,6 +131,62 @@ export async function registerRoutes(app: Express): Promise<Server> {
     } catch (error) {
       console.error("Error fetching stats:", error);
       res.status(500).json({ message: "Failed to fetch stats" });
+    }
+  });
+
+  // Chatbot route - public access
+  app.post('/api/ask-patriarch', async (req, res) => {
+    try {
+      const { question } = req.body;
+      
+      if (!question || typeof question !== 'string') {
+        return res.status(400).json({ message: "سؤال غير صحيح" });
+      }
+
+      const answer = await askPatriarch(question);
+      res.json({ answer });
+    } catch (error) {
+      console.error("Error in ask-patriarch:", error);
+      res.status(500).json({ message: "حدث خطأ أثناء معالجة السؤال" });
+    }
+  });
+
+  // Admin API key management
+  app.post('/api/admin/gemini-api-key', isAuthenticated, async (req, res) => {
+    try {
+      const { apiKey } = req.body;
+      
+      if (!apiKey || typeof apiKey !== 'string') {
+        return res.status(400).json({ message: "مفتاح API غير صحيح" });
+      }
+
+      await setGeminiApiKey(apiKey);
+      res.json({ message: "تم حفظ مفتاح API بنجاح" });
+    } catch (error) {
+      console.error("Error saving API key:", error);
+      res.status(500).json({ message: "فشل في حفظ مفتاح API" });
+    }
+  });
+
+  // Test Gemini connection
+  app.post('/api/admin/test-gemini', isAuthenticated, async (req, res) => {
+    try {
+      const isConnected = await testGeminiConnection();
+      res.json({ connected: isConnected });
+    } catch (error) {
+      console.error("Error testing connection:", error);
+      res.status(500).json({ connected: false });
+    }
+  });
+
+  // Get current API key status
+  app.get('/api/admin/gemini-status', isAuthenticated, async (req, res) => {
+    try {
+      const apiKeySetting = await storage.getSetting('gemini_api_key');
+      res.json({ hasApiKey: !!apiKeySetting?.value });
+    } catch (error) {
+      console.error("Error checking API key status:", error);
+      res.status(500).json({ hasApiKey: false });
     }
   });
 

@@ -52,7 +52,6 @@ export const patriarchs = pgTable("patriarchs", {
 
 export const insertPatriarchSchema = createInsertSchema(patriarchs).omit({
   id: true,
-  isActive: true,
   createdAt: true,
   updatedAt: true,
 });
@@ -64,3 +63,15 @@ export type User = typeof users.$inferSelect;
 export type Patriarch = typeof patriarchs.$inferSelect;
 export type InsertPatriarch = z.infer<typeof insertPatriarchSchema>;
 export type UpdatePatriarch = z.infer<typeof updatePatriarchSchema>;
+
+// Settings table for storing API keys and configuration
+export const settings = pgTable("settings", {
+  id: integer("id").primaryKey().generatedAlwaysAsIdentity(),
+  key: varchar("key").notNull().unique(),
+  value: text("value"),
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+});
+
+export type Setting = typeof settings.$inferSelect;
+export type InsertSetting = typeof settings.$inferInsert;

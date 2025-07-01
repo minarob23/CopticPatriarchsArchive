@@ -10,6 +10,7 @@ import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import PatriarchTable from "@/components/admin/patriarch-table";
 import PatriarchForm from "@/components/admin/patriarch-form";
+import GeminiSettings from "@/components/admin/gemini-settings";
 import Loading from "@/components/ui/loading";
 import type { Patriarch } from "@shared/schema";
 
@@ -392,6 +393,11 @@ ${index + 1}. ${p.name}
           </CardContent>
         </Card>
         
+        {/* Gemini AI Settings */}
+        <div className="mb-8">
+          <GeminiSettings />
+        </div>
+
         {/* Action Buttons */}
         <div className="flex flex-wrap gap-4 mb-8">
           <Button 

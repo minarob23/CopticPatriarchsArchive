@@ -9,6 +9,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Badge } from "@/components/ui/badge";
 import PatriarchTimeline from "@/components/patriarch-timeline";
 import PatriarchCard from "@/components/patriarch-card";
+import AskPatriarchChatbot from "@/components/ask-patriarch-chatbot";
 import Loading from "@/components/ui/loading";
 import type { Patriarch } from "@shared/schema";
 import { getArabicHeresyName } from "@shared/patriarch-names";
@@ -274,6 +275,22 @@ export default function Landing() {
             </CardContent>
           </Card>
         )}
+      </div>
+
+      {/* Ask Patriarch Chatbot Section */}
+      <div className="bg-gradient-to-br from-amber-50 to-orange-50 dark:from-gray-900 dark:to-gray-800 py-16">
+        <div className="container mx-auto px-4">
+          <div className="text-center mb-8">
+            <h2 className="text-4xl font-bold text-amber-800 dark:text-amber-200 mb-4 font-amiri">
+              💬 اسأل البطريرك - الخبير الذكي
+            </h2>
+            <p className="text-xl text-amber-700 dark:text-amber-300 max-w-3xl mx-auto">
+              احصل على إجابات عن أي سؤال يتعلق بتاريخ البطاركة الأقباط الأرثوذكس من خبير ذكي يعرف كل التفاصيل
+            </p>
+          </div>
+          
+          <AskPatriarchChatbot />
+        </div>
       </div>
 
       {/* Footer */}
