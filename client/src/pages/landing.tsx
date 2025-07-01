@@ -304,17 +304,7 @@ export default function Landing() {
             <AskPatriarchChatbot />
           </div>
         </SheetContent>
-      </Sheet>rk:text-amber-200 mb-4 font-amiri">
-              💬 اسأل البطريرك - الخبير الذكي
-            </h2>
-            <p className="text-xl text-amber-700 dark:text-amber-300 max-w-3xl mx-auto">
-              احصل على إجابات عن أي سؤال يتعلق بتاريخ البطاركة الأقباط الأرثوذكس من خبير ذكي يعرف كل التفاصيل
-            </p>
-          </div>
-          
-          <AskPatriarchChatbot />
-        </div>
-      </div>
+      </Sheet>
 
       {/* Footer */}
       <footer className="bg-blue-600 text-white py-12 mt-12">
