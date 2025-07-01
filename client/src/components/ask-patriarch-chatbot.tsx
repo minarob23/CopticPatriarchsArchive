@@ -80,24 +80,24 @@ export default function AskPatriarchChatbot() {
   ];
 
   return (
-    <div className="w-full h-full flex flex-col animate-in fade-in-0 duration-500 max-h-screen">
-      <div className="bg-gradient-to-br from-amber-50 via-orange-50 to-amber-50 dark:from-amber-950/20 dark:via-orange-950/20 dark:to-amber-950/20 border border-amber-200 dark:border-amber-800 rounded-lg flex-1 flex flex-col shadow-xl backdrop-blur-sm min-h-0">
-        <div className="p-1.5 border-b border-amber-200 dark:border-amber-800 bg-gradient-to-r from-amber-100/50 to-orange-100/50 dark:from-amber-900/30 dark:to-orange-900/30 flex-shrink-0">
-          <div className="flex items-center justify-center gap-1 mb-0.5">
-            <Sparkles className="h-2.5 w-2.5 text-amber-600 animate-pulse" />
-            <Crown className="h-3 w-3 text-amber-700 animate-bounce" />
-            <Sparkles className="h-2.5 w-2.5 text-amber-600 animate-pulse delay-150" />
+    <div className="w-full h-full flex flex-col animate-in fade-in-0 duration-500">
+      <div className="bg-gradient-to-br from-amber-50 via-orange-50 to-amber-50 dark:from-amber-950/20 dark:via-orange-950/20 dark:to-amber-950/20 border border-amber-200 dark:border-amber-800 rounded-lg flex-1 flex flex-col shadow-xl backdrop-blur-sm">
+        <div className="p-2 border-b border-amber-200 dark:border-amber-800 bg-gradient-to-r from-amber-100/50 to-orange-100/50 dark:from-amber-900/30 dark:to-orange-900/30">
+          <div className="flex items-center justify-center gap-1 mb-1">
+            <Sparkles className="h-3 w-3 text-amber-600 animate-pulse" />
+            <Crown className="h-4 w-4 text-amber-700 animate-bounce" />
+            <Sparkles className="h-3 w-3 text-amber-600 animate-pulse delay-150" />
           </div>
-          <p className="text-amber-700 dark:text-amber-300 text-xs text-center font-medium leading-tight">
+          <p className="text-amber-700 dark:text-amber-300 text-xs text-center font-medium leading-relaxed">
             استكشف تاريخ الكنيسة القبطية الأرثوذكسية مع خبير ذكي يعرف كل شيء عن البطاركة
           </p>
         </div>
         
-        <div className="flex-1 flex flex-col relative overflow-hidden min-h-0">
+        <div className="flex-1 flex flex-col relative overflow-hidden">
           {/* Chat Messages */}
-          <div className="flex-1 p-1.5 overflow-hidden min-h-0">
-            <ScrollArea className="h-full p-1.5 bg-white dark:bg-gray-900 rounded-lg border border-amber-200 dark:border-amber-800">
-            <div className="space-y-1.5 pb-2">
+          <div className="flex-1 p-2 overflow-hidden">
+            <ScrollArea className="h-full p-2 bg-white dark:bg-gray-900 rounded-lg border border-amber-200 dark:border-amber-800">
+            <div className="space-y-2 pb-4">
               {messages.map((message, index) => (
                 <div
                   key={message.id}
@@ -105,23 +105,23 @@ export default function AskPatriarchChatbot() {
                   style={{ animationDelay: `${index * 100}ms` }}
                 >
                   <div
-                    className={`max-w-[85%] p-1.5 rounded-lg shadow-sm transition-all duration-300 hover:scale-[1.01] hover:shadow-md ${
+                    className={`max-w-[85%] p-2 rounded-xl shadow-md transition-all duration-300 hover:scale-[1.01] hover:shadow-lg ${
                       message.type === 'user'
                         ? 'bg-gradient-to-br from-blue-600 to-blue-700 text-white shadow-blue-200 dark:shadow-blue-900/30'
                         : 'bg-gradient-to-br from-amber-50 to-orange-50 dark:from-amber-900 dark:to-orange-900 text-amber-900 dark:text-amber-100 border border-amber-300 dark:border-amber-700 shadow-amber-200 dark:shadow-amber-900/30'
                     }`}
                   >
                     {message.type === 'patriarch' && (
-                      <div className="flex items-center gap-1 mb-0.5 animate-in fade-in duration-300">
-                        <Crown className="h-2.5 w-2.5 text-amber-600 animate-pulse" />
+                      <div className="flex items-center gap-1 mb-1 animate-in fade-in duration-300">
+                        <Crown className="h-3 w-3 text-amber-600 animate-pulse" />
                         <span className="font-semibold text-xs bg-gradient-to-r from-amber-700 to-orange-700 bg-clip-text text-transparent">البطريرك الخبير</span>
                         <Sparkles className="h-2 w-2 text-amber-500 animate-spin" />
                       </div>
                     )}
-                    <p className="whitespace-pre-wrap leading-relaxed text-xs">
+                    <p className="whitespace-pre-wrap leading-relaxed text-sm">
                       {message.content}
                     </p>
-                    <div className="text-xs opacity-60 mt-0.5">
+                    <div className="text-xs opacity-70 mt-1">
                       {message.timestamp.toLocaleTimeString('ar-EG')}
                     </div>
                   </div>
@@ -130,19 +130,19 @@ export default function AskPatriarchChatbot() {
               
               {askPatriarchMutation.isPending && (
                 <div className="flex justify-start animate-in slide-in-from-bottom-3 duration-500">
-                  <div className="bg-gradient-to-br from-amber-100 to-orange-100 dark:from-amber-900 dark:to-orange-900 text-amber-900 dark:text-amber-100 border border-amber-300 dark:border-amber-700 p-1.5 rounded-lg shadow-sm">
-                    <div className="flex items-center gap-1.5">
+                  <div className="bg-gradient-to-br from-amber-100 to-orange-100 dark:from-amber-900 dark:to-orange-900 text-amber-900 dark:text-amber-100 border border-amber-300 dark:border-amber-700 p-2 rounded-xl shadow-md">
+                    <div className="flex items-center gap-2">
                       <div className="relative">
-                        <Loader2 className="h-3 w-3 animate-spin text-amber-600" />
+                        <Loader2 className="h-4 w-4 animate-spin text-amber-600" />
                         <div className="absolute inset-0 animate-ping">
-                          <Loader2 className="h-3 w-3 text-amber-400 opacity-30" />
+                          <Loader2 className="h-4 w-4 text-amber-400 opacity-30" />
                         </div>
                       </div>
                       <span className="text-xs font-medium">البطريرك يعد الإجابة...</span>
-                      <div className="flex gap-0.5">
-                        <div className="w-1 h-1 bg-amber-500 rounded-full animate-bounce"></div>
-                        <div className="w-1 h-1 bg-amber-500 rounded-full animate-bounce" style={{animationDelay: '0.1s'}}></div>
-                        <div className="w-1 h-1 bg-amber-500 rounded-full animate-bounce" style={{animationDelay: '0.2s'}}></div>
+                      <div className="flex gap-1">
+                        <div className="w-1.5 h-1.5 bg-amber-500 rounded-full animate-bounce"></div>
+                        <div className="w-1.5 h-1.5 bg-amber-500 rounded-full animate-bounce" style={{animationDelay: '0.1s'}}></div>
+                        <div className="w-1.5 h-1.5 bg-amber-500 rounded-full animate-bounce" style={{animationDelay: '0.2s'}}></div>
                       </div>
                     </div>
                   </div>
@@ -155,18 +155,18 @@ export default function AskPatriarchChatbot() {
           {/* Fixed Bottom Panel */}
           <div className="bg-gradient-to-br from-amber-50 via-orange-50 to-amber-50 dark:from-amber-950/20 dark:via-orange-950/20 dark:to-amber-950/20 border-t border-amber-200 dark:border-amber-800 p-1.5 flex-shrink-0">
             {/* Suggested Questions */}
-            <div className="mb-1">
+            <div className="mb-1.5">
               <div className="flex items-center gap-1 mb-1">
-                <Lightbulb className="h-2 w-2 text-amber-600 animate-pulse" />
+                <Lightbulb className="h-2.5 w-2.5 text-amber-600 animate-pulse" />
                 <span className="text-xs text-amber-700 dark:text-amber-300 font-medium">أسئلة مقترحة:</span>
               </div>
-              <div className="grid grid-cols-1 gap-1">
+              <div className="grid grid-cols-2 gap-1">
                 {suggestedQuestions.map((suggestion, index) => (
                   <Button
                     key={index}
                     variant="outline"
                     size="sm"
-                    className="text-right justify-start h-5 px-1.5 text-amber-700 dark:text-amber-300 border-amber-300 dark:border-amber-700 hover:bg-gradient-to-r hover:from-amber-50 hover:to-orange-50 dark:hover:from-amber-950/30 dark:hover:to-orange-950/30 transition-all duration-300 text-xs w-full"
+                    className="text-right justify-start h-6 px-1.5 text-amber-700 dark:text-amber-300 border-amber-300 dark:border-amber-700 hover:bg-gradient-to-r hover:from-amber-50 hover:to-orange-50 dark:hover:from-amber-950/30 dark:hover:to-orange-950/30 transition-all duration-300 text-xs"
                     onClick={() => setQuestion(suggestion)}
                     disabled={askPatriarchMutation.isPending}
                   >
@@ -178,24 +178,24 @@ export default function AskPatriarchChatbot() {
 
             {/* Question Input */}
             <form onSubmit={handleSubmit}>
-              <div className="flex gap-1 items-center">
+              <div className="flex gap-1.5 items-center">
                 <Input
                   value={question}
                   onChange={(e) => setQuestion(e.target.value)}
                   placeholder="اكتب سؤالك هنا..."
-                  className="flex-1 text-right border-amber-300 dark:border-amber-700 focus:border-amber-500 focus:ring-amber-500 transition-all duration-300 rounded-md shadow-sm text-xs h-6 px-2"
+                  className="flex-1 text-right border-amber-300 dark:border-amber-700 focus:border-amber-500 focus:ring-amber-500 transition-all duration-300 rounded-md shadow-sm text-sm h-7 px-2"
                   disabled={askPatriarchMutation.isPending}
                   dir="rtl"
                 />
                 <Button
                   type="submit"
                   disabled={!question.trim() || askPatriarchMutation.isPending}
-                  className="bg-gradient-to-r from-amber-600 to-orange-600 hover:from-amber-700 hover:to-orange-700 text-white px-1.5 rounded-md shadow-md hover:shadow-lg transition-all duration-300 h-6 min-w-[24px]"
+                  className="bg-gradient-to-r from-amber-600 to-orange-600 hover:from-amber-700 hover:to-orange-700 text-white px-2 rounded-md shadow-md hover:shadow-lg transition-all duration-300 h-7 min-w-[28px]"
                 >
                   {askPatriarchMutation.isPending ? (
-                    <Loader2 className="h-2 w-2 animate-spin" />
+                    <Loader2 className="h-2.5 w-2.5 animate-spin" />
                   ) : (
-                    <Send className="h-2 w-2" />
+                    <Send className="h-2.5 w-2.5" />
                   )}
                 </Button>
               </div>
