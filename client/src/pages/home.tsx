@@ -1,16 +1,19 @@
 import { useState, useEffect } from "react";
-import { useQuery } from "@tanstack/react-query";
-import { useLocation } from "wouter";
-import { useAuth } from "@/hooks/useAuth";
-import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
-import PatriarchTimeline from "@/components/patriarch-timeline";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { useQuery } from "@tanstack/react-query";
+import { Link } from "wouter";
 import PatriarchCard from "@/components/patriarch-card";
-import Loading from "@/components/ui/loading";
+import PatriarchTimeline from "@/components/patriarch-timeline";
+import Chatbot from "@/components/chatbot";
 import type { Patriarch } from "@shared/schema";
+import { useLocation } from "wouter";
+import { useAuth } from "@/hooks/useAuth";
+import Loading from "@/components/ui/loading";
 import { getArabicHeresyName } from "@shared/patriarch-names";
 
 const eraLabels: Record<string, string> = {
@@ -29,6 +32,7 @@ export default function Home() {
   const [selectedEra, setSelectedEra] = useState("all");
   const [selectedHeresies, setSelectedHeresies] = useState<string[]>([]);
   const [viewMode, setViewMode] = useState<"cards" | "timeline">("cards");
+  const [isChatbotOpen, setIsChatbotOpen] = useState(false);
 
   const { data: patriarchs, isLoading } = useQuery<Patriarch[]>({
     queryKey: ["/api/patriarchs", { search: searchQuery, era: selectedEra !== "all" ? selectedEra : undefined }],
@@ -275,6 +279,12 @@ export default function Home() {
           </Card>
         )}
       </div>
+
+      {/* Chatbot */}
+      <Chatbot 
+        isOpen={isChatbotOpen} 
+        onToggle={() => setIsChatbotOpen(!isChatbotOpen)} 
+      />
     </div>
   );
 }
