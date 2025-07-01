@@ -10,7 +10,6 @@ import { Badge } from "@/components/ui/badge";
 import PatriarchTimeline from "@/components/patriarch-timeline";
 import PatriarchCard from "@/components/patriarch-card";
 import Loading from "@/components/ui/loading";
-import Chatbot from "@/components/chatbot";
 import type { Patriarch } from "@shared/schema";
 import { getArabicHeresyName } from "@shared/patriarch-names";
 
@@ -275,11 +274,6 @@ export default function Home() {
             </CardContent>
           </Card>
         )}
-      </div>
-
-      {/* Chatbot - Enhanced visibility with stronger positioning */}
-      <div className="chatbot-container">
-        <Chatbot />
       </div>
     </div>
   );

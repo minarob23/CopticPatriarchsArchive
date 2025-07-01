@@ -12,7 +12,6 @@ import PatriarchTable from "@/components/admin/patriarch-table";
 import PatriarchForm from "@/components/admin/patriarch-form";
 import Loading from "@/components/ui/loading";
 import type { Patriarch } from "@shared/schema";
-import { apiRequest } from "@/lib/queryClient";
 
 const eraLabels: Record<string, string> = {
   apostolic: "العصر الرسولي",
@@ -40,8 +39,6 @@ export default function Admin() {
   const [showForm, setShowForm] = useState(false);
   const [editingPatriarch, setEditingPatriarch] = useState<Patriarch | null>(null);
   const [currentDateTime, setCurrentDateTime] = useState(new Date());
-  const [geminiApiKey, setGeminiApiKey] = useState("");
-  const [showChatbotConfig, setShowChatbotConfig] = useState(false);
 
   // Redirect to login if not authenticated
   useEffect(() => {
@@ -71,9 +68,9 @@ export default function Admin() {
     const matchesSearch = !searchQuery || 
       patriarch.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
       patriarch.arabicName?.toLowerCase().includes(searchQuery.toLowerCase());
-
+    
     const matchesEra = selectedEra === "all" || patriarch.era === selectedEra;
-
+    
     return matchesSearch && matchesEra;
   }) || [];
 
@@ -88,42 +85,6 @@ export default function Admin() {
   } : null;
 
   const finalStats = stats;
-
-  const queryClient = useQueryClient();
-  const navigate = useLocation()[1];
-
-  const { data: chatbotStatus } = useQuery({
-    queryKey: ["/api/admin/chatbot/status"],
-    retry: false,
-  });
-
-  const configChatbotMutation = useMutation({
-    mutationFn: async (apiKey: string) => {
-      return apiRequest('/api/admin/chatbot/config', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ apiKey })
-      });
-    },
-    onSuccess: () => {
-      toast({ title: "تم تكوين Gemini API بنجاح", variant: "default" });
-      setGeminiApiKey("");
-      setShowChatbotConfig(false);
-      queryClient.invalidateQueries({ queryKey: ["/api/admin/chatbot/status"] });
-    },
-    onError: (error: any) => {
-      if (isUnauthorizedError(error)) {
-        navigate("/login");
-        return;
-      }
-      toast({ 
-        title: "خطأ في تكوين API", 
-        description: "تأكد من صحة مفتاح API",
-        variant: "destructive" 
-      });
-    }
-  });
-
 
   if (isLoading) {
     return <Loading />;
@@ -187,16 +148,64 @@ export default function Admin() {
   };
 
   const handleGenerateReport = () => {
-    // Implementation for comprehensive reporting
-    toast({ title: "ميزة التقرير الشامل قيد التطوير", variant: "default" });
-  };
-
-  const handleConfigureChatbot = () => {
-    if (!geminiApiKey.trim()) {
-      toast({ title: "يرجى إدخال مفتاح Gemini API", variant: "destructive" });
+    if (!finalStats || !patriarchs) {
+      toast({
+        title: "لا توجد بيانات",
+        description: "لا توجد بيانات كافية لإنشاء التقرير",
+        variant: "destructive",
+      });
       return;
     }
-    configChatbotMutation.mutate(geminiApiKey);
+
+    // Generate comprehensive report
+    const reportContent = `
+تقرير شامل - بطاركة الكنيسة القبطية الأرثوذكسية
+تاريخ التقرير: ${new Date().toLocaleDateString('ar-EG')}
+
+===============================================
+
+الإحصائيات العامة:
+• إجمالي البطاركة: ${finalStats.total}
+• محاربو البدع: ${finalStats.totalDefenders}
+• نسبة محاربي البدع: ${((finalStats.totalDefenders / finalStats.total) * 100).toFixed(1)}%
+
+التوزيع حسب العصور:
+${Object.entries(finalStats.byEra).map(([era, count]) => 
+  `• ${eraLabels[era] || era}: ${count} بطريرك`
+).join('\n')}
+
+===============================================
+
+قائمة البطاركة التفصيلية:
+
+${patriarchs.map((p, index) => `
+${index + 1}. ${p.name}
+   الرقم: البابا ${p.orderNumber}
+   الفترة: ${p.startYear} - ${p.endYear || "الآن"} م
+   العصر: ${eraLabels[p.era] || p.era}
+   المساهمات: ${p.contributions}
+   البدع المحاربة: ${p.heresiesFought.length > 0 ? p.heresiesFought.join(', ') : 'لا توجد'}
+`).join('\n')}
+
+===============================================
+
+ملاحظات:
+• هذا التقرير تم إنشاؤه تلقائيًا من قاعدة البيانات
+• البيانات محدثة حتى تاريخ إنشاء التقرير
+• جميع المعلومات مستندة إلى المصادر التاريخية المعتمدة
+`;
+
+    // Create and download report
+    const blob = new Blob([reportContent], { type: "text/plain;charset=utf-8;" });
+    const link = document.createElement("a");
+    link.href = URL.createObjectURL(blob);
+    link.download = `تقرير_بطاركة_الكنيسة_القبطية_${new Date().toISOString().split('T')[0]}.txt`;
+    link.click();
+
+    toast({
+      title: "تم إنشاء التقرير",
+      description: "تم إنشاء التقرير الشامل بنجاح",
+    });
   };
 
   const eras = [
@@ -253,7 +262,7 @@ export default function Admin() {
                 </div>
               </div>
             </div>
-
+            
             <div className="flex items-center space-x-reverse space-x-4">
               <span className="text-blue-200">{(user as any)?.firstName || "الأدمن"}</span>
               <Button 
@@ -295,7 +304,7 @@ export default function Admin() {
               </div>
             </CardContent>
           </Card>
-
+          
           <Card className="bg-gradient-to-br from-green-500 to-green-700 text-white shadow-xl hover:shadow-2xl transition-all duration-300 transform hover:scale-105">
             <CardContent className="p-6">
               <div className="flex items-center justify-between">
@@ -310,7 +319,7 @@ export default function Admin() {
               </div>
             </CardContent>
           </Card>
-
+          
           <Card className="bg-gradient-to-br from-purple-500 to-purple-700 text-white shadow-xl hover:shadow-2xl transition-all duration-300 transform hover:scale-105">
             <CardContent className="p-6">
               <div className="flex items-center justify-between">
@@ -327,7 +336,7 @@ export default function Admin() {
               </div>
             </CardContent>
           </Card>
-
+          
           <Card className="bg-gradient-to-br from-blue-500 to-blue-700 text-white shadow-xl hover:shadow-2xl transition-all duration-300 transform hover:scale-105">
             <CardContent className="p-6">
               <div className="flex items-center justify-between">
@@ -382,7 +391,7 @@ export default function Admin() {
             </div>
           </CardContent>
         </Card>
-
+        
         {/* Action Buttons */}
         <div className="flex flex-wrap gap-4 mb-8">
           <Button 
@@ -406,16 +415,8 @@ export default function Admin() {
             <i className="fas fa-chart-bar ml-2"></i>
             تقرير شامل
           </Button>
-
-           <Button
-            variant="outline"
-            onClick={() => setShowChatbotConfig(true)}
-          >
-            <i className="fas fa-cog ml-2"></i>
-            تكوين شات بوت "اسأل البطريرك"
-          </Button>
         </div>
-
+        
         {/* Search and Filter */}
         <Card className="mb-8">
           <CardHeader>
@@ -455,7 +456,7 @@ export default function Admin() {
             </div>
           </CardContent>
         </Card>
-
+        
         {/* Patriarchs Management Table */}
         <Card>
           <CardHeader>
@@ -483,88 +484,6 @@ export default function Admin() {
           onClose={handleCloseForm}
         />
       )}
-
-        {/* Chatbot Configuration Dialog */}
-        {showChatbotConfig && (
-          <Card className="fixed inset-0 z-50 bg-black bg-opacity-50 flex items-center justify-center">
-            <div className="bg-white rounded-lg p-6 w-full max-w-md mx-4">
-              <div className="flex items-center justify-between mb-4">
-                <h3 className="text-lg font-semibold font-amiri">إعداد شات بوت "اسأل البطريرك"</h3>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => setShowChatbotConfig(false)}
-                >
-                  <i className="fas fa-times"></i>
-                </Button>
-              </div>
-
-              <div className="space-y-4">
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    مفتاح Google Gemini API
-                  </label>
-                  <Input
-                    type="password"
-                    value={geminiApiKey}
-                    onChange={(e) => setGeminiApiKey(e.target.value)}
-                    placeholder="أدخل مفتاح Gemini API..."
-                    className="w-full"
-                  />
-                  <p className="text-xs text-gray-500 mt-1">
-                    احصل على مفتاح API من Google AI Studio
-                  </p>
-                </div>
-
-                <div className="bg-blue-50 p-3 rounded-lg">
-                  <div className="flex items-center text-blue-700">
-                    <i className="fas fa-info-circle ml-2"></i>
-                    <span className="text-sm">الحالة الحالية:</span>
-                  </div>
-                  <p className="text-sm mt-1">
-                    {chatbotStatus?.configured ? (
-                      <span className="text-green-600">
-                        <i className="fas fa-check ml-1"></i>
-                        الشات بوت مُكوّن ويعمل بشكل صحيح
-                      </span>
-                    ) : (
-                      <span className="text-orange-600">
-                        <i className="fas fa-exclamation-triangle ml-1"></i>
-                        الشات بوت غير مُكوّن - يحتاج مفتاح API
-                      </span>
-                    )}
-                  </p>
-                </div>
-
-                <div className="flex gap-3">
-                  <Button
-                    onClick={handleConfigureChatbot}
-                    disabled={configChatbotMutation.isPending}
-                    className="flex-1"
-                  >
-                    {configChatbotMutation.isPending ? (
-                      <>
-                        <i className="fas fa-spinner fa-spin ml-2"></i>
-                        جاري الحفظ...
-                      </>
-                    ) : (
-                      <>
-                        <i className="fas fa-save ml-2"></i>
-                        حفظ الإعدادات
-                      </>
-                    )}
-                  </Button>
-                  <Button
-                    variant="outline"
-                    onClick={() => setShowChatbotConfig(false)}
-                  >
-                    إلغاء
-                  </Button>
-                </div>
-              </div>
-            </div>
-          </Card>
-        )}
     </div>
   );
 }

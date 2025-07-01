@@ -4,7 +4,6 @@ import { storage } from "./storage";
 import { setupAuth, isAuthenticated } from "./replitAuth";
 import { insertPatriarchSchema, updatePatriarchSchema } from "@shared/schema";
 import { z } from "zod";
-import { chatbotService } from "./chatbot";
 
 export async function registerRoutes(app: Express): Promise<Server> {
   // Auth middleware
@@ -131,55 +130,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
     } catch (error) {
       console.error("Error fetching stats:", error);
       res.status(500).json({ message: "Failed to fetch stats" });
-    }
-  });
-
-  // Chatbot routes
-  app.post('/api/chatbot/chat', async (req, res) => {
-    try {
-      const { message } = req.body;
-      
-      if (!message || typeof message !== 'string') {
-        return res.status(400).json({ message: "Message is required" });
-      }
-
-      const response = await chatbotService.chat(message);
-      res.json({ response });
-    } catch (error) {
-      console.error("Error in chatbot chat:", error);
-      res.status(500).json({ message: "Failed to process chat message" });
-    }
-  });
-
-  // Admin chatbot configuration
-  app.post('/api/admin/chatbot/config', isAuthenticated, async (req, res) => {
-    try {
-      const { apiKey } = req.body;
-      
-      if (!apiKey || typeof apiKey !== 'string') {
-        return res.status(400).json({ message: "API key is required" });
-      }
-
-      const success = await chatbotService.setApiKey(apiKey);
-      
-      if (success) {
-        res.json({ message: "Gemini API key configured successfully" });
-      } else {
-        res.status(400).json({ message: "Invalid API key or configuration failed" });
-      }
-    } catch (error) {
-      console.error("Error configuring chatbot:", error);
-      res.status(500).json({ message: "Failed to configure chatbot" });
-    }
-  });
-
-  app.get('/api/admin/chatbot/status', isAuthenticated, async (req, res) => {
-    try {
-      const isConfigured = chatbotService.isConfigured();
-      res.json({ configured: isConfigured });
-    } catch (error) {
-      console.error("Error checking chatbot status:", error);
-      res.status(500).json({ message: "Failed to check chatbot status" });
     }
   });
 
