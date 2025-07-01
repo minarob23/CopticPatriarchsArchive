@@ -11,6 +11,7 @@ import PatriarchTimeline from "@/components/patriarch-timeline";
 import PatriarchCard from "@/components/patriarch-card";
 import Loading from "@/components/ui/loading";
 import type { Patriarch } from "@shared/schema";
+import { getArabicHeresyName } from "@shared/patriarch-names";
 
 const eraLabels: Record<string, string> = {
   apostolic: "العصر الرسولي",
@@ -174,7 +175,7 @@ export default function Home() {
                           }`}
                           onClick={() => handleHeresyToggle(heresy)}
                         >
-                          {heresy}
+                          {getArabicHeresyName(heresy)}
                         </Badge>
                       ))}
                     </div>

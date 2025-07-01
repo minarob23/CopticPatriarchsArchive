@@ -16,6 +16,7 @@ import {
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 import type { Patriarch } from "@shared/schema";
+import { getArabicHeresyName } from "@shared/patriarch-names";
 
 interface PatriarchTableProps {
   patriarchs: Patriarch[];
@@ -140,7 +141,7 @@ export default function PatriarchTable({ patriarchs, onEdit }: PatriarchTablePro
                   <div className="flex flex-wrap gap-1">
                     {patriarch.heresiesFought.slice(0, 2).map((heresy, index) => (
                       <Badge key={index} variant="outline" className="text-xs">
-                        {heresy}
+                        {getArabicHeresyName(heresy)}
                       </Badge>
                     ))}
                     {patriarch.heresiesFought.length > 2 && (

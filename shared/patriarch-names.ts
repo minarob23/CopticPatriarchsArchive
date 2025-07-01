@@ -81,3 +81,41 @@ export const patriarchNamesArabic: Record<string, string> = {
 export function getArabicPatriarchName(englishName: string): string {
   return patriarchNamesArabic[englishName] || englishName;
 }
+
+export const heresiesArabic: Record<string, string> = {
+  "Arianism": "الآريوسية",
+  "Nestorianism": "النسطورية",
+  "Monophysitism": "المونوفيزية",
+  "Monothelitism": "المونوثيليتية",
+  "Iconoclasm": "محاربة الأيقونات",
+  "Apollinarianism": "الأبولينارية",
+  "Donatism": "الدوناتية",
+  "Pelagianism": "البيلاجية",
+  "Sabellianism": "السابيليانية",
+  "Modalism": "الموداليزم",
+  "Docetism": "الدوسيتية",
+  "Gnosticism": "الغنوصية",
+  "Marcionism": "المارسيونية",
+  "Manichaeism": "المانوية",
+  "Origenism": "الأوريجينية",
+  "Macedonianism": "المقدونية",
+  "Pneumatomachi": "محاربي الروح",
+  "Chalcedonian": "الخلقيدونية",
+  "Melkite": "الملكية",
+  "Monothelite": "المونوثيليتية",
+  "Monoenergism": "المونوإنرجيزم",
+  "Adoptionism": "التبني",
+  "Patripassianism": "معاناة الآب",
+  "Subordinationism": "التبعية",
+  "Tritheism": "التثليث الثلاثي",
+  "Theopaschitism": "معاناة الله",
+  "Crypto-Arianism": "الآريوسية المخفية",
+  "Semi-Arianism": "شبه الآريوسية",
+  "Anomoeanism": "الأنوموية",
+  "Homoianism": "الهوموية",
+  "Eunomianism": "الأونومية"
+};
+
+export function getArabicHeresyName(englishName: string): string {
+  return heresiesArabic[englishName] || englishName;
+}

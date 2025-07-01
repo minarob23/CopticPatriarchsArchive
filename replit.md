@@ -133,6 +133,8 @@ Changelog:
 - June 30, 2025. Updated admin interface to display Arabic content for contributions, biography, and heresies fought
 - June 30, 2025. Enhanced patriarch management table with comprehensive display of historical eras and heresies
 - June 30, 2025. Confirmed Replit Auth integration working properly for admin access control
+- July 1, 2025. Added Arabic translation system for heresies fought - all heresy names now display in Arabic throughout the application
+- July 1, 2025. Enhanced patriarch management interface with proper Arabic display for biographical content and search functionality
 
 ## User Preferences
 

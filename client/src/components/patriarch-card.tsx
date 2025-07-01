@@ -4,6 +4,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import type { Patriarch } from "@shared/schema";
+import { getArabicHeresyName } from "@shared/patriarch-names";
 
 interface PatriarchCardProps {
   patriarch: Patriarch;
@@ -75,7 +76,7 @@ export default function PatriarchCard({ patriarch }: PatriarchCardProps) {
               <div className="flex flex-wrap gap-2">
                 {patriarch.heresiesFought.slice(0, 3).map((heresy, index) => (
                   <Badge key={index} variant="outline" className="text-xs">
-                    {heresy}
+                    {getArabicHeresyName(heresy)}
                   </Badge>
                 ))}
                 {patriarch.heresiesFought.length > 3 && (
@@ -166,7 +167,7 @@ export default function PatriarchCard({ patriarch }: PatriarchCardProps) {
                   <div className="flex flex-wrap gap-2">
                     {patriarch.heresiesFought.map((heresy, index) => (
                       <Badge key={index} variant="outline" className="bg-white border-red-300 text-red-700">
-                        {heresy}
+                        {getArabicHeresyName(heresy)}
                       </Badge>
                     ))}
                   </div>
