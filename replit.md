@@ -141,6 +141,10 @@ Changelog:
 - July 1, 2025. Configured and activated "Ask Patriarch" AI chatbot with Google Gemini integration
 - July 1, 2025. Fixed patriarch card display issues for proper heresies fought rendering
 - July 1, 2025. Database now contains authentic historical data for all 118 Coptic Orthodox Patriarchs with full Arabic support
+- July 1, 2025. Successfully completed migration from Replit Agent to Replit environment
+- July 1, 2025. Updated database schema from SQLite to PostgreSQL for proper deployment
+- July 1, 2025. Fixed JSON parsing errors and imported complete database of 111 authentic Coptic Orthodox Patriarchs
+- July 1, 2025. All patriarch data now displayed in Arabic as requested with proper historical information
 
 ## User Preferences
 
