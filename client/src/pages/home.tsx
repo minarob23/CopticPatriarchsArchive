@@ -61,9 +61,14 @@ export default function Home() {
 
     const matchesHeresies = selectedHeresies.length === 0 || 
       selectedHeresies.some(heresy => {
-        const heresies = Array.isArray(patriarch.heresiesFought) 
-          ? patriarch.heresiesFought 
-          : JSON.parse(patriarch.heresiesFought || '[]');
+        let heresies = [];
+        try {
+          heresies = Array.isArray(patriarch.heresiesFought) 
+            ? patriarch.heresiesFought 
+            : JSON.parse(patriarch.heresiesFought || '[]');
+        } catch (e) {
+          heresies = [];
+        }
         return heresies.includes(heresy);
       });
 

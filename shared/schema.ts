@@ -1,39 +1,41 @@
 
 import {
-  sqliteTable,
+  pgTable,
   text,
   integer,
-  blob,
+  boolean,
+  timestamp,
+  serial,
   index,
-} from "drizzle-orm/sqlite-core";
+} from "drizzle-orm/pg-core";
 import { createInsertSchema } from "drizzle-zod";
 import { z } from "zod";
 
 // Session storage table for Replit Auth
-export const sessions = sqliteTable(
+export const sessions = pgTable(
   "sessions",
   {
     sid: text("sid").primaryKey(),
-    sess: text("sess").notNull(), // JSON as text in SQLite
-    expire: integer("expire", { mode: 'timestamp' }).notNull(),
+    sess: text("sess").notNull(), // JSON as text
+    expire: timestamp("expire").notNull(),
   },
   (table) => [index("IDX_session_expire").on(table.expire)],
 );
 
 // User storage table for Replit Auth
-export const users = sqliteTable("users", {
+export const users = pgTable("users", {
   id: text("id").primaryKey().notNull(),
   email: text("email").unique(),
   firstName: text("first_name"),
   lastName: text("last_name"),
   profileImageUrl: text("profile_image_url"),
-  createdAt: integer("created_at", { mode: 'timestamp' }).default(new Date()),
-  updatedAt: integer("updated_at", { mode: 'timestamp' }).default(new Date()),
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
 });
 
 // Patriarchs table
-export const patriarchs = sqliteTable("patriarchs", {
-  id: integer("id").primaryKey({ autoIncrement: true }),
+export const patriarchs = pgTable("patriarchs", {
+  id: serial("id").primaryKey(),
   name: text("name").notNull(),
   arabicName: text("arabic_name"),
   orderNumber: integer("order_number").notNull(),
@@ -43,18 +45,18 @@ export const patriarchs = sqliteTable("patriarchs", {
   contributions: text("contributions").notNull(),
   biography: text("biography"),
   heresiesFought: text("heresies_fought").notNull().default("[]"), // JSON array as text
-  isActive: integer("is_active", { mode: 'boolean' }).notNull().default(true),
-  createdAt: integer("created_at", { mode: 'timestamp' }).default(new Date()),
-  updatedAt: integer("updated_at", { mode: 'timestamp' }).default(new Date()),
+  isActive: boolean("is_active").notNull().default(true),
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
 });
 
 // Settings table for storing API keys and configuration
-export const settings = sqliteTable("settings", {
-  id: integer("id").primaryKey({ autoIncrement: true }),
+export const settings = pgTable("settings", {
+  id: serial("id").primaryKey(),
   key: text("key").notNull().unique(),
   value: text("value"),
-  createdAt: integer("created_at", { mode: 'timestamp' }).default(new Date()),
-  updatedAt: integer("updated_at", { mode: 'timestamp' }).default(new Date()),
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
 });
 
 export const insertPatriarchSchema = createInsertSchema(patriarchs).omit({

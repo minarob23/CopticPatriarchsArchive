@@ -1,6 +1,7 @@
 // ملف لاستيراد بيانات البطاركة محلياً
 import fs from 'fs';
-import { Pool } from 'pg';
+import pkg from 'pg';
+const { Pool } = pkg;
 import Database from 'better-sqlite3';
 
 // اختر نوع قاعدة البيانات
@@ -45,7 +46,7 @@ async function importToPostgreSQL() {
         patriarch.era,
         patriarch.contributions,
         patriarch.biography,
-        patriarch.heresies_fought,
+        JSON.stringify(patriarch.heresies_fought),
         patriarch.is_active
       ]);
     }

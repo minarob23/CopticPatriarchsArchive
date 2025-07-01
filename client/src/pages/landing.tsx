@@ -46,9 +46,15 @@ export default function Landing() {
   const allHeresies = Array.from(
     new Set(
       (patriarchs || []).flatMap(p => {
-        const heresies = Array.isArray(p.heresiesFought) 
-          ? p.heresiesFought 
-          : JSON.parse(p.heresiesFought || '[]');
+        let heresies = [];
+        try {
+          heresies = Array.isArray(p.heresiesFought) 
+            ? p.heresiesFought 
+            : JSON.parse(p.heresiesFought || '[]');
+        } catch (e) {
+          console.warn('Failed to parse heresiesFought for patriarch:', p.name);
+          heresies = [];
+        }
         return heresies;
       })
     )

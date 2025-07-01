@@ -1,7 +1,3 @@
-The code changes enhance the visual appeal of the suggested questions with advanced animations and styling.
-```
-
-```replit_final_file
 import { useState, useEffect, useRef } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
