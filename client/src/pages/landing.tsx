@@ -7,12 +7,14 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
+import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 import PatriarchTimeline from "@/components/patriarch-timeline";
 import PatriarchCard from "@/components/patriarch-card";
 import AskPatriarchChatbot from "@/components/ask-patriarch-chatbot";
 import Loading from "@/components/ui/loading";
 import type { Patriarch } from "@shared/schema";
 import { getArabicHeresyName } from "@shared/patriarch-names";
+import { MessageCircle, Crown } from "lucide-react";
 
 const eraLabels: Record<string, string> = {
   apostolic: "العصر الرسولي",
@@ -277,11 +279,32 @@ export default function Landing() {
         )}
       </div>
 
-      {/* Ask Patriarch Chatbot Section */}
-      <div className="bg-gradient-to-br from-amber-50 to-orange-50 dark:from-gray-900 dark:to-gray-800 py-16">
-        <div className="container mx-auto px-4">
-          <div className="text-center mb-8">
-            <h2 className="text-4xl font-bold text-amber-800 dark:text-amber-200 mb-4 font-amiri">
+      {/* Floating Ask Patriarch Button */}
+      <Sheet>
+        <SheetTrigger asChild>
+          <Button 
+            size="lg"
+            className="fixed bottom-6 right-6 z-50 bg-gradient-to-r from-amber-600 to-orange-600 hover:from-amber-700 hover:to-orange-700 text-white shadow-2xl rounded-full p-4 h-16 w-16 md:w-auto md:h-auto md:px-6 md:py-3 transition-all duration-300 hover:scale-105"
+          >
+            <div className="flex items-center gap-2">
+              <Crown className="h-6 w-6" />
+              <span className="hidden md:inline font-bold">💬 اسأل البطريرك</span>
+            </div>
+          </Button>
+        </SheetTrigger>
+        <SheetContent className="w-full sm:max-w-2xl p-0 overflow-hidden" side="right">
+          <SheetHeader className="bg-gradient-to-r from-amber-600 to-orange-600 text-white p-6">
+            <SheetTitle className="text-right text-xl font-bold flex items-center justify-center gap-3">
+              <Crown className="h-6 w-6" />
+              💬 اسأل البطريرك - الخبير الذكي
+              <Crown className="h-6 w-6" />
+            </SheetTitle>
+          </SheetHeader>
+          <div className="p-6 h-full overflow-auto">
+            <AskPatriarchChatbot />
+          </div>
+        </SheetContent>
+      </Sheet>rk:text-amber-200 mb-4 font-amiri">
               💬 اسأل البطريرك - الخبير الذكي
             </h2>
             <p className="text-xl text-amber-700 dark:text-amber-300 max-w-3xl mx-auto">

@@ -80,22 +80,17 @@ export default function AskPatriarchChatbot() {
   ];
 
   return (
-    <div className="w-full max-w-4xl mx-auto">
-      <Card className="bg-gradient-to-br from-amber-50 to-orange-50 dark:from-amber-950/20 dark:to-orange-950/20 border-amber-200 dark:border-amber-800">
-        <CardHeader className="text-center bg-gradient-to-r from-amber-600 to-orange-600 text-white rounded-t-lg">
-          <div className="flex items-center justify-center gap-3 mb-2">
-            <Crown className="h-8 w-8" />
-            <CardTitle className="text-2xl font-bold">اسأل البطريرك</CardTitle>
-            <Crown className="h-8 w-8" />
-          </div>
-          <p className="text-amber-100 font-medium">
+    <div className="w-full h-full flex flex-col">
+      <div className="bg-gradient-to-br from-amber-50 to-orange-50 dark:from-amber-950/20 dark:to-orange-950/20 border border-amber-200 dark:border-amber-800 rounded-lg flex-1 flex flex-col">
+        <div className="p-3 border-b border-amber-200 dark:border-amber-800">
+          <p className="text-amber-700 dark:text-amber-300 text-sm text-center font-medium">
             استكشف تاريخ الكنيسة القبطية الأرثوذكسية مع خبير ذكي يعرف كل شيء عن البطاركة
           </p>
-        </CardHeader>
+        </div>
         
-        <CardContent className="p-6">
+        <div className="p-4 flex-1 flex flex-col">
           {/* Chat Messages */}
-          <ScrollArea className="h-96 mb-6 p-4 bg-white dark:bg-gray-900 rounded-lg border border-amber-200 dark:border-amber-800">
+          <ScrollArea className="flex-1 mb-4 p-4 bg-white dark:bg-gray-900 rounded-lg border border-amber-200 dark:border-amber-800 min-h-0">
             <div className="space-y-4">
               {messages.map((message) => (
                 <div
@@ -192,8 +187,8 @@ export default function AskPatriarchChatbot() {
               💡 يمكنك أن تسأل عن أي بطريرك أو فترة تاريخية أو موضوع متعلق بتاريخ الكنيسة القبطية
             </p>
           </form>
-        </CardContent>
-      </Card>
+        </div>
+      </div>
     </div>
   );
 }
