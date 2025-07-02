@@ -3,8 +3,8 @@ import session from "express-session";
 import connectPg from "connect-pg-simple";
 
 // Simple admin credentials
-const ADMIN_USERNAME = "admin";
-const ADMIN_PASSWORD = "admin123";
+const ADMIN_USERNAME = "admin@coptic-patriarchs.org";
+const ADMIN_PASSWORD = "CopticPatriarchs2025!";
 
 declare module 'express-session' {
   interface SessionData {

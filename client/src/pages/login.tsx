@@ -13,8 +13,8 @@ export default function Login() {
   const { isAuthenticated, isLoading } = useAuth();
   const [, setLocation] = useLocation();
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [username, setUsername] = useState("admin");
-  const [password, setPassword] = useState("admin123");
+  const [username, setUsername] = useState("admin@coptic-patriarchs.org");
+  const [password, setPassword] = useState("CopticPatriarchs2025!");
   const [loginError, setLoginError] = useState("");
   const [isLoggingIn, setIsLoggingIn] = useState(false);
 
@@ -182,18 +182,7 @@ export default function Login() {
               </DialogContent>
             </Dialog>
 
-            {/* Alternative Replit Login */}
-            <div className="text-center">
-              <p className="text-gray-500 text-sm mb-3">أو</p>
-              <Button 
-                onClick={() => window.location.href = "/api/login"}
-                variant="outline"
-                className="w-full border-blue-300 text-blue-600 hover:bg-blue-50"
-              >
-                <i className="fas fa-external-link-alt ml-2"></i>
-                تسجيل الدخول بحساب Replit
-              </Button>
-            </div>
+
           </CardContent>
         </Card>
 
