@@ -16,6 +16,7 @@ import Loading from "@/components/ui/loading";
 import type { Patriarch } from "@shared/schema";
 import { getArabicHeresyName } from "@shared/patriarch-names";
 import { MessageCircle, Crown } from "lucide-react";
+import { Link } from "@/components/ui/link";
 
 const eraLabels: Record<string, string> = {
   apostolic: "العصر الرسولي",
@@ -355,13 +356,70 @@ export default function Landing() {
             </div>
 
             <div>
-              <h4 className="text-lg font-semibold mb-4 font-amiri">روابط مهمة</h4>
-              <ul className="space-y-2">
-                <li><button onClick={() => setLocation("/about")} className="text-blue-200 hover:text-white transition-colors duration-200">عن الموقع</button></li>
-                <li><button onClick={() => setLocation("/church-history")} className="text-blue-200 hover:text-white transition-colors duration-200">تاريخ الكنيسة</button></li>
-                <li><button onClick={() => setLocation("/references")} className="text-blue-200 hover:text-white transition-colors duration-200">المراجع</button></li>
-                <li><button onClick={() => setLocation("/contact")} className="text-blue-200 hover:text-white transition-colors duration-200">اتصل بنا</button></li>
-              </ul>
+              <div className="space-y-4">
+                <h3 className="text-xl font-bold text-white mb-6">روابط مهمة</h3>
+                <div className="grid grid-cols-1 gap-4">
+                  <Link
+                    href="/smart-summary"
+                    className="bg-white bg-opacity-10 backdrop-blur-sm rounded-lg p-4 hover:bg-opacity-20 transition-all duration-300 border border-white border-opacity-20 group"
+                  >
+                    <div className="flex items-center space-x-3 space-x-reverse">
+                      <div className="w-10 h-10 bg-gradient-to-r from-green-400 to-emerald-400 rounded-lg flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
+                        <i className="fas fa-brain text-white"></i>
+                      </div>
+                      <div>
+                        <h4 className="font-medium text-white">الملخص الذكي</h4>
+                        <p className="text-sm text-blue-100">ملخص ذكي بالذكاء الاصطناعي</p>
+                      </div>
+                    </div>
+                  </Link>
+
+                  <Link
+                    href="/about"
+                    className="bg-white bg-opacity-10 backdrop-blur-sm rounded-lg p-4 hover:bg-opacity-20 transition-all duration-300 border border-white border-opacity-20 group"
+                  >
+                    <div className="flex items-center space-x-3 space-x-reverse">
+                      <div className="w-10 h-10 bg-gradient-to-r from-blue-400 to-purple-400 rounded-lg flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
+                        <i className="fas fa-info-circle text-white"></i>
+                      </div>
+                      <div>
+                        <h4 className="font-medium text-white">عن الموقع</h4>
+                        <p className="text-sm text-blue-100">تعرف على أهداف الموقع</p>
+                      </div>
+                    </div>
+                  </Link>
+
+                  <Link
+                    href="/church-history"
+                    className="bg-white bg-opacity-10 backdrop-blur-sm rounded-lg p-4 hover:bg-opacity-20 transition-all duration-300 border border-white border-opacity-20 group"
+                  >
+                    <div className="flex items-center space-x-3 space-x-reverse">
+                      <div className="w-10 h-10 bg-gradient-to-r from-green-400 to-blue-400 rounded-lg flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
+                        <i className="fas fa-church text-white"></i>
+                      </div>
+                      <div>
+                        <h4 className="font-medium text-white">تاريخ الكنيسة</h4>
+                        <p className="text-sm text-blue-100">تاريخ الكنيسة القبطية</p>
+                      </div>
+                    </div>
+                  </Link>
+
+                  <Link
+                    href="/references"
+                    className="bg-white bg-opacity-10 backdrop-blur-sm rounded-lg p-4 hover:bg-opacity-20 transition-all duration-300 border border-white border-opacity-20 group"
+                  >
+                    <div className="flex items-center space-x-3 space-x-reverse">
+                      <div className="w-10 h-10 bg-gradient-to-r from-purple-400 to-pink-400 rounded-lg flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
+                        <i className="fas fa-book text-white"></i>
+                      </div>
+                      <div>
+                        <h4 className="font-medium text-white">المراجع</h4>
+                        <p className="text-sm text-blue-100">المصادر والمراجع</p>
+                      </div>
+                    </div>
+                  </Link>
+                </div>
+              </div>
             </div>
 
             <div>
