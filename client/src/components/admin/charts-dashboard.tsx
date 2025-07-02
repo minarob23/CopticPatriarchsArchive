@@ -273,52 +273,98 @@ export default function ChartsDashboard({ patriarchs }: ChartsDashboardProps) {
 
       {/* الرسوم البيانية الرئيسية */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-        {/* توزيع البطاركة حسب العصور - رسم بياني دائري */}
+        {/* توزيع البطاركة حسب العصور - رسم بياني دائري محسن */}
         <Card>
-          <CardHeader>
+          <CardHeader className="bg-gradient-to-r from-blue-600 to-purple-600 text-white">
             <CardTitle className="text-center font-amiri text-lg">توزيع البطاركة عبر العصور التاريخية</CardTitle>
           </CardHeader>
           <CardContent>
-            <ResponsiveContainer width="100%" height={400}>
+            <ResponsiveContainer width="100%" height={450}>
               <PieChart>
                 <Pie
                   data={chartsData.eraChartData}
                   cx="50%"
                   cy="50%"
-                  labelLine={false}
-                  label={({ era, count, percent }) => `${era}: ${count} (${(percent * 100).toFixed(1)}%)`}
-                  outerRadius={120}
+                  labelLine={true}
+                  label={({ era, count, percent }) => `${era}\n${count} بطريرك\n(${(percent * 100).toFixed(1)}%)`}
+                  outerRadius={140}
+                  innerRadius={60}
                   fill="#8884d8"
                   dataKey="count"
+                  stroke="#fff"
+                  strokeWidth={3}
                 >
                   {chartsData.eraChartData.map((entry, index) => (
                     <Cell key={`cell-${index}`} fill={entry.color} />
                   ))}
                 </Pie>
                 <Tooltip 
-                  formatter={(value, name) => [value, 'عدد البطاركة']}
+                  formatter={(value, name) => [`${value} بطريرك`, 'العدد']}
                   labelFormatter={(label) => chartsData.eraChartData.find(d => d.era === label)?.fullEra || label}
+                  contentStyle={{
+                    backgroundColor: 'rgba(255, 255, 255, 0.95)',
+                    border: '2px solid #e0e0e0',
+                    borderRadius: '12px',
+                    fontSize: '14px',
+                    direction: 'rtl',
+                    boxShadow: '0 4px 12px rgba(0,0,0,0.1)'
+                  }}
                 />
-                <Legend />
+                <Legend 
+                  wrapperStyle={{ 
+                    paddingTop: '20px',
+                    fontSize: '12px'
+                  }}
+                />
               </PieChart>
             </ResponsiveContainer>
           </CardContent>
         </Card>
 
-        {/* توزيع البطاركة عبر القرون - رسم بياني عمودي */}
+        {/* توزيع البطاركة عبر القرون - رسم بياني منطقي */}
         <Card>
-          <CardHeader>
+          <CardHeader className="bg-gradient-to-r from-green-600 to-teal-600 text-white">
             <CardTitle className="text-center font-amiri text-lg">توزيع البطاركة عبر القرون</CardTitle>
           </CardHeader>
           <CardContent>
-            <ResponsiveContainer width="100%" height={400}>
-              <BarChart data={chartsData.centuryChartData}>
-                <CartesianGrid strokeDasharray="3 3" />
-                <XAxis dataKey="century" />
-                <YAxis />
-                <Tooltip content={<CustomTooltip />} />
-                <Bar dataKey="count" fill="#8B5CF6" radius={[4, 4, 0, 0]} />
-              </BarChart>
+            <ResponsiveContainer width="100%" height={450}>
+              <AreaChart data={chartsData.centuryChartData} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
+                <defs>
+                  <linearGradient id="colorCentury" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="5%" stopColor="#10B981" stopOpacity={0.8}/>
+                    <stop offset="95%" stopColor="#10B981" stopOpacity={0.2}/>
+                  </linearGradient>
+                </defs>
+                <CartesianGrid strokeDasharray="3 3" stroke="#e0e0e0" />
+                <XAxis 
+                  dataKey="century" 
+                  fontSize={12}
+                  tick={{ fill: '#666' }}
+                />
+                <YAxis 
+                  fontSize={12}
+                  tick={{ fill: '#666' }}
+                />
+                <Tooltip 
+                  formatter={(value) => [`${value} بطريرك`, 'العدد']}
+                  labelFormatter={(label) => `القرن ${label}`}
+                  contentStyle={{
+                    backgroundColor: 'white',
+                    border: '2px solid #10B981',
+                    borderRadius: '10px',
+                    fontSize: '14px',
+                    direction: 'rtl'
+                  }}
+                />
+                <Area 
+                  type="monotone" 
+                  dataKey="count" 
+                  stroke="#10B981" 
+                  strokeWidth={3}
+                  fillOpacity={1} 
+                  fill="url(#colorCentury)" 
+                />
+              </AreaChart>
             </ResponsiveContainer>
           </CardContent>
         </Card>
@@ -326,62 +372,117 @@ export default function ChartsDashboard({ patriarchs }: ChartsDashboardProps) {
 
       {/* رسوم بيانية إضافية */}
       <div className="grid grid-cols-1 xl:grid-cols-2 gap-8">
-        {/* مدة الخدمة للبطاركة */}
+        {/* مدة الخدمة للبطاركة - رسم بياني أفقي محسن */}
         <Card>
-          <CardHeader>
-            <CardTitle className="text-center font-amiri text-lg">أطول فترات الخدمة للبطاركة (رسم بياني)</CardTitle>
+          <CardHeader className="bg-gradient-to-r from-orange-600 to-red-600 text-white">
+            <CardTitle className="text-center font-amiri text-lg">أطول فترات الخدمة للبطاركة</CardTitle>
           </CardHeader>
           <CardContent>
-            <ResponsiveContainer width="100%" height={400}>
-              <BarChart data={chartsData.serviceData} layout="vertical">
-                <CartesianGrid strokeDasharray="3 3" />
-                <XAxis type="number" />
+            <ResponsiveContainer width="100%" height={500}>
+              <BarChart 
+                data={chartsData.serviceData.slice(0, 12)} 
+                layout="vertical"
+                margin={{ top: 20, right: 30, left: 20, bottom: 5 }}
+              >
+                <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
+                <XAxis 
+                  type="number" 
+                  fontSize={12}
+                  tick={{ fill: '#666' }}
+                />
                 <YAxis 
                   dataKey="name" 
                   type="category" 
-                  width={150}
-                  fontSize={11}
+                  width={180}
+                  fontSize={10}
                   interval={0}
+                  tick={{ fill: '#333' }}
                 />
                 <Tooltip 
                   formatter={(value, name, props) => [`${value} سنة`, 'مدة الخدمة']}
                   labelFormatter={(label) => `البابا ${label}`}
                   contentStyle={{
-                    backgroundColor: 'white',
-                    border: '1px solid #ccc',
-                    borderRadius: '8px',
+                    backgroundColor: 'rgba(255, 255, 255, 0.95)',
+                    border: '2px solid #f97316',
+                    borderRadius: '12px',
                     fontSize: '14px',
-                    direction: 'rtl'
+                    direction: 'rtl',
+                    boxShadow: '0 4px 12px rgba(0,0,0,0.1)'
                   }}
                 />
-                <Bar dataKey="duration" fill="#10B981" radius={[0, 4, 4, 0]} />
+                <Bar 
+                  dataKey="duration" 
+                  radius={[0, 8, 8, 0]}
+                >
+                  {chartsData.serviceData.slice(0, 12).map((entry, index) => (
+                    <Cell 
+                      key={`cell-${index}`} 
+                      fill={
+                        index === 0 ? '#f59e0b' : 
+                        index === 1 ? '#ef4444' : 
+                        index === 2 ? '#ec4899' : 
+                        '#f97316'
+                      } 
+                    />
+                  ))}
+                </Bar>
               </BarChart>
             </ResponsiveContainer>
           </CardContent>
         </Card>
 
-        {/* البدع الأكثر محاربة */}
+        {/* البدع الأكثر محاربة - رسم بياني عمودي بألوان متدرجة */}
         <Card>
-          <CardHeader>
+          <CardHeader className="bg-gradient-to-r from-red-600 to-pink-600 text-white">
             <CardTitle className="text-center font-amiri text-lg">البدع الأكثر محاربة</CardTitle>
           </CardHeader>
           <CardContent>
-            <ResponsiveContainer width="100%" height={400}>
-              <BarChart data={chartsData.heresiesChartData}>
-                <CartesianGrid strokeDasharray="3 3" />
+            <ResponsiveContainer width="100%" height={500}>
+              <BarChart 
+                data={chartsData.heresiesChartData} 
+                margin={{ top: 20, right: 30, left: 20, bottom: 120 }}
+              >
+                <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
                 <XAxis 
                   dataKey="heresy" 
                   angle={-45}
                   textAnchor="end"
-                  height={100}
-                  fontSize={11}
+                  height={120}
+                  fontSize={10}
+                  interval={0}
+                  tick={{ fill: '#333' }}
                 />
-                <YAxis />
+                <YAxis 
+                  fontSize={12}
+                  tick={{ fill: '#666' }}
+                />
                 <Tooltip 
                   formatter={(value) => [`${value} بطريرك`, 'عدد المحاربين']}
                   labelFormatter={(label) => chartsData.heresiesChartData.find(d => d.heresy === label)?.fullHeresy || label}
+                  contentStyle={{
+                    backgroundColor: 'rgba(255, 255, 255, 0.95)',
+                    border: '2px solid #dc2626',
+                    borderRadius: '12px',
+                    fontSize: '14px',
+                    direction: 'rtl',
+                    boxShadow: '0 4px 12px rgba(0,0,0,0.1)'
+                  }}
                 />
-                <Bar dataKey="count" fill="#F59E0B" radius={[4, 4, 0, 0]} />
+                <Bar dataKey="count" radius={[6, 6, 0, 0]}>
+                  {chartsData.heresiesChartData.map((entry, index) => (
+                    <Cell 
+                      key={`cell-${index}`} 
+                      fill={
+                        index === 0 ? '#dc2626' : 
+                        index === 1 ? '#ea580c' : 
+                        index === 2 ? '#d97706' : 
+                        index === 3 ? '#ca8a04' : 
+                        index === 4 ? '#65a30d' : 
+                        '#6366f1'
+                      } 
+                    />
+                  ))}
+                </Bar>
               </BarChart>
             </ResponsiveContainer>
           </CardContent>

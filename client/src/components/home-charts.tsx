@@ -211,26 +211,29 @@ export default function HomeCharts({ patriarchs }: HomeChartsProps) {
 
         {/* الرسوم البيانية الرئيسية */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-12">
-          {/* توزيع حسب العصور */}
+          {/* توزيع حسب العصور - رسم دائري محسن */}
           <Card className="shadow-xl">
-            <CardHeader className="bg-gradient-to-r from-blue-500 to-purple-500 text-white">
+            <CardHeader className="bg-gradient-to-r from-blue-600 to-purple-600 text-white">
               <CardTitle className="text-center font-amiri text-xl">
                 <i className="fas fa-chart-pie mr-2"></i>
                 التوزيع الإجمالي للبطاركة
               </CardTitle>
             </CardHeader>
             <CardContent className="p-6">
-              <ResponsiveContainer width="100%" height={350}>
+              <ResponsiveContainer width="100%" height={400}>
                 <PieChart>
                   <Pie
                     data={chartsData.topEras}
                     cx="50%"
                     cy="50%"
-                    labelLine={false}
-                    label={({ era, count, percent }) => `${era}: ${count}`}
-                    outerRadius={120}
+                    labelLine={true}
+                    label={({ era, count, percent }) => `${era}\n${count} بطريرك\n(${(percent * 100).toFixed(1)}%)`}
+                    outerRadius={130}
+                    innerRadius={50}
                     fill="#8884d8"
                     dataKey="count"
+                    stroke="#fff"
+                    strokeWidth={2}
                   >
                     {chartsData.topEras.map((entry, index) => (
                       <Cell key={`cell-${index}`} fill={entry.color} />
@@ -239,30 +242,72 @@ export default function HomeCharts({ patriarchs }: HomeChartsProps) {
                   <Tooltip 
                     formatter={(value) => [`${value} بطريرك`, 'العدد']}
                     labelFormatter={(label) => chartsData.topEras.find(d => d.era === label)?.fullEra || label}
+                    contentStyle={{
+                      backgroundColor: 'rgba(255, 255, 255, 0.95)',
+                      border: '2px solid #e0e0e0',
+                      borderRadius: '10px',
+                      fontSize: '14px',
+                      direction: 'rtl'
+                    }}
                   />
-                  <Legend />
+                  <Legend 
+                    wrapperStyle={{ 
+                      paddingTop: '15px',
+                      fontSize: '12px'
+                    }}
+                  />
                 </PieChart>
               </ResponsiveContainer>
             </CardContent>
           </Card>
 
-          {/* توزيع حسب القرون */}
+          {/* توزيع حسب القرون - رسم منطقي محسن */}
           <Card className="shadow-xl">
-            <CardHeader className="bg-gradient-to-r from-green-500 to-teal-500 text-white">
+            <CardHeader className="bg-gradient-to-r from-green-600 to-teal-600 text-white">
               <CardTitle className="text-center font-amiri text-xl">
-                <i className="fas fa-chart-bar mr-2"></i>
-                أكثر القرون نشاطاً
+                <i className="fas fa-chart-line mr-2"></i>
+                توزيع البطاركة عبر القرون
               </CardTitle>
             </CardHeader>
             <CardContent className="p-6">
-              <ResponsiveContainer width="100%" height={350}>
-                <BarChart data={chartsData.topCenturies}>
-                  <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis dataKey="century" />
-                  <YAxis />
-                  <Tooltip content={<CustomTooltip />} />
-                  <Bar dataKey="count" fill="#10B981" radius={[4, 4, 0, 0]} />
-                </BarChart>
+              <ResponsiveContainer width="100%" height={400}>
+                <AreaChart data={chartsData.topCenturies} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
+                  <defs>
+                    <linearGradient id="colorCenturyHome" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="5%" stopColor="#10B981" stopOpacity={0.8}/>
+                      <stop offset="95%" stopColor="#10B981" stopOpacity={0.2}/>
+                    </linearGradient>
+                  </defs>
+                  <CartesianGrid strokeDasharray="3 3" stroke="#e0e0e0" />
+                  <XAxis 
+                    dataKey="century" 
+                    fontSize={12}
+                    tick={{ fill: '#666' }}
+                  />
+                  <YAxis 
+                    fontSize={12}
+                    tick={{ fill: '#666' }}
+                  />
+                  <Tooltip 
+                    formatter={(value) => [`${value} بطريرك`, 'العدد']}
+                    labelFormatter={(label) => `القرن ${label}`}
+                    contentStyle={{
+                      backgroundColor: 'white',
+                      border: '2px solid #10B981',
+                      borderRadius: '10px',
+                      fontSize: '14px',
+                      direction: 'rtl'
+                    }}
+                  />
+                  <Area 
+                    type="monotone" 
+                    dataKey="count" 
+                    stroke="#10B981" 
+                    strokeWidth={3}
+                    fillOpacity={1} 
+                    fill="url(#colorCenturyHome)" 
+                  />
+                </AreaChart>
               </ResponsiveContainer>
             </CardContent>
           </Card>
