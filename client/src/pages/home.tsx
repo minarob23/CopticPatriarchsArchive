@@ -10,6 +10,7 @@ import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/co
 import PatriarchTimeline from "@/components/patriarch-timeline";
 import PatriarchCard from "@/components/patriarch-card";
 import AskPatriarchChatbot from "@/components/ask-patriarch-chatbot";
+import SmartSummaryModal from "@/components/smart-summary-modal";
 import { useAuth } from "@/hooks/useAuth";
 import HomeCharts from "@/components/home-charts";
 import Loading from "@/components/ui/loading";
@@ -63,6 +64,7 @@ export default function Home() {
   const [selectedHeresies, setSelectedHeresies] = useState<string[]>([]);
   const [viewMode, setViewMode] = useState<"cards" | "timeline" | "charts">("cards");
   const [showChatbot, setShowChatbot] = useState(false);
+  const [showSmartSummary, setShowSmartSummary] = useState(false);
   
 
 
@@ -262,6 +264,14 @@ export default function Home() {
                     الإحصائيات والتحليلات
                   </Button>
 
+                  <Button
+                    variant="outline"
+                    onClick={() => setShowSmartSummary(true)}
+                    className="bg-white bg-opacity-20 text-green-600 border-green-600 hover:bg-green-600 hover:text-white px-6 py-3"
+                  >
+                    <i className="fas fa-brain ml-2"></i>
+                    الملخص الذكي
+                  </Button>
                   
                 </div>
               </CardContent>
@@ -380,11 +390,25 @@ export default function Home() {
 
       {/* Chatbot */}
       {showChatbot && (
-        <AskPatriarchChatbot 
-          isOpen={showChatbot} 
-          onClose={() => setShowChatbot(false)} 
-        />
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-lg max-w-4xl w-full max-h-[90vh] relative">
+            <Button
+              onClick={() => setShowChatbot(false)}
+              className="absolute top-4 left-4 z-10 rounded-full w-8 h-8 p-0"
+              variant="ghost"
+            >
+              ✕
+            </Button>
+            <AskPatriarchChatbot />
+          </div>
+        </div>
       )}
+
+      {/* Smart Summary Modal */}
+      <SmartSummaryModal 
+        isOpen={showSmartSummary} 
+        onClose={() => setShowSmartSummary(false)} 
+      />
 
       
     </div>
