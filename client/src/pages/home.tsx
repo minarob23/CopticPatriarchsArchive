@@ -172,11 +172,11 @@ export default function Home() {
                     </div>
                   </div>
 
-                  {/* Search Buttons */}
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  {/* Search Button */}
+                  <div>
                     <Button
                       onClick={handleSearch}
-                      className="w-full py-4 text-lg bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white rounded-xl shadow-lg transform hover:scale-105 transition-all duration-300"
+                      className="w-full py-4 text-lg bg-gradient-to-r from-yellow-500 to-orange-500 hover:from-yellow-600 hover:to-orange-600 text-white rounded-xl shadow-lg transform hover:scale-105 transition-all duration-300"
                       disabled={isLoading}
                     >
                       {isLoading ? (
@@ -187,17 +187,9 @@ export default function Home() {
                       ) : (
                         <>
                           <i className="fas fa-search ml-2"></i>
-                          بحث عادي
+                          بحث
                         </>
                       )}
-                    </Button>
-
-                    <Button
-                      onClick={() => setLocation("/recommendations")}
-                      className="w-full py-4 text-lg bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white rounded-xl shadow-lg transform hover:scale-105 transition-all duration-300"
-                    >
-                      <i className="fas fa-brain ml-2"></i>
-                      بحث ذكي
                     </Button>
                   </div>
 
@@ -273,7 +265,7 @@ export default function Home() {
                   </Button>
                 </div>
 
-
+                
               </CardContent>
             </Card>
           </div>
@@ -344,7 +336,7 @@ export default function Home() {
                 اسأل البطريرك
               </Button>
 
-
+              
             </div>
 
             {/* Authentication Buttons */}
