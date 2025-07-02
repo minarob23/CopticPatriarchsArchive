@@ -337,7 +337,14 @@ export default function Home() {
                 الإحصائيات والتحليلات
               </Button>
 
-
+              <Button
+                variant="outline"
+                onClick={() => setShowSmartSummary(true)}
+                className="bg-gradient-to-r from-purple-600 to-indigo-600 text-white border-purple-600 hover:from-purple-700 hover:to-indigo-700 shadow-lg transform hover:scale-105 transition-all duration-300"
+              >
+                <i className="fas fa-brain w-4 h-4 ml-2"></i>
+                الملخص الذكي
+              </Button>
 
               {isAuthenticated && (
                 <Button

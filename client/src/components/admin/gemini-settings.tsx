@@ -23,7 +23,7 @@ export default function GeminiSettings() {
   // Save API key mutation
   const saveApiKeyMutation = useMutation({
     mutationFn: async (apiKey: string) => {
-      const response = await apiRequest('/api/admin/gemini-api-key', 'POST', { apiKey });
+      const response = await apiRequest('POST', '/api/admin/gemini-api-key', { apiKey });
       return response;
     },
     onSuccess: () => {
@@ -48,7 +48,7 @@ export default function GeminiSettings() {
   // Test connection mutation
   const testConnectionMutation = useMutation({
     mutationFn: async () => {
-      const response = await apiRequest('/api/admin/test-gemini', 'POST');
+      const response = await apiRequest('POST', '/api/admin/test-gemini');
       return response;
     },
     onSuccess: (data) => {
