@@ -264,14 +264,7 @@ export default function Home() {
                     الإحصائيات والتحليلات
                   </Button>
 
-                  <Button
-                    variant="outline"
-                    onClick={() => setShowSmartSummary(true)}
-                    className="bg-white bg-opacity-20 text-green-600 border-green-600 hover:bg-green-600 hover:text-white px-6 py-3"
-                  >
-                    <i className="fas fa-brain ml-2"></i>
-                    الملخص الذكي
-                  </Button>
+                  
                   
                 </div>
               </CardContent>
@@ -356,7 +349,7 @@ export default function Home() {
               )}
 
               <Button
-                onClick={() => setLocation("/smart-summary")}
+                onClick={() => setShowSmartSummary(true)}
                 className="bg-gradient-to-r from-green-500 to-teal-600 text-white hover:from-green-600 hover:to-teal-700 shadow-lg transform hover:scale-105 transition-all duration-300 px-6 py-3"
               >
                 <i className="fas fa-brain ml-2"></i>

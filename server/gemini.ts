@@ -64,6 +64,62 @@ export async function setGeminiApiKey(apiKey: string): Promise<void> {
   geminiClient = null; // Reset client to use new API key
 }
 
+export async function generateSmartSummary(patriarchName: string, tone: string = "easy"): Promise<string> {
+  const client = await getGeminiClient();
+  if (!client) {
+    return "عذراً، لم يتم تكوين مفتاح API الخاص بـ Gemini. يرجى إضافة المفتاح في صفحة الإدارة.";
+  }
+
+  try {
+    // Get patriarch data
+    const patriarch = await storage.getPatriarchByName(patriarchName);
+    if (!patriarch) {
+      return "عذراً، لم يتم العثور على البطريرك المطلوب. يرجى التأكد من الاسم والمحاولة مرة أخرى.";
+    }
+
+    let tonePrompt = "";
+    if (tone === "kids") {
+      tonePrompt = "استخدم لغة بسيطة ومناسبة للأطفال مع الرموز التعبيرية والأمثلة السهلة";
+    } else if (tone === "academic") {
+      tonePrompt = "استخدم لغة أكاديمية متخصصة ومصطلحات تاريخية دقيقة";
+    } else {
+      tonePrompt = "استخدم لغة سهلة ومبسطة للقارئ العادي";
+    }
+
+    const prompt = `اكتب ملخصاً ذكياً وشاملاً عن البطريرك: ${patriarch.name}
+
+معلومات البطريرك:
+- الاسم: ${patriarch.name}
+- الرقم: ${patriarch.orderNumber}
+- العصر: ${patriarch.era}
+- فترة الخدمة: ${patriarch.startYear} - ${patriarch.endYear || 'حتى الآن'}
+- المساهمات: ${patriarch.contributions}
+- السيرة: ${patriarch.biography || 'غير متوفرة'}
+- البدع المحاربة: ${Array.isArray(patriarch.heresiesFought) ? patriarch.heresiesFought.join(', ') : patriarch.heresiesFought}
+
+${tonePrompt}
+
+يجب أن يكون الملخص شاملاً ومفيداً ويحتوي على:
+1. نبذة عن حياته الشخصية
+2. أهم إنجازاته وأعماله
+3. دوره في الكنيسة والمجتمع
+4. التحديات التي واجهها
+5. إرثه وتأثيره
+
+اكتب باللغة العربية فقط.`;
+
+    const response = await client.models.generateContent({
+      model: "gemini-2.5-flash",
+      contents: prompt,
+    });
+
+    return response.text || "عذراً، لم أتمكن من توليد الملخص. يرجى المحاولة مرة أخرى.";
+  } catch (error) {
+    console.error("Gemini summary error:", error);
+    return "عذراً، حدث خطأ أثناء توليد الملخص. يرجى التأكد من صحة مفتاح API والمحاولة مرة أخرى.";
+  }
+}
+
 export async function testGeminiConnection(): Promise<boolean> {
   try {
     const client = await getGeminiClient();

@@ -2,7 +2,7 @@ import type { Express } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
 import { setupAuth, isAuthenticated } from "./replitAuth";
-import { askPatriarch, setGeminiApiKey, testGeminiConnection } from "./gemini";
+import { askPatriarch, setGeminiApiKey, testGeminiConnection, generateSmartSummary } from "./gemini";
 import { insertPatriarchSchema, updatePatriarchSchema } from "@shared/schema";
 import { z } from "zod";
 import { eq, and, like, desc, asc, or } from "drizzle-orm";
@@ -232,7 +232,7 @@ ${tonePrompt}
 
 يجب أن يكون الملخص شاملاً ومفيداً ويحتوي على المعلومات المهمة حول حياة وإنجازات هذا البطريرك.`;
 
-      const summary = await askPatriarch(prompt);
+      const summary = await generateSmartSummary(name, tone);
 
       res.json({
         summary,
