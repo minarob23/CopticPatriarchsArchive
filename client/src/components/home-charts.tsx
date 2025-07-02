@@ -65,13 +65,13 @@ export default function HomeCharts({ patriarchs }: HomeChartsProps) {
 
     const topEras = Object.entries(eraDistribution)
       .map(([era, count], index) => ({
-        era: era.length > 12 ? era.substring(0, 12) + "..." : era,
+        era: era.length > 15 ? era.substring(0, 15) + "..." : era,
         fullEra: era,
         count,
         color: COLORS[index % COLORS.length]
       }))
       .sort((a, b) => b.count - a.count)
-      .slice(0, 6);
+      .slice(0, 8);
 
     // توزيع عبر القرون (أهم 6 قرون)
     const centuryDistribution = patriarchs.reduce((acc: Record<number, number>, patriarch) => {

@@ -273,54 +273,67 @@ export default function ChartsDashboard({ patriarchs }: ChartsDashboardProps) {
 
       {/* الرسوم البيانية الرئيسية */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-        {/* توزيع البطاركة حسب العصور - رسم بياني دائري محسن */}
+        {/* توزيع البطاركة حسب العصور - رسم بياني عمودي */}
         <Card>
           <CardHeader className="bg-gradient-to-r from-blue-600 to-purple-600 text-white">
             <CardTitle className="text-center font-amiri text-lg">توزيع البطاركة عبر العصور التاريخية</CardTitle>
           </CardHeader>
           <CardContent>
             <ResponsiveContainer width="100%" height={500}>
-              <PieChart>
-                <Pie
-                  data={chartsData.eraChartData}
-                  cx="50%"
-                  cy="45%"
-                  labelLine={false}
-                  label={false}
-                  outerRadius={120}
-                  innerRadius={50}
-                  fill="#8884d8"
-                  dataKey="count"
-                  stroke="#fff"
-                  strokeWidth={3}
-                >
-                  {chartsData.eraChartData.map((entry, index) => (
-                    <Cell key={`cell-${index}`} fill={entry.color} />
-                  ))}
-                </Pie>
+              <BarChart
+                data={chartsData.eraChartData}
+                margin={{ top: 20, right: 30, left: 20, bottom: 120 }}
+              >
+                <CartesianGrid strokeDasharray="3 3" stroke="#e0e0e0" />
+                <XAxis 
+                  dataKey="era"
+                  angle={-35}
+                  textAnchor="end"
+                  height={120}
+                  fontSize={11}
+                  interval={0}
+                  tick={{ fill: '#333', fontSize: 11, fontWeight: 'bold' }}
+                />
+                <YAxis 
+                  fontSize={12}
+                  tick={{ fill: '#666' }}
+                />
                 <Tooltip 
-                  formatter={(value, name) => [`${value} بطريرك`, 'العدد']}
+                  formatter={(value) => [`${value} بطريرك`, 'العدد']}
                   labelFormatter={(label) => chartsData.eraChartData.find(d => d.era === label)?.fullEra || label}
                   contentStyle={{
                     backgroundColor: 'rgba(255, 255, 255, 0.98)',
                     border: '2px solid #3b82f6',
                     borderRadius: '12px',
-                    fontSize: '16px',
+                    fontSize: '14px',
                     direction: 'rtl',
                     boxShadow: '0 8px 16px rgba(0,0,0,0.15)',
                     fontWeight: 'bold'
                   }}
                 />
-                <Legend 
-                  wrapperStyle={{ 
-                    paddingTop: '30px',
-                    fontSize: '14px',
-                    fontWeight: 'bold'
-                  }}
-                  iconType="rect"
-                />
-              </PieChart>
+                <Bar dataKey="count" radius={[6, 6, 0, 0]}>
+                  {chartsData.eraChartData.map((entry, index) => (
+                    <Cell key={`cell-${index}`} fill={entry.color} />
+                  ))}
+                </Bar>
+              </BarChart>
             </ResponsiveContainer>
+            
+            {/* قائمة العصور خارج الرسم البياني */}
+            <div className="mt-6 grid grid-cols-2 lg:grid-cols-3 gap-3">
+              {chartsData.eraChartData.map((item, index) => (
+                <div key={index} className="flex items-center space-x-reverse space-x-2 p-2 bg-gray-50 rounded-lg">
+                  <div 
+                    className="w-4 h-4 rounded-full"
+                    style={{ backgroundColor: item.color }}
+                  ></div>
+                  <div className="flex-1">
+                    <span className="text-sm font-semibold text-gray-800">{item.fullEra}</span>
+                    <div className="text-xs text-gray-600">{item.count} بطريرك</div>
+                  </div>
+                </div>
+              ))}
+            </div>
           </CardContent>
         </Card>
 
@@ -375,32 +388,26 @@ export default function ChartsDashboard({ patriarchs }: ChartsDashboardProps) {
 
       {/* رسوم بيانية إضافية */}
       <div className="grid grid-cols-1 xl:grid-cols-2 gap-8">
-        {/* مدة الخدمة للبطاركة - رسم بياني أفقي محسن */}
+        {/* مدة الخدمة للبطاركة - رسم بياني عمودي محسن */}
         <Card>
           <CardHeader className="bg-gradient-to-r from-orange-600 to-red-600 text-white">
             <CardTitle className="text-center font-amiri text-lg">أطول فترات الخدمة للبطاركة</CardTitle>
           </CardHeader>
           <CardContent>
-            <ResponsiveContainer width="100%" height={600}>
+            <ResponsiveContainer width="100%" height={400}>
               <BarChart 
-                data={chartsData.serviceData.slice(0, 10)} 
-                layout="vertical"
-                margin={{ top: 20, right: 30, left: 30, bottom: 20 }}
+                data={chartsData.serviceData.slice(0, 8)} 
+                margin={{ top: 20, right: 30, left: 20, bottom: 20 }}
               >
                 <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
                 <XAxis 
-                  type="number" 
-                  fontSize={14}
-                  tick={{ fill: '#666', fontSize: 14 }}
+                  dataKey="name"
+                  fontSize={11}
+                  tick={false}
                 />
                 <YAxis 
-                  dataKey="name" 
-                  type="category" 
-                  width={220}
-                  fontSize={13}
-                  interval={0}
-                  tick={{ fill: '#333', fontSize: 13, fontWeight: 'bold' }}
-                  tickFormatter={(value) => value.length > 25 ? value.substring(0, 25) + "..." : value}
+                  fontSize={12}
+                  tick={{ fill: '#666' }}
                 />
                 <Tooltip 
                   formatter={(value, name, props) => [`${value} سنة`, 'مدة الخدمة']}
@@ -416,9 +423,9 @@ export default function ChartsDashboard({ patriarchs }: ChartsDashboardProps) {
                 />
                 <Bar 
                   dataKey="duration" 
-                  radius={[0, 8, 8, 0]}
+                  radius={[6, 6, 0, 0]}
                 >
-                  {chartsData.serviceData.slice(0, 10).map((entry, index) => (
+                  {chartsData.serviceData.slice(0, 8).map((entry, index) => (
                     <Cell 
                       key={`cell-${index}`} 
                       fill={
@@ -432,34 +439,53 @@ export default function ChartsDashboard({ patriarchs }: ChartsDashboardProps) {
                 </Bar>
               </BarChart>
             </ResponsiveContainer>
+            
+            {/* قائمة البطاركة خارج الرسم البياني */}
+            <div className="mt-6 grid grid-cols-1 md:grid-cols-2 gap-3">
+              {chartsData.serviceData.slice(0, 8).map((patriarch, index) => (
+                <div key={index} className="flex items-center justify-between p-3 bg-gradient-to-r from-orange-50 to-red-50 rounded-lg border">
+                  <div className="flex items-center space-x-reverse space-x-3">
+                    <div className={`w-8 h-8 rounded-full flex items-center justify-center text-white font-bold text-sm ${
+                      index === 0 ? 'bg-yellow-500' : 
+                      index === 1 ? 'bg-gray-400' : 
+                      index === 2 ? 'bg-orange-500' : 'bg-blue-500'
+                    }`}>
+                      {index + 1}
+                    </div>
+                    <div>
+                      <h4 className="font-semibold text-gray-800 text-sm">{patriarch.fullName}</h4>
+                      <p className="text-xs text-gray-600">{patriarch.era}</p>
+                    </div>
+                  </div>
+                  <div className="text-left">
+                    <Badge variant="secondary" className="font-bold">{patriarch.duration} سنة</Badge>
+                  </div>
+                </div>
+              ))}
+            </div>
           </CardContent>
         </Card>
 
-        {/* البدع الأكثر محاربة - رسم بياني عمودي بألوان متدرجة */}
+        {/* البدع الأكثر محاربة - رسم بياني بسيط */}
         <Card>
           <CardHeader className="bg-gradient-to-r from-red-600 to-pink-600 text-white">
             <CardTitle className="text-center font-amiri text-lg">البدع الأكثر محاربة</CardTitle>
           </CardHeader>
           <CardContent>
-            <ResponsiveContainer width="100%" height={600}>
+            <ResponsiveContainer width="100%" height={350}>
               <BarChart 
-                data={chartsData.heresiesChartData.slice(0, 8)} 
-                margin={{ top: 20, right: 30, left: 30, bottom: 160 }}
+                data={chartsData.heresiesChartData.slice(0, 6)} 
+                margin={{ top: 20, right: 30, left: 20, bottom: 20 }}
               >
                 <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
                 <XAxis 
-                  dataKey="heresy" 
-                  angle={-35}
-                  textAnchor="end"
-                  height={160}
-                  fontSize={12}
-                  interval={0}
-                  tick={{ fill: '#333', fontSize: 12, fontWeight: 'bold' }}
-                  tickFormatter={(value) => value.length > 18 ? value.substring(0, 18) + "..." : value}
+                  dataKey="heresy"
+                  fontSize={11}
+                  tick={false}
                 />
                 <YAxis 
-                  fontSize={14}
-                  tick={{ fill: '#666', fontSize: 14 }}
+                  fontSize={12}
+                  tick={{ fill: '#666' }}
                 />
                 <Tooltip 
                   formatter={(value) => [`${value} بطريرك`, 'عدد المحاربين']}
@@ -474,7 +500,7 @@ export default function ChartsDashboard({ patriarchs }: ChartsDashboardProps) {
                   }}
                 />
                 <Bar dataKey="count" radius={[6, 6, 0, 0]}>
-                  {chartsData.heresiesChartData.slice(0, 8).map((entry, index) => (
+                  {chartsData.heresiesChartData.slice(0, 6).map((entry, index) => (
                     <Cell 
                       key={`cell-${index}`} 
                       fill={
@@ -483,15 +509,39 @@ export default function ChartsDashboard({ patriarchs }: ChartsDashboardProps) {
                         index === 2 ? '#d97706' : 
                         index === 3 ? '#ca8a04' : 
                         index === 4 ? '#65a30d' : 
-                        index === 5 ? '#6366f1' :
-                        index === 6 ? '#8b5cf6' :
-                        '#ef4444'
+                        '#6366f1'
                       } 
                     />
                   ))}
                 </Bar>
               </BarChart>
             </ResponsiveContainer>
+            
+            {/* قائمة البدع خارج الرسم البياني */}
+            <div className="mt-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
+              {chartsData.heresiesChartData.slice(0, 6).map((heresy, index) => (
+                <div key={index} className="flex items-center justify-between p-3 bg-gradient-to-r from-red-50 to-pink-50 rounded-lg border">
+                  <div className="flex items-center space-x-reverse space-x-3">
+                    <div 
+                      className="w-6 h-6 rounded-full"
+                      style={{ 
+                        backgroundColor: index === 0 ? '#dc2626' : 
+                          index === 1 ? '#ea580c' : 
+                          index === 2 ? '#d97706' : 
+                          index === 3 ? '#ca8a04' : 
+                          index === 4 ? '#65a30d' : '#6366f1'
+                      }}
+                    ></div>
+                    <div>
+                      <h4 className="font-semibold text-gray-800 text-sm">{heresy.fullHeresy}</h4>
+                    </div>
+                  </div>
+                  <div>
+                    <Badge variant="secondary" className="font-bold">{heresy.count}</Badge>
+                  </div>
+                </div>
+              ))}
+            </div>
           </CardContent>
         </Card>
       </div>
