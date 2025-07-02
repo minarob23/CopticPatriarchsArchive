@@ -13,6 +13,14 @@ import PatriarchForm from "@/components/admin/patriarch-form";
 import GeminiSettings from "@/components/admin/gemini-settings";
 import Loading from "@/components/ui/loading";
 import type { Patriarch } from "@shared/schema";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog"
 
 const eraLabels: Record<string, string> = {
   apostolic: "العصر الرسولي",
@@ -39,6 +47,7 @@ export default function Admin() {
   const [selectedEra, setSelectedEra] = useState("all");
   const [showForm, setShowForm] = useState(false);
   const [editingPatriarch, setEditingPatriarch] = useState<Patriarch | null>(null);
+  const [showGeminiModal, setShowGeminiModal] = useState(false);
   const [currentDateTime, setCurrentDateTime] = useState(new Date());
 
   // Redirect to login if not authenticated
@@ -69,9 +78,9 @@ export default function Admin() {
     const matchesSearch = !searchQuery || 
       patriarch.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
       patriarch.arabicName?.toLowerCase().includes(searchQuery.toLowerCase());
-    
+
     const matchesEra = selectedEra === "all" || patriarch.era === selectedEra;
-    
+
     return matchesSearch && matchesEra;
   }) || [];
 
@@ -248,6 +257,16 @@ ${index + 1}. ${p.name}
     { value: "modern", label: "العصر الحديث" },
   ];
 
+  const logout = () => {
+    // Check if demo user
+    if (localStorage.getItem('demo-auth')) {
+      localStorage.removeItem('demo-auth');
+      setLocation("/login");
+    } else {
+      window.location.href = "/api/logout";
+    }
+  }
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-purple-50" dir="rtl">
       {/* Admin Header */}
@@ -293,20 +312,33 @@ ${index + 1}. ${p.name}
                 </div>
               </div>
             </div>
-            
+
             <div className="flex items-center space-x-reverse space-x-4">
               <span className="text-blue-200">{(user as any)?.firstName || "الأدمن"}</span>
+              <Dialog open={showGeminiModal} onOpenChange={setShowGeminiModal}>
+                <DialogTrigger asChild>
+                  <Button 
+                    variant="secondary"
+                    className="bg-white text-purple-600 hover:bg-gray-100"
+                  >
+                    <i className="fas fa-cog ml-2"></i>
+                    إعدادات Gemini AI
+                  </Button>
+                </DialogTrigger>
+                <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto" dir="rtl">
+                  <DialogHeader>
+                    <DialogTitle className="text-center text-purple-600 font-amiri text-xl">
+                      إعدادات Gemini AI
+                    </DialogTitle>
+                  </DialogHeader>
+                  <div className="mt-4">
+                    <GeminiSettings />
+                  </div>
+                </DialogContent>
+              </Dialog>
               <Button 
                 variant="secondary" 
-                onClick={() => {
-                  // Check if demo user
-                  if (localStorage.getItem('demo-auth')) {
-                    localStorage.removeItem('demo-auth');
-                    setLocation("/login");
-                  } else {
-                    window.location.href = "/api/logout";
-                  }
-                }}
+                onClick={logout}
                 className="bg-white text-blue-600 hover:bg-gray-100"
               >
                 تسجيل خروج
@@ -335,7 +367,7 @@ ${index + 1}. ${p.name}
               </div>
             </CardContent>
           </Card>
-          
+
           <Card className="bg-gradient-to-br from-green-500 to-green-700 text-white shadow-xl hover:shadow-2xl transition-all duration-300 transform hover:scale-105">
             <CardContent className="p-6">
               <div className="flex items-center justify-between">
@@ -350,7 +382,7 @@ ${index + 1}. ${p.name}
               </div>
             </CardContent>
           </Card>
-          
+
           <Card className="bg-gradient-to-br from-purple-500 to-purple-700 text-white shadow-xl hover:shadow-2xl transition-all duration-300 transform hover:scale-105">
             <CardContent className="p-6">
               <div className="flex items-center justify-between">
@@ -367,7 +399,7 @@ ${index + 1}. ${p.name}
               </div>
             </CardContent>
           </Card>
-          
+
           <Card className="bg-gradient-to-br from-blue-500 to-blue-700 text-white shadow-xl hover:shadow-2xl transition-all duration-300 transform hover:scale-105">
             <CardContent className="p-6">
               <div className="flex items-center justify-between">
@@ -431,10 +463,10 @@ ${index + 1}. ${p.name}
                       'العصر الحديث': 'from-red-600 to-red-800',
                       'العصر المعاصر': 'from-emerald-600 to-emerald-800'
                     };
-                    
+
                     const gradient = eraColors[era as keyof typeof eraColors] || 'from-gray-500 to-gray-700';
                     const percentage = ((count as number) / (finalStats?.total || 1) * 100).toFixed(1);
-                    
+
                     return (
                       <div key={era} 
                            className={`relative overflow-hidden rounded-xl bg-gradient-to-r ${gradient} p-5 text-white shadow-lg transform hover:scale-105 transition-all duration-300 hover:shadow-xl`}>
@@ -456,7 +488,7 @@ ${index + 1}. ${p.name}
                             </div>
                           </div>
                         </div>
-                        
+
                         {/* Progress bar */}
                         <div className="mt-3 bg-white bg-opacity-20 rounded-full h-2 overflow-hidden">
                           <div 
@@ -468,7 +500,7 @@ ${index + 1}. ${p.name}
                     );
                   })}
               </div>
-              
+
               {/* Summary Statistics */}
               <div className="space-y-6">
                 <div className="bg-white rounded-xl p-6 shadow-lg border border-gray-200">
@@ -481,7 +513,7 @@ ${index + 1}. ${p.name}
                     <p className="text-gray-600 text-sm">بطريرك عبر التاريخ</p>
                   </div>
                 </div>
-                
+
                 <div className="bg-white rounded-xl p-6 shadow-lg border border-gray-200">
                   <h4 className="font-bold text-gray-800 mb-4 flex items-center">
                     <i className="fas fa-clock ml-2 text-blue-600"></i>
@@ -510,11 +542,6 @@ ${index + 1}. ${p.name}
             </div>
           </CardContent>
         </Card>
-        
-        {/* Gemini AI Settings */}
-        <div className="mb-8">
-          <GeminiSettings />
-        </div>
 
         {/* Action Buttons */}
         <div className="flex flex-wrap gap-4 mb-8">
@@ -540,7 +567,7 @@ ${index + 1}. ${p.name}
             تقرير شامل
           </Button>
         </div>
-        
+
         {/* Search and Filter */}
         <Card className="mb-8">
           <CardHeader>
@@ -580,7 +607,7 @@ ${index + 1}. ${p.name}
             </div>
           </CardContent>
         </Card>
-        
+
         {/* Patriarchs Management Table */}
         <Card>
           <CardHeader>
