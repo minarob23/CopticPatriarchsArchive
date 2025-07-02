@@ -9,7 +9,6 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Badge } from "@/components/ui/badge";
 import PatriarchTimeline from "@/components/patriarch-timeline";
 import PatriarchCard from "@/components/patriarch-card";
-import HomeCharts from "@/components/home-charts";
 import Loading from "@/components/ui/loading";
 import type { Patriarch } from "@shared/schema";
 import { getArabicHeresyName } from "@shared/patriarch-names";
@@ -58,7 +57,7 @@ export default function Home() {
   const [searchInput, setSearchInput] = useState("");
   const [selectedEra, setSelectedEra] = useState("all");
   const [selectedHeresies, setSelectedHeresies] = useState<string[]>([]);
-  const [viewMode, setViewMode] = useState<"cards" | "timeline" | "charts">("cards");
+  const [viewMode, setViewMode] = useState<"cards" | "timeline">("cards");
 
   const { data: patriarchs, isLoading } = useQuery<Patriarch[]>({
     queryKey: ["/api/patriarchs", { search: searchQuery, era: selectedEra !== "all" ? selectedEra : undefined }],
@@ -245,14 +244,6 @@ export default function Home() {
                     <i className="fas fa-clock ml-2"></i>
                     الخط الزمني
                   </Button>
-                  <Button
-                    variant={viewMode === "charts" ? "default" : "outline"}
-                    onClick={() => setViewMode("charts")}
-                    className={`${viewMode === "charts" ? "bg-yellow-400 text-black" : "bg-white bg-opacity-20 text-white border-white border-opacity-30"} hover:bg-yellow-500 transition-all duration-200`}
-                  >
-                    <i className="fas fa-chart-bar ml-2"></i>
-                    الإحصائيات والتحليلات
-                  </Button>
                 </div>
               </CardContent>
             </Card>
@@ -310,8 +301,6 @@ export default function Home() {
         {/* Content Display */}
         {viewMode === "timeline" ? (
           <PatriarchTimeline patriarchs={filteredPatriarchs} />
-        ) : viewMode === "charts" ? (
-          <HomeCharts patriarchs={filteredPatriarchs} />
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8">
             {filteredPatriarchs.map((patriarch) => (
