@@ -154,7 +154,7 @@ export default function Landing() {
                       ) : (
                         <>
                           <i className="fas fa-search mr-2"></i>
-                          بحث عادي
+                          بحث
                         </>
                       )}
                     </Button>
@@ -177,7 +177,7 @@ export default function Landing() {
                           }}
                         >
                           <i className="fas fa-brain mr-2"></i>
-                          بحث ذكي
+                          بحث
                         </Button>
                       </SheetTrigger>
                       <SheetContent className="w-full sm:max-w-2xl p-0 overflow-hidden" side="right">

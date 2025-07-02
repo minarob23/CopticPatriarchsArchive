@@ -187,7 +187,7 @@ export default function Home() {
                       ) : (
                         <>
                           <i className="fas fa-search mr-2"></i>
-                          بحث عادي
+                          بحث
                         </>
                       )}
                     </Button>
@@ -208,7 +208,7 @@ export default function Home() {
                       className="w-full py-4 text-lg bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white rounded-xl shadow-lg transform hover:scale-105 transition-all duration-300 flex items-center justify-center"
                     >
                       <i className="fas fa-brain mr-2"></i>
-                      بحث ذكي
+                      بحث
                     </Button>
                   </div>
 
