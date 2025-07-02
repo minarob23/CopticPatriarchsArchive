@@ -2,7 +2,7 @@ import type { Express } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
 import { setupAuth, isAuthenticated } from "./simpleAuth";
-import { askPatriarch, setGeminiApiKey, testGeminiConnection, generateSmartSummary } from "./gemini";
+import { askPatriarch, setGeminiApiKey, testGeminiConnection, generateSmartSummary, generateAIRecommendations } from "./gemini";
 import { insertPatriarchSchema, updatePatriarchSchema } from "@shared/schema";
 import { z } from "zod";
 import { eq, and, like, desc, asc, or } from "drizzle-orm";
@@ -251,6 +251,42 @@ export async function registerRoutes(app: Express): Promise<Server> {
     } catch (error) {
       console.error("Error fetching patriarchs:", error);
       res.status(500).json({ message: "Failed to fetch patriarchs" });
+    }
+  });
+
+  // Generate AI-powered recommendations using Gemini
+  app.post("/api/ai-recommendations", async (req, res) => {
+    try {
+      const { userProfile, preferences } = req.body;
+
+      if (!userProfile || !preferences) {
+        return res.status(400).json({ 
+          error: "ملف المستخدم والتفضيلات مطلوبة" 
+        });
+      }
+
+      // Get all patriarchs for AI analysis
+      const allPatriarchs = await storage.getPatriarchs();
+
+      if (allPatriarchs.length === 0) {
+        return res.status(404).json({ 
+          error: "لا توجد بيانات للبطاركة" 
+        });
+      }
+
+      // Generate AI recommendations using Gemini
+      const aiRecommendations = await generateAIRecommendations(
+        userProfile, 
+        preferences, 
+        allPatriarchs
+      );
+
+      res.json(aiRecommendations);
+    } catch (error) {
+      console.error("Error generating AI recommendations:", error);
+      res.status(500).json({ 
+        error: "فشل في إنشاء الاقتراحات الذكية" 
+      });
     }
   });
 

@@ -220,3 +220,113 @@ export async function testGeminiConnection(): Promise<boolean> {
     return false;
   }
 }
+
+export async function generateAIRecommendations(
+  userProfile: any, 
+  preferences: any, 
+  patriarchs: any[]
+): Promise<any> {
+  try {
+    const client = await getGeminiClient();
+    if (!client) {
+      throw new Error('Gemini AI غير متاح');
+    }
+
+    // Create detailed user profile for AI analysis
+    const userDescription = `
+ملف المستخدم:
+- الاهتمامات: ${preferences.interests?.join(', ') || 'غير محدد'}
+- الفترة الزمنية المفضلة: ${preferences.timeInterest || 'غير محدد'}
+- المجال المفضل: ${preferences.topicInterest || 'غير محدد'}
+- نوع الشخصية المفضل: ${preferences.personalityTrait || 'غير محدد'}
+- العصور المختارة: ${preferences.selectedEras?.join(', ') || 'لا توجد'}
+- البدع المختارة: ${preferences.selectedHeresies?.join(', ') || 'لا توجد'}
+- وصف إضافي: ${userProfile.description || 'لا يوجد'}
+`;
+
+    // Prepare patriarchs data for AI (limit to first 20 for token efficiency)
+    const patriarchsData = patriarchs.slice(0, 20).map(p => ({
+      name: p.name,
+      arabicName: p.arabicName,
+      era: p.era,
+      startYear: p.startYear,
+      endYear: p.endYear,
+      contributions: p.contributions.substring(0, 200),
+      heresiesFought: Array.isArray(p.heresiesFought) ? p.heresiesFought : []
+    }));
+
+    const prompt = `
+أنت خبير في تاريخ الكنيسة القبطية الأرثوذكسية. بناءً على ملف المستخدم التالي، أريد منك أن تقترح أفضل 5 بطاركة مناسبين له من القائمة المتاحة.
+
+${userDescription}
+
+قائمة البطاركة المتاحة:
+${JSON.stringify(patriarchsData, null, 2)}
+
+المطلوب:
+1. اختر أفضل 5 بطاركة مناسبين لاهتمامات المستخدم
+2. رتبهم حسب درجة المطابقة (الأعلى أولاً)
+3. لكل بطريرك، اكتب:
+   - اسم البطريرك
+   - درجة المطابقة (من 1-100)
+   - 3-5 أسباب مقنعة لماذا يناسب المستخدم
+   - نصيحة شخصية للمستخدم حول ما يمكن تعلمه من هذا البطريرك
+
+أجب بصيغة JSON بالتنسيق التالي:
+{
+  "recommendations": [
+    {
+      "name": "اسم البطريرك بالإنجليزية",
+      "arabicName": "اسم البطريرك بالعربية", 
+      "score": 95,
+      "reasons": ["السبب الأول", "السبب الثاني", "السبب الثالث"],
+      "personalAdvice": "نصيحة شخصية للمستخدم",
+      "highlights": ["نقطة مميزة 1", "نقطة مميزة 2"]
+    }
+  ],
+  "overallAdvice": "نصيحة عامة للمستخدم حول كيفية الاستفادة من هذه الاقتراحات"
+}
+
+تأكد من أن الإجابة باللغة العربية وتركز على التطبيق العملي والروحي.
+`;
+
+    const response = await client.models.generateContent({
+      model: "gemini-2.5-pro",
+      config: {
+        responseMimeType: "application/json",
+      },
+      contents: prompt,
+    });
+
+    const responseText = response.text;
+    if (!responseText) {
+      throw new Error('لم يتم الحصول على رد من الذكاء الاصطناعي');
+    }
+
+    const aiResult = JSON.parse(responseText);
+    
+    // Add full patriarch data to recommendations
+    const enhancedRecommendations = aiResult.recommendations.map((rec: any) => {
+      const fullPatriarch = patriarchs.find(p => 
+        p.name === rec.name || p.arabicName === rec.arabicName
+      );
+      
+      return {
+        ...rec,
+        patriarch: fullPatriarch,
+        aiGenerated: true
+      };
+    });
+
+    return {
+      ...aiResult,
+      recommendations: enhancedRecommendations,
+      source: 'gemini-ai',
+      timestamp: new Date().toISOString()
+    };
+
+  } catch (error) {
+    console.error('Error generating AI recommendations:', error);
+    throw new Error(`فشل في إنشاء الاقتراحات الذكية: ${error}`);
+  }
+}

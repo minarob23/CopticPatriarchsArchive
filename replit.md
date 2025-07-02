@@ -171,6 +171,7 @@ Changelog:
 - July 2, 2025. Added Smart Summary button to main homepage alongside the three main view buttons (Cards, Timeline, Charts)
 - July 2, 2025. Enhanced patriarch form with custom era and heresy addition features - users can now add new eras and heresies that aren't in predefined lists
 - July 2, 2025. Created smart recommendations engine - intelligent system that suggests patriarchs based on user interests including time periods, topics, personality traits, and heresies fought
+- July 2, 2025. Enhanced recommendations engine with Gemini AI integration - users can now get personalized patriarch suggestions through AI analysis of their written interests and preferences
 
 ## User Preferences
 

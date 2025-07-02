@@ -242,12 +242,12 @@ export default function Recommendations() {
         {/* Header */}
         <div className="text-center mb-8">
           <div className="flex items-center justify-center gap-3 mb-4">
-            <Brain className="h-8 w-8 text-purple-600" />
+            <Sparkles className="h-8 w-8 text-amber-600" />
             <h1 className="text-4xl font-bold text-gray-800">محرك الاقتراحات الذكي</h1>
             <Sparkles className="h-8 w-8 text-amber-600" />
           </div>
           <p className="text-lg text-gray-600 max-w-3xl mx-auto">
-            اكتشف البطاركة المناسبين لاهتماماتك بالذكاء الاصطناعي أو الفلترة التقليدية
+            اكتشف البطاركة المناسبين لاهتماماتك من خلال نظام الاقتراحات الذكي المخصص
           </p>
         </div>
 
@@ -297,6 +297,100 @@ export default function Recommendations() {
                         />
                         <Label htmlFor={interest.id} className="text-sm cursor-pointer">
                           {interest.label}
+                        </Label>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                <Separator />
+
+                {/* Topic Interest */}
+                <div>
+                  <Label className="text-sm font-medium flex items-center gap-2">
+                    <BookOpen className="h-4 w-4" />
+                    المجال المفضل
+                  </Label>
+                  <div className="mt-2 space-y-2">
+                    {topicInterests.map((interest) => (
+                      <div key={interest.id} className="flex items-center space-x-2">
+                        <Checkbox
+                          id={interest.id}
+                          checked={criteria.topicInterest === interest.value}
+                          onCheckedChange={(checked) => 
+                            updateCriteria("topicInterest", checked ? interest.value : "")
+                          }
+                        />
+                        <Label htmlFor={interest.id} className="text-sm cursor-pointer">
+                          {interest.label}
+                        </Label>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                <Separator />
+
+                {/* Personality Trait */}
+                <div>
+                  <Label className="text-sm font-medium flex items-center gap-2">
+                    <Shield className="h-4 w-4" />
+                    نوع الشخصية
+                  </Label>
+                  <div className="mt-2 space-y-2">
+                    {personalityTraits.map((trait) => (
+                      <div key={trait.id} className="flex items-center space-x-2">
+                        <Checkbox
+                          id={trait.id}
+                          checked={criteria.personalityTrait === trait.value}
+                          onCheckedChange={(checked) => 
+                            updateCriteria("personalityTrait", checked ? trait.value : "")
+                          }
+                        />
+                        <Label htmlFor={trait.id} className="text-sm cursor-pointer">
+                          {trait.label}
+                        </Label>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                <Separator />
+
+                {/* Eras */}
+                <div>
+                  <Label className="text-sm font-medium">العصور التاريخية</Label>
+                  <div className="mt-2 space-y-2 max-h-32 overflow-y-auto">
+                    {uniqueEras.map((era) => (
+                      <div key={era} className="flex items-center space-x-2">
+                        <Checkbox
+                          id={era}
+                          checked={criteria.selectedEras.includes(era)}
+                          onCheckedChange={(checked) => handleEraChange(era, !!checked)}
+                        />
+                        <Label htmlFor={era} className="text-sm cursor-pointer">
+                          {era}
+                        </Label>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                <Separator />
+
+                {/* Heresies */}
+                <div>
+                  <Label className="text-sm font-medium">البدع المحاربة</Label>
+                  <div className="mt-2 space-y-2 max-h-32 overflow-y-auto">
+                    {uniqueHeresies.map((heresy) => (
+                      <div key={heresy} className="flex items-center space-x-2">
+                        <Checkbox
+                          id={heresy}
+                          checked={criteria.selectedHeresies.includes(heresy)}
+                          onCheckedChange={(checked) => handleHeresyChange(heresy, !!checked)}
+                        />
+                        <Label htmlFor={heresy} className="text-sm cursor-pointer">
+                          {heresy}
                         </Label>
                       </div>
                     ))}
@@ -394,6 +488,7 @@ export default function Recommendations() {
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                       {aiRecommendations.recommendations.map((rec: any, index: number) => (
                         <div key={index} className="relative">
+                          {/* AI Score Badge */}
                           <div className="absolute top-4 left-4 z-10">
                             <Badge className="bg-purple-100 text-purple-800">
                               AI Score: {rec.score}%
@@ -402,6 +497,7 @@ export default function Recommendations() {
                           
                           {rec.patriarch && <PatriarchCard patriarch={rec.patriarch} />}
                           
+                          {/* AI Analysis */}
                           <Card className="mt-2 border-purple-200 bg-purple-50">
                             <CardContent className="p-4">
                               <div className="space-y-3">
@@ -484,6 +580,7 @@ export default function Recommendations() {
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                       {recommendations.map((rec, index) => (
                         <div key={rec.patriarch.id} className="relative">
+                          {/* Recommendation Score Badge */}
                           <div className="absolute top-4 left-4 z-10">
                             <Badge variant="secondary" className="bg-amber-100 text-amber-800">
                               #{index + 1}
@@ -492,6 +589,7 @@ export default function Recommendations() {
                           
                           <PatriarchCard patriarch={rec.patriarch} />
                           
+                          {/* Recommendation Reasons */}
                           {rec.reasons.length > 0 && (
                             <Card className="mt-2 border-amber-200 bg-amber-50">
                               <CardContent className="p-3">
@@ -499,7 +597,7 @@ export default function Recommendations() {
                                   لماذا يناسبك هذا البطريرك:
                                 </p>
                                 <div className="flex flex-wrap gap-1">
-                                  {rec.reasons.map((reason, idx) => (
+                                  {rec.reasons.map((reason: string, idx: number) => (
                                     <Badge key={idx} variant="outline" className="text-xs">
                                       {reason}
                                     </Badge>
