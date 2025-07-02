@@ -159,7 +159,6 @@ Changelog:
 - July 2, 2025. Fixed JSON parsing errors in heresiesFought data and resolved admin interface issues
 - July 2, 2025. Database now contains 118 authentic patriarch records with proper PostgreSQL integration
 - July 2, 2025. Fixed logout functionality to properly redirect to homepage after logout
-- July 2, 2025. Removed AI features (Smart Summary and Ask Patriarch) from UI to avoid API key errors
 
 ## User Preferences
 
