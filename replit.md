@@ -145,6 +145,9 @@ Changelog:
 - July 1, 2025. Updated database schema from SQLite to PostgreSQL for proper deployment
 - July 1, 2025. Fixed JSON parsing errors and imported complete database of 111 authentic Coptic Orthodox Patriarchs
 - July 1, 2025. All patriarch data now displayed in Arabic as requested with proper historical information
+- July 2, 2025. Added comprehensive charts dashboard to admin panel with detailed statistical analysis
+- July 2, 2025. Created home page charts component displaying key insights and visualizations
+- July 2, 2025. Implemented three-view system: cards, timeline, and charts/analytics accessible via buttons
 
 ## User Preferences
 

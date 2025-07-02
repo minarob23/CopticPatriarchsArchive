@@ -32,7 +32,7 @@ export default function Landing() {
   const [searchInput, setSearchInput] = useState("");
   const [selectedEra, setSelectedEra] = useState("all");
   const [selectedHeresies, setSelectedHeresies] = useState<string[]>([]);
-  const [viewMode, setViewMode] = useState<"cards" | "timeline">("cards");
+  const [viewMode, setViewMode] = useState<"cards" | "timeline" | "charts">("cards");
 
   const { data: patriarchs, isLoading } = useQuery<Patriarch[]>({
     queryKey: ["/api/patriarchs", { search: searchQuery, era: selectedEra !== "all" ? selectedEra : undefined }],
@@ -203,7 +203,7 @@ export default function Landing() {
                 )}
 
                 {/* View Mode Toggle */}
-                <div className="flex justify-center gap-4 mt-6">
+                <div className="flex justify-center gap-3 mt-6">
                   <Button
                     variant={viewMode === "cards" ? "default" : "outline"}
                     onClick={() => setViewMode("cards")}
@@ -219,6 +219,14 @@ export default function Landing() {
                   >
                     <i className="fas fa-clock ml-2"></i>
                     الخط الزمني
+                  </Button>
+                  <Button
+                    variant={viewMode === "charts" ? "default" : "outline"}
+                    onClick={() => setViewMode("charts")}
+                    className={`${viewMode === "charts" ? "bg-yellow-400 text-black" : "bg-white bg-opacity-20 text-white border-white border-opacity-30"} hover:bg-yellow-500 transition-all duration-200`}
+                  >
+                    <i className="fas fa-chart-pie ml-2"></i>
+                    الإحصائيات والتحليلات
                   </Button>
                 </div>
               </CardContent>
@@ -277,6 +285,10 @@ export default function Landing() {
         {/* Content Display */}
         {viewMode === "timeline" ? (
           <PatriarchTimeline patriarchs={filteredPatriarchs} />
+        ) : viewMode === "charts" ? (
+          patriarchs && patriarchs.length > 0 && (
+            <HomeCharts patriarchs={patriarchs} />
+          )
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8">
             {filteredPatriarchs.map((patriarch) => (
@@ -285,7 +297,7 @@ export default function Landing() {
           </div>
         )}
 
-        {filteredPatriarchs.length === 0 && (
+        {filteredPatriarchs.length === 0 && viewMode !== "charts" && (
           <Card className="text-center py-16">
             <CardContent>
               <i className="fas fa-search text-6xl text-gray-300 mb-4"></i>
@@ -295,11 +307,6 @@ export default function Landing() {
           </Card>
         )}
       </div>
-
-      {/* Charts Section */}
-      {patriarchs && patriarchs.length > 0 && (
-        <HomeCharts patriarchs={patriarchs} />
-      )}
 
       {/* Floating Ask Patriarch Button */}
       <Sheet>
