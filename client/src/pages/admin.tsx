@@ -171,7 +171,7 @@ export default function Admin() {
   };
 
   const handleExportData = () => {
-    if (!patriarchs || patriarchs.length === 0) {
+    if (!allPatriarchs || allPatriarchs.length === 0) {
       toast({
         title: "لا توجد بيانات",
         description: "لا توجد بيانات لتصديرها",
@@ -184,7 +184,7 @@ export default function Admin() {
     const headers = ["الاسم", "الرقم", "سنة البداية", "سنة النهاية", "العصر", "المساهمات", "البدع المحاربة"];
     const csvContent = [
       headers.join(","),
-      ...patriarchs.map(p => [
+      ...allPatriarchs.map(p => [
         `"${p.arabicName || p.name}"`,
         p.orderNumber,
         p.startYear,
