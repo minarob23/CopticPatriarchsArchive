@@ -13,8 +13,8 @@ export default function Login() {
   const { isAuthenticated, isLoading } = useAuth();
   const [, setLocation] = useLocation();
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [username, setUsername] = useState("");
-  const [password, setPassword] = useState("");
+  const [username, setUsername] = useState("admin");
+  const [password, setPassword] = useState("admin123");
   const [loginError, setLoginError] = useState("");
   const [isLoggingIn, setIsLoggingIn] = useState(false);
 
@@ -29,28 +29,32 @@ export default function Login() {
     setIsLoggingIn(true);
     setLoginError("");
 
-    // Demo credentials validation
-    if (username === "admin@coptic-patriarchs.org" && password === "CopticPatriarchs2025!") {
-      // Create a demo user session in localStorage for demo purposes
-      const demoUser = {
-        id: "demo-admin",
-        name: "مدير النظام",
-        email: "admin@coptic-patriarchs.org",
-        firstName: "المدير"
-      };
-      
-      localStorage.setItem('demo-auth', JSON.stringify(demoUser));
-      
-      // Simulate successful login
-      setTimeout(() => {
+    try {
+      const response = await fetch('/api/auth/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          username: username,
+          password: password
+        }),
+      });
+
+      const result = await response.json();
+
+      if (result.success) {
         setIsModalOpen(false);
         setLocation("/admin");
         setIsLoggingIn(false);
         // Force page reload to update auth state
         window.location.href = "/admin";
-      }, 1000);
-    } else {
-      setLoginError("اسم المستخدم أو كلمة المرور غير صحيحة");
+      } else {
+        setLoginError(result.message || "اسم المستخدم أو كلمة المرور غير صحيحة");
+        setIsLoggingIn(false);
+      }
+    } catch (error) {
+      setLoginError("حدث خطأ أثناء تسجيل الدخول");
       setIsLoggingIn(false);
     }
   };
