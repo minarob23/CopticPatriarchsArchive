@@ -38,7 +38,7 @@ export default function AskPatriarchChatbot() {
 
   const askPatriarchMutation = useMutation({
     mutationFn: async (question: string) => {
-      const response = await apiRequest('/api/ask-patriarch', 'POST', { question });
+      const response = await apiRequest('POST', '/api/ask-patriarch', { question });
       return response.json().then(data => data.answer);
     },
     onSuccess: (answer) => {
