@@ -211,34 +211,34 @@ export default function HomeCharts({ patriarchs }: HomeChartsProps) {
 
         {/* الرسوم البيانية الرئيسية */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-12">
-          {/* توزيع حسب العصور - رسم دائري محسن */}
+          {/* توزيع حسب العصور - رسم بياني عمودي محسن */}
           <Card className="shadow-xl">
             <CardHeader className="bg-gradient-to-r from-blue-600 to-purple-600 text-white">
               <CardTitle className="text-center font-amiri text-xl">
-                <i className="fas fa-chart-pie mr-2"></i>
+                <i className="fas fa-chart-bar mr-2"></i>
                 التوزيع الإجمالي للبطاركة
               </CardTitle>
             </CardHeader>
             <CardContent className="p-6">
-              <ResponsiveContainer width="100%" height={450}>
-                <PieChart>
-                  <Pie
-                    data={chartsData.topEras}
-                    cx="50%"
-                    cy="45%"
-                    labelLine={false}
-                    label={false}
-                    outerRadius={120}
-                    innerRadius={45}
-                    fill="#8884d8"
-                    dataKey="count"
-                    stroke="#fff"
-                    strokeWidth={3}
-                  >
-                    {chartsData.topEras.map((entry, index) => (
-                      <Cell key={`cell-${index}`} fill={entry.color} />
-                    ))}
-                  </Pie>
+              <ResponsiveContainer width="100%" height={400}>
+                <BarChart
+                  data={chartsData.topEras}
+                  margin={{ top: 20, right: 30, left: 20, bottom: 100 }}
+                >
+                  <CartesianGrid strokeDasharray="3 3" stroke="#e0e0e0" />
+                  <XAxis 
+                    dataKey="era"
+                    angle={-35}
+                    textAnchor="end"
+                    height={100}
+                    fontSize={10}
+                    interval={0}
+                    tick={false}
+                  />
+                  <YAxis 
+                    fontSize={12}
+                    tick={{ fill: '#666' }}
+                  />
                   <Tooltip 
                     formatter={(value) => [`${value} بطريرك`, 'العدد']}
                     labelFormatter={(label) => chartsData.topEras.find(d => d.era === label)?.fullEra || label}
@@ -252,16 +252,29 @@ export default function HomeCharts({ patriarchs }: HomeChartsProps) {
                       fontWeight: 'bold'
                     }}
                   />
-                  <Legend 
-                    wrapperStyle={{ 
-                      paddingTop: '25px',
-                      fontSize: '14px',
-                      fontWeight: 'bold'
-                    }}
-                    iconType="rect"
-                  />
-                </PieChart>
+                  <Bar dataKey="count" radius={[8, 8, 0, 0]}>
+                    {chartsData.topEras.map((entry, index) => (
+                      <Cell key={`cell-${index}`} fill={entry.color} />
+                    ))}
+                  </Bar>
+                </BarChart>
               </ResponsiveContainer>
+              
+              {/* قائمة العصور خارج الرسم البياني */}
+              <div className="mt-6 grid grid-cols-2 lg:grid-cols-3 gap-3">
+                {chartsData.topEras.map((item, index) => (
+                  <div key={index} className="flex items-center space-x-reverse space-x-2 p-3 bg-gradient-to-r from-gray-50 to-blue-50 rounded-lg border hover:shadow-md transition-all duration-200">
+                    <div 
+                      className="w-5 h-5 rounded-full shadow-sm"
+                      style={{ backgroundColor: item.color }}
+                    ></div>
+                    <div className="flex-1">
+                      <span className="text-sm font-semibold text-gray-800">{item.fullEra}</span>
+                      <div className="text-xs text-gray-600 font-medium">{item.count} بطريرك</div>
+                    </div>
+                  </div>
+                ))}
+              </div>
             </CardContent>
           </Card>
 
