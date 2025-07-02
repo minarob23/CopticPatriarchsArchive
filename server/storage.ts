@@ -71,7 +71,7 @@ export class DatabaseStorage implements IStorage {
     era?: string;
     heresies?: string[];
   }): Promise<Patriarch[]> {
-    const conditions = [eq(patriarchs.isActive, true)];
+    const conditions = [eq(patriarchs.active, true)];
 
     if (filters?.searchQuery) {
       conditions.push(ilike(patriarchs.name, `%${filters.searchQuery}%`));
@@ -100,7 +100,7 @@ export class DatabaseStorage implements IStorage {
     const [patriarch] = await db
       .select()
       .from(patriarchs)
-      .where(and(eq(patriarchs.id, id), eq(patriarchs.isActive, true)));
+      .where(and(eq(patriarchs.id, id), eq(patriarchs.active, true)));
     return patriarch;
   }
 
@@ -114,8 +114,8 @@ export class DatabaseStorage implements IStorage {
       era: patriarch.era,
       contributions: patriarch.contributions,
       biography: patriarch.biography,
-      heresiesFought: JSON.stringify(patriarch.heresiesFought || []),
-      isActive: patriarch.isActive ?? true
+      heresiesFought: patriarch.heresiesFought || [],
+      active: patriarch.active ?? true
     };
 
     const [created] = await db
@@ -129,7 +129,7 @@ export class DatabaseStorage implements IStorage {
     const [updated] = await db
       .update(patriarchs)
       .set({ ...patriarch, updatedAt: new Date() })
-      .where(and(eq(patriarchs.id, id), eq(patriarchs.isActive, true)))
+      .where(and(eq(patriarchs.id, id), eq(patriarchs.active, true)))
       .returning();
     return updated;
   }
@@ -137,7 +137,7 @@ export class DatabaseStorage implements IStorage {
   async deletePatriarch(id: number): Promise<boolean> {
     const [deleted] = await db
       .update(patriarchs)
-      .set({ isActive: false, updatedAt: new Date() })
+      .set({ active: false, updatedAt: new Date() })
       .where(eq(patriarchs.id, id))
       .returning();
     return !!deleted;
@@ -151,7 +151,7 @@ export class DatabaseStorage implements IStorage {
       .from(patriarchs)
       .where(
         and(
-          eq(patriarchs.isActive, true),
+          eq(patriarchs.active, true),
           or(
             ilike(patriarchs.name, `%${searchName}%`),
             ilike(patriarchs.arabicName, `%${searchName}%`)
@@ -171,7 +171,7 @@ export class DatabaseStorage implements IStorage {
     const allPatriarchs = await db
       .select()
       .from(patriarchs)
-      .where(eq(patriarchs.isActive, true));
+      .where(eq(patriarchs.active, true));
 
     const total = allPatriarchs.length;
     const byEra: Record<string, number> = {};
