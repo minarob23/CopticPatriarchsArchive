@@ -228,6 +228,14 @@ export default function Landing() {
                     <i className="fas fa-chart-pie ml-2"></i>
                     الإحصائيات والتحليلات
                   </Button>
+                  <Button
+                    variant="outline"
+                    onClick={() => setLocation("/recommendations")}
+                    className="bg-gradient-to-r from-amber-500 to-orange-500 text-white border-none hover:from-amber-600 hover:to-orange-600 transition-all duration-200 transform hover:scale-105"
+                  >
+                    <i className="fas fa-magic ml-2"></i>
+                    الاقتراحات الذكية
+                  </Button>
                 </div>
               </CardContent>
             </Card>
@@ -369,6 +377,21 @@ export default function Landing() {
                       <div>
                         <h4 className="font-medium text-white">الملخص الذكي</h4>
                         <p className="text-sm text-blue-100">ملخص ذكي بالذكاء الاصطناعي</p>
+                      </div>
+                    </div>
+                  </button>
+
+                  <button
+                    onClick={() => setLocation("/recommendations")}
+                    className="bg-white bg-opacity-10 backdrop-blur-sm rounded-lg p-4 hover:bg-opacity-20 transition-all duration-300 border border-white border-opacity-20 group w-full text-right"
+                  >
+                    <div className="flex items-center space-x-3 space-x-reverse">
+                      <div className="w-10 h-10 bg-gradient-to-r from-amber-400 to-orange-400 rounded-lg flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
+                        <i className="fas fa-magic text-white"></i>
+                      </div>
+                      <div>
+                        <h4 className="font-medium text-white">الاقتراحات الذكية</h4>
+                        <p className="text-sm text-blue-100">اكتشف البطاركة حسب اهتمامك</p>
                       </div>
                     </div>
                   </button>

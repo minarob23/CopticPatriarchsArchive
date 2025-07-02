@@ -13,6 +13,7 @@ import Contact from "@/pages/contact";
 import References from "@/pages/references";
 import ChurchHistory from "@/pages/church-history";
 import SmartSummary from "@/pages/smart-summary";
+import Recommendations from "@/pages/recommendations";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { useAuth } from "@/hooks/useAuth";
 import Loading from "@/components/ui/loading";
@@ -31,6 +32,7 @@ function Router() {
       <Route path="/references" component={References} />
       <Route path="/church-history" component={ChurchHistory} />
       <Route path="/smart-summary" component={SmartSummary} />
+      <Route path="/recommendations" component={Recommendations} />
       <Route component={NotFound} />
     </Switch>
   );
