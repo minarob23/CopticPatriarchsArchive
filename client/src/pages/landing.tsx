@@ -164,6 +164,17 @@ export default function Landing() {
                       <SheetTrigger asChild>
                         <Button
                           className="w-full py-4 text-lg bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white rounded-xl shadow-lg transform hover:scale-105 transition-all duration-300"
+                          onClick={() => {
+                            // Send search input to chatbot if available
+                            if (searchInput.trim()) {
+                              setTimeout(() => {
+                                const event = new CustomEvent('sendToChatbot', { 
+                                  detail: { message: searchInput.trim() } 
+                                });
+                                window.dispatchEvent(event);
+                              }, 500);
+                            }
+                          }}
                         >
                           <i className="fas fa-brain ml-2"></i>
                           بحث ذكي

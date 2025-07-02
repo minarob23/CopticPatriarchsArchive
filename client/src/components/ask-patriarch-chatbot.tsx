@@ -36,6 +36,32 @@ export default function AskPatriarchChatbot() {
     scrollToBottom();
   }, [messages]);
 
+  // Listen for messages from search buttons
+  useEffect(() => {
+    const handleSendToChatbot = (event: CustomEvent) => {
+      const message = event.detail.message;
+      if (message && message.trim()) {
+        setQuestion(message);
+        // Auto-submit the question
+        setTimeout(() => {
+          const userMessage: Message = {
+            id: Date.now().toString(),
+            type: 'user',
+            content: message,
+            timestamp: new Date()
+          };
+          setMessages(prev => [...prev, userMessage]);
+          askPatriarchMutation.mutate(message);
+        }, 100);
+      }
+    };
+
+    window.addEventListener('sendToChatbot', handleSendToChatbot as EventListener);
+    return () => {
+      window.removeEventListener('sendToChatbot', handleSendToChatbot as EventListener);
+    };
+  }, [askPatriarchMutation]);
+
   const askPatriarchMutation = useMutation({
     mutationFn: async (question: string) => {
       const response = await apiRequest('POST', '/api/ask-patriarch', { question });
