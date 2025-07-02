@@ -9,6 +9,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Badge } from "@/components/ui/badge";
 import PatriarchTimeline from "@/components/patriarch-timeline";
 import PatriarchCard from "@/components/patriarch-card";
+import SmartSummaryModal from "@/components/smart-summary-modal";
 import Loading from "@/components/ui/loading";
 import type { Patriarch } from "@shared/schema";
 import { getArabicHeresyName } from "@shared/patriarch-names";
@@ -58,6 +59,7 @@ export default function Home() {
   const [selectedEra, setSelectedEra] = useState("all");
   const [selectedHeresies, setSelectedHeresies] = useState<string[]>([]);
   const [viewMode, setViewMode] = useState<"cards" | "timeline">("cards");
+  const [showSmartSummary, setShowSmartSummary] = useState(false);
 
   const { data: patriarchs, isLoading } = useQuery<Patriarch[]>({
     queryKey: ["/api/patriarchs", { search: searchQuery, era: selectedEra !== "all" ? selectedEra : undefined }],
@@ -275,26 +277,37 @@ export default function Home() {
               </div>
             </div>
 
-            {isAuthenticated && (
+            <div className="flex gap-3">
+              {/* زر الملخص الذكي */}
               <Button
-                onClick={() => setLocation("/admin")}
-                className="bg-gradient-to-r from-blue-600 to-purple-600 text-white hover:from-blue-700 hover:to-purple-700"
+                onClick={() => setShowSmartSummary(true)}
+                className="bg-gradient-to-r from-green-500 to-teal-600 text-white hover:from-green-600 hover:to-teal-700 shadow-lg transform hover:scale-105 transition-all duration-300"
               >
-                <i className="fas fa-cog ml-2"></i>
-                لوحة الإدارة
+                <i className="fas fa-brain ml-2"></i>
+                ملخص ذكي
               </Button>
-            )}
 
-            {!isAuthenticated && (
-              <Button
-                onClick={() => setLocation("/login")}
-                variant="outline"
-                className="border-blue-600 text-blue-600 hover:bg-blue-600 hover:text-white"
-              >
-                <i className="fas fa-sign-in-alt ml-2"></i>
-                دخول الإدارة
-              </Button>
-            )}
+              {isAuthenticated && (
+                <Button
+                  onClick={() => setLocation("/admin")}
+                  className="bg-gradient-to-r from-blue-600 to-purple-600 text-white hover:from-blue-700 hover:to-purple-700"
+                >
+                  <i className="fas fa-cog ml-2"></i>
+                  لوحة الإدارة
+                </Button>
+              )}
+
+              {!isAuthenticated && (
+                <Button
+                  onClick={() => setLocation("/login")}
+                  variant="outline"
+                  className="border-blue-600 text-blue-600 hover:bg-blue-600 hover:text-white"
+                >
+                  <i className="fas fa-sign-in-alt ml-2"></i>
+                  دخول الإدارة
+                </Button>
+              )}
+            </div>
           </div>
         </div>
 
@@ -319,6 +332,12 @@ export default function Home() {
           </Card>
         )}
       </div>
+
+      {/* Smart Summary Modal */}
+      <SmartSummaryModal 
+        isOpen={showSmartSummary} 
+        onClose={() => setShowSmartSummary(false)} 
+      />
     </div>
   );
 }
