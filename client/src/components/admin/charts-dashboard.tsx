@@ -279,16 +279,16 @@ export default function ChartsDashboard({ patriarchs }: ChartsDashboardProps) {
             <CardTitle className="text-center font-amiri text-lg">توزيع البطاركة عبر العصور التاريخية</CardTitle>
           </CardHeader>
           <CardContent>
-            <ResponsiveContainer width="100%" height={450}>
+            <ResponsiveContainer width="100%" height={500}>
               <PieChart>
                 <Pie
                   data={chartsData.eraChartData}
                   cx="50%"
-                  cy="50%"
-                  labelLine={true}
-                  label={({ era, count, percent }) => `${era}\n${count} بطريرك\n(${(percent * 100).toFixed(1)}%)`}
-                  outerRadius={140}
-                  innerRadius={60}
+                  cy="45%"
+                  labelLine={false}
+                  label={false}
+                  outerRadius={120}
+                  innerRadius={50}
                   fill="#8884d8"
                   dataKey="count"
                   stroke="#fff"
@@ -302,19 +302,22 @@ export default function ChartsDashboard({ patriarchs }: ChartsDashboardProps) {
                   formatter={(value, name) => [`${value} بطريرك`, 'العدد']}
                   labelFormatter={(label) => chartsData.eraChartData.find(d => d.era === label)?.fullEra || label}
                   contentStyle={{
-                    backgroundColor: 'rgba(255, 255, 255, 0.95)',
-                    border: '2px solid #e0e0e0',
+                    backgroundColor: 'rgba(255, 255, 255, 0.98)',
+                    border: '2px solid #3b82f6',
                     borderRadius: '12px',
-                    fontSize: '14px',
+                    fontSize: '16px',
                     direction: 'rtl',
-                    boxShadow: '0 4px 12px rgba(0,0,0,0.1)'
+                    boxShadow: '0 8px 16px rgba(0,0,0,0.15)',
+                    fontWeight: 'bold'
                   }}
                 />
                 <Legend 
                   wrapperStyle={{ 
-                    paddingTop: '20px',
-                    fontSize: '12px'
+                    paddingTop: '30px',
+                    fontSize: '14px',
+                    fontWeight: 'bold'
                   }}
+                  iconType="rect"
                 />
               </PieChart>
             </ResponsiveContainer>
@@ -378,25 +381,26 @@ export default function ChartsDashboard({ patriarchs }: ChartsDashboardProps) {
             <CardTitle className="text-center font-amiri text-lg">أطول فترات الخدمة للبطاركة</CardTitle>
           </CardHeader>
           <CardContent>
-            <ResponsiveContainer width="100%" height={500}>
+            <ResponsiveContainer width="100%" height={600}>
               <BarChart 
-                data={chartsData.serviceData.slice(0, 12)} 
+                data={chartsData.serviceData.slice(0, 10)} 
                 layout="vertical"
-                margin={{ top: 20, right: 30, left: 20, bottom: 5 }}
+                margin={{ top: 20, right: 30, left: 30, bottom: 20 }}
               >
                 <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
                 <XAxis 
                   type="number" 
-                  fontSize={12}
-                  tick={{ fill: '#666' }}
+                  fontSize={14}
+                  tick={{ fill: '#666', fontSize: 14 }}
                 />
                 <YAxis 
                   dataKey="name" 
                   type="category" 
-                  width={180}
-                  fontSize={10}
+                  width={220}
+                  fontSize={13}
                   interval={0}
-                  tick={{ fill: '#333' }}
+                  tick={{ fill: '#333', fontSize: 13, fontWeight: 'bold' }}
+                  tickFormatter={(value) => value.length > 25 ? value.substring(0, 25) + "..." : value}
                 />
                 <Tooltip 
                   formatter={(value, name, props) => [`${value} سنة`, 'مدة الخدمة']}
@@ -414,7 +418,7 @@ export default function ChartsDashboard({ patriarchs }: ChartsDashboardProps) {
                   dataKey="duration" 
                   radius={[0, 8, 8, 0]}
                 >
-                  {chartsData.serviceData.slice(0, 12).map((entry, index) => (
+                  {chartsData.serviceData.slice(0, 10).map((entry, index) => (
                     <Cell 
                       key={`cell-${index}`} 
                       fill={
@@ -437,24 +441,25 @@ export default function ChartsDashboard({ patriarchs }: ChartsDashboardProps) {
             <CardTitle className="text-center font-amiri text-lg">البدع الأكثر محاربة</CardTitle>
           </CardHeader>
           <CardContent>
-            <ResponsiveContainer width="100%" height={500}>
+            <ResponsiveContainer width="100%" height={600}>
               <BarChart 
-                data={chartsData.heresiesChartData} 
-                margin={{ top: 20, right: 30, left: 20, bottom: 120 }}
+                data={chartsData.heresiesChartData.slice(0, 8)} 
+                margin={{ top: 20, right: 30, left: 30, bottom: 160 }}
               >
                 <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
                 <XAxis 
                   dataKey="heresy" 
-                  angle={-45}
+                  angle={-35}
                   textAnchor="end"
-                  height={120}
-                  fontSize={10}
+                  height={160}
+                  fontSize={12}
                   interval={0}
-                  tick={{ fill: '#333' }}
+                  tick={{ fill: '#333', fontSize: 12, fontWeight: 'bold' }}
+                  tickFormatter={(value) => value.length > 18 ? value.substring(0, 18) + "..." : value}
                 />
                 <YAxis 
-                  fontSize={12}
-                  tick={{ fill: '#666' }}
+                  fontSize={14}
+                  tick={{ fill: '#666', fontSize: 14 }}
                 />
                 <Tooltip 
                   formatter={(value) => [`${value} بطريرك`, 'عدد المحاربين']}
@@ -469,7 +474,7 @@ export default function ChartsDashboard({ patriarchs }: ChartsDashboardProps) {
                   }}
                 />
                 <Bar dataKey="count" radius={[6, 6, 0, 0]}>
-                  {chartsData.heresiesChartData.map((entry, index) => (
+                  {chartsData.heresiesChartData.slice(0, 8).map((entry, index) => (
                     <Cell 
                       key={`cell-${index}`} 
                       fill={
@@ -478,7 +483,9 @@ export default function ChartsDashboard({ patriarchs }: ChartsDashboardProps) {
                         index === 2 ? '#d97706' : 
                         index === 3 ? '#ca8a04' : 
                         index === 4 ? '#65a30d' : 
-                        '#6366f1'
+                        index === 5 ? '#6366f1' :
+                        index === 6 ? '#8b5cf6' :
+                        '#ef4444'
                       } 
                     />
                   ))}

@@ -220,20 +220,20 @@ export default function HomeCharts({ patriarchs }: HomeChartsProps) {
               </CardTitle>
             </CardHeader>
             <CardContent className="p-6">
-              <ResponsiveContainer width="100%" height={400}>
+              <ResponsiveContainer width="100%" height={450}>
                 <PieChart>
                   <Pie
                     data={chartsData.topEras}
                     cx="50%"
-                    cy="50%"
-                    labelLine={true}
-                    label={({ era, count, percent }) => `${era}\n${count} بطريرك\n(${(percent * 100).toFixed(1)}%)`}
-                    outerRadius={130}
-                    innerRadius={50}
+                    cy="45%"
+                    labelLine={false}
+                    label={false}
+                    outerRadius={120}
+                    innerRadius={45}
                     fill="#8884d8"
                     dataKey="count"
                     stroke="#fff"
-                    strokeWidth={2}
+                    strokeWidth={3}
                   >
                     {chartsData.topEras.map((entry, index) => (
                       <Cell key={`cell-${index}`} fill={entry.color} />
@@ -243,18 +243,22 @@ export default function HomeCharts({ patriarchs }: HomeChartsProps) {
                     formatter={(value) => [`${value} بطريرك`, 'العدد']}
                     labelFormatter={(label) => chartsData.topEras.find(d => d.era === label)?.fullEra || label}
                     contentStyle={{
-                      backgroundColor: 'rgba(255, 255, 255, 0.95)',
-                      border: '2px solid #e0e0e0',
-                      borderRadius: '10px',
-                      fontSize: '14px',
-                      direction: 'rtl'
+                      backgroundColor: 'rgba(255, 255, 255, 0.98)',
+                      border: '2px solid #3b82f6',
+                      borderRadius: '12px',
+                      fontSize: '16px',
+                      direction: 'rtl',
+                      boxShadow: '0 8px 16px rgba(0,0,0,0.15)',
+                      fontWeight: 'bold'
                     }}
                   />
                   <Legend 
                     wrapperStyle={{ 
-                      paddingTop: '15px',
-                      fontSize: '12px'
+                      paddingTop: '25px',
+                      fontSize: '14px',
+                      fontWeight: 'bold'
                     }}
+                    iconType="rect"
                   />
                 </PieChart>
               </ResponsiveContainer>
