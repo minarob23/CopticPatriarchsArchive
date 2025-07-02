@@ -265,18 +265,21 @@ export default function Home() {
                   </Button>
                 </div>
 
-                {/* Smart Summary Button - Prominent Display */}
+                {/* Smart Summary Button - More Prominent Display */}
                 <div className="mt-8 text-center">
-                  <Button
-                    onClick={() => setShowSmartSummary(true)}
-                    size="lg"
-                    className="bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white shadow-2xl border-2 border-green-400 hover:border-green-300 transform hover:scale-110 transition-all duration-300 px-12 py-6 text-xl font-bold rounded-2xl animate-pulse hover:animate-none"
-                  >
-                    <i className="fas fa-brain ml-3 text-2xl"></i>
-                    🤖 الملخص الذكي بالذكاء الاصطناعي
-                  </Button>
-                  <p className="text-green-200 text-sm mt-2 font-medium">
-                    احصل على ملخص ذكي ومفصل عن أي بطريرك باستخدام تقنية Gemini AI
+                  <div className="bg-gradient-to-r from-green-400 to-emerald-500 p-1 rounded-3xl shadow-2xl transform hover:scale-105 transition-all duration-300">
+                    <Button
+                      onClick={() => setShowSmartSummary(true)}
+                      size="lg"
+                      className="bg-gradient-to-r from-green-600 to-emerald-700 hover:from-green-700 hover:to-emerald-800 text-white shadow-2xl border-0 transform hover:scale-105 transition-all duration-300 px-16 py-8 text-2xl font-bold rounded-3xl w-full"
+                    >
+                      <i className="fas fa-brain ml-4 text-3xl animate-pulse"></i>
+                      🤖 الملخص الذكي بالذكاء الاصطناعي
+                      <i className="fas fa-sparkles mr-4 text-yellow-300"></i>
+                    </Button>
+                  </div>
+                  <p className="text-green-100 text-lg mt-4 font-bold bg-black bg-opacity-20 rounded-xl px-6 py-3 mx-auto max-w-md">
+                    ✨ احصل على ملخص ذكي ومفصل عن أي بطريرك باستخدام تقنية Gemini AI
                   </p>
                 </div>
               </CardContent>
@@ -350,12 +353,12 @@ export default function Home() {
               </Button>
 
               <Button
-                variant="outline"
                 onClick={() => setShowSmartSummary(true)}
-                className="bg-gradient-to-r from-purple-600 to-indigo-600 text-white border-purple-600 hover:from-purple-700 hover:to-indigo-700 px-6 py-3 shadow-md hover:shadow-lg transition-all duration-300"
+                className="bg-gradient-to-r from-green-500 to-emerald-600 text-white hover:from-green-600 hover:to-emerald-700 px-8 py-4 shadow-lg hover:shadow-xl transition-all duration-300 text-lg font-bold border-2 border-green-400 hover:border-green-300 transform hover:scale-105"
               >
-                <i className="fas fa-brain ml-2"></i>
-                الملخص الذكي
+                <i className="fas fa-brain ml-2 text-xl animate-pulse"></i>
+                🤖 الملخص الذكي
+                <i className="fas fa-sparkles mr-2 text-yellow-300"></i>
               </Button>
             </div>
 
