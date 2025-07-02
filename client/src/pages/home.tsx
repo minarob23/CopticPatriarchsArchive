@@ -229,22 +229,41 @@ export default function Home() {
                 )}
 
                 {/* View Mode Toggle */}
-                <div className="flex justify-center gap-4 mt-6">
+                <div className="flex justify-center gap-4 mt-6 flex-wrap">
                   <Button
                     variant={viewMode === "cards" ? "default" : "outline"}
                     onClick={() => setViewMode("cards")}
-                    className={`${viewMode === "cards" ? "bg-yellow-400 text-black" : "bg-white bg-opacity-20 text-white border-white border-opacity-30"} hover:bg-yellow-500 transition-all duration-200`}
+                    className={`${viewMode === "cards" ? "bg-blue-600 text-white" : "bg-white bg-opacity-20 text-blue-600 border-blue-600"} px-6 py-3`}
                   >
                     <i className="fas fa-th-large ml-2"></i>
-                    عرض بطاقات
+                    البطاقات
                   </Button>
+
                   <Button
                     variant={viewMode === "timeline" ? "default" : "outline"}
                     onClick={() => setViewMode("timeline")}
-                    className={`${viewMode === "timeline" ? "bg-yellow-400 text-black" : "bg-white bg-opacity-20 text-white border-white border-opacity-30"} hover:bg-yellow-500 transition-all duration-200`}
+                    className={`${viewMode === "timeline" ? "bg-purple-600 text-white" : "bg-white bg-opacity-20 text-purple-600 border-purple-600"} px-6 py-3`}
                   >
-                    <i className="fas fa-clock ml-2"></i>
+                    <i className="fas fa-history ml-2"></i>
                     الخط الزمني
+                  </Button>
+
+                  <Button
+                    variant={viewMode === "charts" ? "default" : "outline"}
+                    onClick={() => setViewMode("charts")}
+                    className={`${viewMode === "charts" ? "bg-orange-600 text-white" : "bg-white bg-opacity-20 text-orange-600 border-orange-600"} px-6 py-3`}
+                  >
+                    <i className="fas fa-chart-bar ml-2"></i>
+                    الإحصائيات والتحليلات
+                  </Button>
+
+                  {/* زر الملخص الذكي */}
+                  <Button
+                    onClick={() => setShowSmartSummary(true)}
+                    className="bg-gradient-to-r from-green-500 to-teal-600 text-white hover:from-green-600 hover:to-teal-700 shadow-lg transform hover:scale-105 transition-all duration-300 px-6 py-3"
+                  >
+                    <i className="fas fa-brain ml-2"></i>
+                    ملخص ذكي
                   </Button>
                 </div>
               </CardContent>
