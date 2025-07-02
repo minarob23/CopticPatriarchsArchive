@@ -140,12 +140,18 @@ export default function PatriarchTable({ patriarchs, onEdit }: PatriarchTablePro
                 <td className="px-6 py-4 text-sm text-gray-900">
                   <div className="flex flex-wrap gap-1">
                     {(() => {
-                      const heresies = Array.isArray(patriarch.heresiesFought) 
-                        ? patriarch.heresiesFought 
-                        : JSON.parse(patriarch.heresiesFought || '[]');
+                      let heresies = [];
+                      try {
+                        heresies = Array.isArray(patriarch.heresiesFought) 
+                          ? patriarch.heresiesFought 
+                          : JSON.parse(patriarch.heresiesFought || '[]');
+                      } catch (error) {
+                        console.warn('Failed to parse heresiesFought for patriarch:', patriarch.name);
+                        heresies = [];
+                      }
                       return (
                         <>
-                          {heresies.slice(0, 2).map((heresy, index) => (
+                          {heresies.slice(0, 2).map((heresy: string, index: number) => (
                             <Badge key={index} variant="outline" className="text-xs">
                               {getArabicHeresyName(heresy)}
                             </Badge>
