@@ -81,14 +81,30 @@ export async function generateSmartSummary(patriarch: any, tone: string): Promis
     throw new Error("Gemini API key not configured");
   }
 
-  // Read additional CSV data
-  let csvData = '';
+  // Read CSV data with better parsing
+  let csvPatriarchData = '';
   try {
     const fs = await import('fs');
     const path = await import('path');
-    const csvPath = path.join(process.cwd(), 'patriarchs_data.csv');
+    const csvPath = path.join(process.cwd(), 'attached_assets/coptic_patriarchs_2025_1751464991874.csv');
     if (fs.existsSync(csvPath)) {
-      csvData = fs.readFileSync(csvPath, 'utf-8');
+      const csvContent = fs.readFileSync(csvPath, 'utf-8');
+      const lines = csvContent.split('\n');
+      
+      // Find matching patriarch in CSV
+      for (const line of lines) {
+        if (line.includes(patriarch.name) || 
+            line.includes(patriarch.arabicName || '') ||
+            line.includes(patriarch.orderNumber?.toString() || '')) {
+          csvPatriarchData = line;
+          break;
+        }
+      }
+      
+      // If no exact match, provide general CSV context
+      if (!csvPatriarchData) {
+        csvPatriarchData = csvContent.substring(0, 3000);
+      }
     }
   } catch (error) {
     console.log('CSV file not found, using database data only');
@@ -102,40 +118,51 @@ export async function generateSmartSummary(patriarch: any, tone: string): Promis
 
   const instruction = toneInstructions[tone as keyof typeof toneInstructions] || toneInstructions.easy;
 
-  const csvInfo = csvData ? `\n\nمصادر إضافية من ملف البيانات:\n${csvData.substring(0, 2000)}` : '';
+  const heresiesFought = (() => {
+    try {
+      if (Array.isArray(patriarch.heresiesFought)) {
+        return patriarch.heresiesFought.join(', ');
+      }
+      if (typeof patriarch.heresiesFought === 'string') {
+        const parsed = JSON.parse(patriarch.heresiesFought);
+        return Array.isArray(parsed) ? parsed.join(', ') : patriarch.heresiesFought;
+      }
+      return 'غير متوفر';
+    } catch (error) {
+      return patriarch.heresiesFought || 'غير متوفر';
+    }
+  })();
 
   const prompt = `
-اكتب ملخصاً ذكياً ومفصلاً عن البطريرك التالي:
+أنت خبير في تاريخ الكنيسة القبطية الأرثوذكسية. اكتب ملخصاً ذكياً ومفصلاً عن البطريرك التالي:
 
-الاسم: ${patriarch.name}
-الاسم العربي: ${patriarch.arabicName || "غير متوفر"}
-البابا رقم: ${patriarch.orderNumber}
-فترة الخدمة: ${patriarch.startYear} - ${patriarch.endYear || "الآن"}
-العصر: ${patriarch.era}
-المساهمات: ${patriarch.contributions}
-السيرة الذاتية: ${patriarch.biography || "غير متوفر"}
-البدع التي حاربها: ${(() => {
-  try {
-    const heresies = Array.isArray(patriarch.heresiesFought) 
-      ? patriarch.heresiesFought 
-      : JSON.parse(patriarch.heresiesFought || '[]');
-    return heresies.join(', ') || 'غير متوفر';
-  } catch (error) {
-    return 'غير متوفر';
-  }
-})()}${csvInfo}
+معلومات البطريرك من قاعدة البيانات:
+- الاسم: ${patriarch.name}
+- الاسم العربي: ${patriarch.arabicName || "غير متوفر"}
+- رقم البطريرك: ${patriarch.orderNumber}
+- فترة الخدمة: ${patriarch.startYear} - ${patriarch.endYear || "الآن"}
+- العصر: ${patriarch.era}
+- المساهمات: ${patriarch.contributions}
+- السيرة الذاتية: ${patriarch.biography || "غير متوفر"}
+- البدع التي حاربها: ${heresiesFought}
+
+${csvPatriarchData ? `معلومات إضافية من ملف البيانات التاريخية:\n${csvPatriarchData}\n` : ''}
 
 المطلوب:
 - ${instruction}
 - اكتب ملخصاً شاملاً يغطي حياته وإنجازاته الروحية والكنسية
 - اذكر أهم المساهمات والأحداث في فترة خدمته
-- أضف معلومات عن السياق التاريخي للفترة
-- اذكر البدع التي حاربها وكيف دافع عن الإيمان
-- اكتب بطريقة شيقة وجذابة
-- استخدم المعلومات من ملف البيانات الإضافية إذا كانت متوفرة لإثراء الملخص
+- أضف معلومات عن السياق التاريخي للفترة التي عاش فيها
+- اذكر البدع التي حاربها وكيف دافع عن الإيمان الأرثوذكسي
+- اكتب بطريقة شيقة وجذابة تجعل القارئ يفهم أهمية هذا البطريرك
+- استخدم المعلومات المتاحة من المصادر لإثراء الملخص
+- إذا كانت المعلومات محدودة، اكتب عن السياق التاريخي العام لفترته
 
-طول الملخص: حوالي 300-500 كلمة
-اللغة: العربية فقط
+متطلبات الكتابة:
+- طول الملخص: حوالي 300-500 كلمة
+- اللغة: العربية فقط
+- أسلوب متدرج ومنظم
+- معلومات دقيقة ومفيدة
 `;
 
   const requestBody = {

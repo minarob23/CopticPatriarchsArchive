@@ -196,33 +196,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(404).json({ error: "لم يتم العثور على البطريرك" });
       }
 
-      // Generate summary using Gemini AI
-      let tonePrompt = "";
-      if (tone === "kids") {
-        tonePrompt = "استخدم لغة بسيطة ومناسبة للأطفال مع الرموز التعبيرية والأمثلة السهلة";
-      } else if (tone === "academic") {
-        tonePrompt = "استخدم لغة أكاديمية متخصصة ومصطلحات تاريخية دقيقة";
-      } else {
-        tonePrompt = "استخدم لغة سهلة ومبسطة للقارئ العادي";
-      }
-
-      const patriarchInfo = `اسم البطريرك: ${patriarch.arabicName || patriarch.name}
-رقم البطريرك: ${patriarch.orderNumber}
-العصر: ${patriarch.era}
-سنة البداية: ${patriarch.startYear}
-سنة النهاية: ${patriarch.endYear || 'حتى الآن'}
-المساهمات: ${patriarch.contributions}
-السيرة الذاتية: ${patriarch.biography || 'غير متوفرة'}
-البدع المحاربة: ${Array.isArray(patriarch.heresiesFought) ? patriarch.heresiesFought.join(', ') : patriarch.heresiesFought}`;
-
-      const prompt = `اكتب ملخصاً ذكياً عن البطريرك التالي:
-${patriarchInfo}
-
-${tonePrompt}
-
-يجب أن يكون الملخص شاملاً ومفيداً ويحتوي على المعلومات المهمة حول حياة وإنجازات هذا البطريرك.`;
-
-      const summary = await generateSmartSummary(name, tone);
+      // Generate summary using Gemini AI with the patriarch object
+      const summary = await generateSmartSummary(patriarch, tone || 'easy');
 
       res.json({
         summary,
