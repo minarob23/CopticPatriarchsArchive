@@ -139,8 +139,8 @@ export default function Landing() {
                     </div>
                   </div>
 
-                  {/* Search Button */}
-                  <div>
+                  {/* Search Buttons */}
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     <Button
                       onClick={handleSearch}
                       className="w-full py-4 text-lg bg-gradient-to-r from-yellow-500 to-orange-500 hover:from-yellow-600 hover:to-orange-600 text-white rounded-xl shadow-lg transform hover:scale-105 transition-all duration-300"
@@ -154,9 +154,17 @@ export default function Landing() {
                       ) : (
                         <>
                           <i className="fas fa-search ml-2"></i>
-                          بحث
+                          بحث عادي
                         </>
                       )}
+                    </Button>
+                    
+                    <Button
+                      onClick={() => setLocation("/recommendations")}
+                      className="w-full py-4 text-lg bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white rounded-xl shadow-lg transform hover:scale-105 transition-all duration-300"
+                    >
+                      <i className="fas fa-brain ml-2"></i>
+                      بحث ذكي
                     </Button>
                   </div>
 
