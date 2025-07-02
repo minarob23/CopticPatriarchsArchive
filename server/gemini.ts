@@ -25,7 +25,45 @@ export async function askPatriarch(question: string): Promise<string> {
     // Get all patriarchs data for context
     const patriarchs = await storage.getPatriarchs();
 
-    // Create context from patriarchs data
+    // Read additional external sources
+    let externalSources = '';
+    
+    // 1. Read CSV data
+    try {
+      const fs = await import('fs');
+      const path = await import('path');
+      const csvPath = path.join(process.cwd(), 'attached_assets/coptic_patriarchs_2025_1751464991874.csv');
+      if (fs.existsSync(csvPath)) {
+        const csvContent = fs.readFileSync(csvPath, 'utf-8');
+        externalSources += `\n\nمصادر إضافية من ملف البيانات التاريخية:\n${csvContent.substring(0, 4000)}\n`;
+      }
+    } catch (error) {
+      console.log('CSV file reading failed, continuing without it');
+    }
+
+    // 2. Read additional text files if available
+    try {
+      const fs = await import('fs');
+      const path = await import('path');
+      const assetsDir = path.join(process.cwd(), 'attached_assets');
+      if (fs.existsSync(assetsDir)) {
+        const files = fs.readdirSync(assetsDir);
+        const textFiles = files.filter(file => file.endsWith('.txt'));
+        
+        for (const file of textFiles.slice(0, 3)) { // Limit to 3 files to avoid token limits
+          try {
+            const content = fs.readFileSync(path.join(assetsDir, file), 'utf-8');
+            externalSources += `\n\nمصدر إضافي من ${file}:\n${content.substring(0, 2000)}\n`;
+          } catch (err) {
+            console.log(`Could not read ${file}`);
+          }
+        }
+      }
+    } catch (error) {
+      console.log('Additional text files reading failed, continuing without them');
+    }
+
+    // Create enhanced context from patriarchs data
     const context = patriarchs.map(p => {
       let heresiesList = '';
       try {
@@ -40,24 +78,33 @@ export async function askPatriarch(question: string): Promise<string> {
       return `البطريرك ${p.name} (رقم ${p.orderNumber}) - العصر: ${p.era} - الفترة: ${p.startYear}${p.endYear ? `-${p.endYear}` : '-الآن'} - المساهمات: ${p.contributions} - السيرة: ${p.biography || 'غير متوفرة'} - البدع المحاربة: ${heresiesList}`;
     }).join('\n\n');
 
-    const systemPrompt = `أنت خبير في تاريخ الكنيسة القبطية الأرثوذكسية والبطاركة الأقباط. 
+    const enhancedSystemPrompt = `أنت خبير في تاريخ الكنيسة القبطية الأرثوذكسية والبطاركة الأقباط. 
 تتحدث بالعربية فقط وتجيب على الأسئلة بناءً على المعلومات التاريخية الموثقة للبطاركة الأقباط الأرثوذكس.
 
-معلومات البطاركة المتوفرة:
+معلومات البطاركة من قاعدة البيانات الرئيسية:
 ${context}
 
-قواعد الإجابة:
+${externalSources}
+
+قواعد الإجابة المحسنة:
 1. أجب بالعربية فقط
-2. استخدم المعلومات المتوفرة في قاعدة البيانات
-3. كن دقيقاً تاريخياً
-4. إذا لم تجد معلومة محددة، اذكر ذلك بوضوح
-5. قدم معلومات مفيدة وتعليمية
-6. حافظ على الطابع الروحي والتاريخي المناسب`;
+2. استخدم جميع المصادر المتاحة (قاعدة البيانات والمصادر الخارجية)
+3. اربط المعلومات من مصادر مختلفة لتقديم إجابة شاملة
+4. كن دقيقاً تاريخياً ومرجع المعلومات عند الإمكان
+5. إذا وجدت معلومات متضاربة، اذكر ذلك وقدم التفسير
+6. قدم معلومات مفيدة وتعليمية مع سياق تاريخي
+7. حافظ على الطابع الروحي والتاريخي المناسب
+8. استخدم المعرفة العامة عن التاريخ المسيحي والقبطي لإثراء الإجابة
+9. قدم روابط منطقية بين الأحداث والشخصيات
+10. اذكر التأثير الروحي والكنسي للبطاركة على الكنيسة والمجتمع`;
 
     const response = await client.models.generateContent({
-      model: "gemini-2.5-flash",
+      model: "gemini-2.5-pro", // استخدام النموذج المتقدم للحصول على إجابات أفضل
       config: {
-        systemInstruction: systemPrompt,
+        systemInstruction: enhancedSystemPrompt,
+        temperature: 0.7, // توازن بين الدقة والإبداع
+        topP: 0.9,
+        topK: 40,
       },
       contents: question,
     });
