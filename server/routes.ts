@@ -31,7 +31,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         era: era as string,
         heresies: heresies ? (heresies as string).split(',') : undefined,
       };
-
+      
       const patriarchs = await storage.getPatriarchs(filters);
       res.json(patriarchs);
     } catch (error) {
@@ -86,7 +86,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
       const validatedData = updatePatriarchSchema.parse(req.body);
       const patriarch = await storage.updatePatriarch(id, validatedData);
-
+      
       if (!patriarch) {
         return res.status(404).json({ message: "Patriarch not found" });
       }
@@ -138,7 +138,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.post('/api/ask-patriarch', async (req, res) => {
     try {
       const { question } = req.body;
-
+      
       if (!question || typeof question !== 'string') {
         return res.status(400).json({ message: "سؤال غير صحيح" });
       }
@@ -155,7 +155,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.post('/api/admin/gemini-api-key', isAuthenticated, async (req, res) => {
     try {
       const { apiKey } = req.body;
-
+      
       if (!apiKey || typeof apiKey !== 'string') {
         return res.status(400).json({ message: "مفتاح API غير صحيح" });
       }

@@ -7,8 +7,6 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
-import { ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart";
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, PieChart, Pie, Cell, ResponsiveContainer } from "recharts";
 import PatriarchTimeline from "@/components/patriarch-timeline";
 import PatriarchCard from "@/components/patriarch-card";
 import Loading from "@/components/ui/loading";
@@ -51,8 +49,6 @@ const eraLabels: Record<string, string> = {
   "عصر محمد علي": "عصر محمد علي",
   "العصر الفاطمي المبكر": "العصر الفاطمي المبكر"
 };
-
-const COLORS = ['#3b82f6', '#ef4444', '#10b981', '#f59e0b', '#8b5cf6', '#06b6d4', '#84cc16', '#f97316'];
 
 export default function Home() {
   const { isAuthenticated } = useAuth();
@@ -114,58 +110,6 @@ export default function Home() {
         ? prev.filter(h => h !== heresy)
         : [...prev, heresy]
     );
-  };
-
-  // إعداد بيانات الرسومات البيانية
-  const topErasData = Object.entries(
-    (patriarchs || []).reduce((acc: Record<string, number>, patriarch) => {
-      acc[patriarch.era] = (acc[patriarch.era] || 0) + 1;
-      return acc;
-    }, {})
-  )
-  .sort(([,a], [,b]) => (b as number) - (a as number))
-  .slice(0, 6)
-  .map(([era, count]) => ({
-    era: eraLabels[era] || era,
-    count: count as number
-  }));
-
-  const heresyFightersData = [
-    {
-      category: "محاربو البدع",
-      count: (patriarchs || []).filter(p => {
-        let heresies: string[] = [];
-        try {
-          heresies = Array.isArray(p.heresiesFought) 
-            ? p.heresiesFought 
-            : JSON.parse(p.heresiesFought || '[]');
-        } catch (e) {
-          heresies = [];
-        }
-        return heresies.length > 0;
-      }).length
-    },
-    {
-      category: "غير محاربين",
-      count: (patriarchs || []).filter(p => {
-        let heresies: string[] = [];
-        try {
-          heresies = Array.isArray(p.heresiesFought) 
-            ? p.heresiesFought 
-            : JSON.parse(p.heresiesFought || '[]');
-        } catch (e) {
-          heresies = [];
-        }
-        return heresies.length === 0;
-      }).length
-    }
-  ];
-
-  const chartConfig = {
-    count: {
-      label: "العدد",
-      color: "hsl(var(--chart-1))",
-    },
   };
 
   if (isLoading) {
@@ -303,96 +247,6 @@ export default function Home() {
                 </div>
               </CardContent>
             </Card>
-          </div>
-        </div>
-      </div>
-
-      {/* Analytics Section */}
-      <div className="bg-white py-16">
-        <div className="container mx-auto px-4">
-          <div className="text-center mb-12">
-            <h2 className="text-4xl font-bold font-amiri text-gray-800 mb-4">
-              <i className="fas fa-chart-line text-blue-600 ml-3"></i>
-              إحصائيات وتحليلات شاملة
-            </h2>
-            <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-              اكتشف أنماط وتوزيعات البطاركة عبر العصور التاريخية المختلفة
-            </p>
-          </div>
-
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-12">
-            {/* أهم العصور */}
-            <Card className="shadow-xl border-0 overflow-hidden">
-              <CardHeader className="bg-gradient-to-r from-blue-500 to-blue-600 text-white">
-                <CardTitle className="font-amiri text-xl flex items-center">
-                  <i className="fas fa-crown ml-2"></i>
-                  أهم العصور التاريخية
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="p-6">
-                <ChartContainer config={chartConfig} className="h-80">
-                  <ResponsiveContainer width="100%" height="100%">
-                    <BarChart data={topErasData}>
-                      <CartesianGrid strokeDasharray="3 3" />
-                      <XAxis 
-                        dataKey="era" 
-                        angle={-45}
-                        textAnchor="end"
-                        height={100}
-                        fontSize={11}
-                      />
-                      <YAxis />
-                      <ChartTooltip content={<ChartTooltipContent />} />
-                      <Bar dataKey="count" fill="#3b82f6" radius={[4, 4, 0, 0]} />
-                    </BarChart>
-                  </ResponsiveContainer>
-                </ChartContainer>
-              </CardContent>
-            </Card>
-
-            {/* محاربو البدع */}
-            <Card className="shadow-xl border-0 overflow-hidden">
-              <CardHeader className="bg-gradient-to-r from-red-500 to-red-600 text-white">
-                <CardTitle className="font-amiri text-xl flex items-center">
-                  <i className="fas fa-shield-alt ml-2"></i>
-                  محاربو البدع
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="p-6">
-                <ChartContainer config={chartConfig} className="h-80">
-                  <ResponsiveContainer width="100%" height="100%">
-                    <PieChart>
-                      <Pie
-                        data={heresyFightersData}
-                        cx="50%"
-                        cy="50%"
-                        labelLine={false}
-                        label={({ category, count }) => `${category}: ${count}`}
-                        outerRadius={100}
-                        fill="#8884d8"
-                        dataKey="count"
-                      >
-                        <Cell fill="#ef4444" />
-                        <Cell fill="#94a3b8" />
-                      </Pie>
-                      <ChartTooltip content={<ChartTooltipContent />} />
-                    </PieChart>
-                  </ResponsiveContainer>
-                </ChartContainer>
-              </CardContent>
-            </Card>
-          </div>
-
-          {/* رابط عرض المزيد */}
-          <div className="text-center">
-            <Button
-              onClick={() => setLocation("/charts")}
-              size="lg"
-              className="bg-gradient-to-r from-purple-600 to-blue-600 text-white hover:from-purple-700 hover:to-blue-700 px-8 py-4 text-lg"
-            >
-              <i className="fas fa-chart-line ml-2"></i>
-              عرض جميع الرسومات البيانية التفصيلية
-            </Button>
           </div>
         </div>
       </div>
