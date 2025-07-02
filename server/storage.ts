@@ -188,27 +188,25 @@ export class DatabaseStorage implements IStorage {
 
   async setSetting(key: string, value: string): Promise<Setting> {
     try {
-      // First try to update existing setting
-      const [existingSetting] = await db
-        .select()
-        .from(settings)
-        .where(eq(settings.key, key))
-        .limit(1);
-
-      if (existingSetting) {
-        const [updated] = await db
-          .update(settings)
-          .set({ value, updatedAt: new Date() })
-          .where(eq(settings.key, key))
-          .returning();
-        return updated;
-      } else {
-        const [created] = await db
-          .insert(settings)
-          .values({ key, value })
-          .returning();
-        return created;
-      }
+      // Use upsert with ON CONFLICT for PostgreSQL
+      const [result] = await db
+        .insert(settings)
+        .values({ 
+          key, 
+          value,
+          createdAt: new Date(),
+          updatedAt: new Date()
+        })
+        .onConflictDoUpdate({
+          target: settings.key,
+          set: {
+            value: value,
+            updatedAt: new Date()
+          }
+        })
+        .returning();
+      
+      return result;
     } catch (error) {
       console.error('Error in setSetting:', error);
       throw error;

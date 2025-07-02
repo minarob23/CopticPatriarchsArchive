@@ -5,7 +5,6 @@ import {
   integer,
   boolean,
   timestamp,
-  serial,
   index,
 } from "drizzle-orm/pg-core";
 import { createInsertSchema } from "drizzle-zod";
@@ -52,8 +51,7 @@ export const patriarchs = pgTable("patriarchs", {
 
 // Settings table for storing API keys and configuration
 export const settings = pgTable("settings", {
-  id: serial("id").primaryKey(),
-  key: text("key").unique().notNull(),
+  key: text("key").primaryKey(),
   value: text("value").notNull(),
   createdAt: timestamp("created_at").defaultNow().notNull(),
   updatedAt: timestamp("updated_at").defaultNow().notNull(),
