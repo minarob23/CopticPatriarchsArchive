@@ -79,7 +79,7 @@ export default function SmartSummary() {
       </Button>
 
       {/* Hero Section */}
-      <div className="bg-gradient-to-r from-green-600 via-teal-600 to-green-800 text-white relative overflow-hidden"></div>
+      <div className="bg-gradient-to-r from-green-600 via-teal-600 to-green-800 text-white relative overflow-hidden">
         <div className="absolute inset-0 bg-black bg-opacity-10"></div>
         <div className="absolute top-0 left-0 w-full h-full">
           <div className="absolute top-10 right-10 w-64 h-64 bg-white bg-opacity-10 rounded-full blur-3xl"></div>
