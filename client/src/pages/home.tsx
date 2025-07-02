@@ -10,7 +10,7 @@ import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/co
 import PatriarchTimeline from "@/components/patriarch-timeline";
 import PatriarchCard from "@/components/patriarch-card";
 import AskPatriarchChatbot from "@/components/ask-patriarch-chatbot";
-import SmartSummaryModal from "@/components/smart-summary-modal";
+
 import HomeCharts from "@/components/home-charts";
 import Loading from "@/components/ui/loading";
 import type { Patriarch } from "@shared/schema";
@@ -63,7 +63,7 @@ export default function Home() {
   const [selectedHeresies, setSelectedHeresies] = useState<string[]>([]);
   const [viewMode, setViewMode] = useState<"cards" | "timeline" | "charts">("cards");
   const [showChatbot, setShowChatbot] = useState(false);
-  const [showSmartSummary, setShowSmartSummary] = useState(false);
+  
 
 
   const { data: patriarchs, isLoading } = useQuery<Patriarch[]>({
@@ -262,14 +262,7 @@ export default function Home() {
                     الإحصائيات والتحليلات
                   </Button>
 
-                  {/* زر الملخص الذكي */}
-                  <Button
-                    onClick={() => setShowSmartSummary(true)}
-                    className="bg-gradient-to-r from-green-500 to-teal-600 text-white hover:from-green-600 hover:to-teal-700 shadow-lg transform hover:scale-105 transition-all duration-300 px-6 py-3"
-                  >
-                    <i className="fas fa-brain ml-2"></i>
-                    ملخص ذكي
-                  </Button>
+                  
                 </div>
               </CardContent>
             </Card>
@@ -329,14 +322,7 @@ export default function Home() {
                 الإحصائيات والتحليلات
               </Button>
 
-              {/* زر الملخص الذكي */}
-              <Button
-                onClick={() => setShowSmartSummary(true)}
-                className="bg-gradient-to-r from-green-500 to-teal-600 text-white hover:from-green-600 hover:to-teal-700 shadow-lg transform hover:scale-105 transition-all duration-300 px-6 py-3 text-lg font-bold"
-              >
-                <i className="fas fa-brain ml-2 text-xl"></i>
-                ملخص ذكي للبطاركة
-              </Button>
+              
 
               {isAuthenticated && (
                 <Button
@@ -358,6 +344,14 @@ export default function Home() {
                   دخول الإدارة
                 </Button>
               )}
+
+              <Button
+                onClick={() => setLocation("/smart-summary")}
+                className="bg-gradient-to-r from-green-500 to-teal-600 text-white hover:from-green-600 hover:to-teal-700 shadow-lg transform hover:scale-105 transition-all duration-300 px-6 py-3"
+              >
+                <i className="fas fa-brain ml-2"></i>
+                الملخص الذكي
+              </Button>
             </div>
           </div>
         </div>
@@ -392,13 +386,7 @@ export default function Home() {
         />
       )}
 
-      {/* Smart Summary Modal */}
-      {showSmartSummary && (
-        <SmartSummaryModal 
-          isOpen={showSmartSummary} 
-          onClose={() => setShowSmartSummary(false)} 
-        />
-      )}
+      
     </div>
   );
 }

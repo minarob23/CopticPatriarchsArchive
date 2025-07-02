@@ -191,7 +191,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-   // Generate smart summary for a patriarch
+   // Generate smart summary for a patriarch using Gemini AI
    app.post("/api/generate-smart-summary", async (req, res) => {
     try {
       const { name, tone } = req.body;
@@ -206,84 +206,42 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(404).json({ error: "لم يتم العثور على البطريرك" });
       }
 
-      // Generate intelligent summary based on tone
-      let summary = "";
-      const patriarchData = patriarch;
-      const serviceDuration = patriarchData.endYear ? 
-        patriarchData.endYear - patriarchData.startYear : 
-        new Date().getFullYear() - patriarchData.startYear;
-
+      // Generate summary using Gemini AI
+      let tonePrompt = "";
       if (tone === "kids") {
-        summary = `🌟 قصة البابا ${patriarchData.arabicName || patriarchData.name} 🌟
-
-هل تعرف من هو البابا ${patriarchData.arabicName || patriarchData.name}؟ إنه البابا رقم ${patriarchData.orderNumber} في الكنيسة القبطية! 
-
-كان بابا عظيماً عاش منذ زمن طويل في ${patriarchData.era}. خدم ربنا لمدة ${serviceDuration} سنة من عام ${patriarchData.startYear} ${patriarchData.endYear ? `إلى عام ${patriarchData.endYear}` : 'وحتى الآن'}.
-
-🎯 ماذا فعل؟
-${patriarchData.contributions}
-
-💪 كان شجاعاً وقوياً ودافع عن الكنيسة ضد الذين يريدون تغيير تعاليم المسيح.
-
-✨ هو مثال رائع لنا جميعاً في المحبة والخدمة!`;
-
+        tonePrompt = "استخدم لغة بسيطة ومناسبة للأطفال مع الرموز التعبيرية والأمثلة السهلة";
       } else if (tone === "academic") {
-        const heresiesText = (() => {
-          try {
-            const heresies = Array.isArray(patriarchData.heresiesFought) 
-              ? patriarchData.heresiesFought 
-              : JSON.parse(patriarchData.heresiesFought || '[]');
-            return heresies.length > 0 ? heresies.join('، ') : 'لا توجد معلومات متاحة';
-          } catch (e) {
-            return 'لا توجد معلومات متاحة';
-          }
-        })();
-
-        summary = `📚 دراسة أكاديمية للبابا ${patriarchData.arabicName || patriarchData.name} 📚
-
-السيرة التاريخية والإدارية:
-يُعد البابا ${patriarchData.arabicName || patriarchData.name} البطريرك رقم ${patriarchData.orderNumber} في السلسلة البطريركية للكنيسة القبطية الأرثوذكسية، والذي تولى مسؤولية الكرسي المرقسي في فترة تاريخية مهمة.
-
-السياق التاريخي والزمني:
-تولى البطريركية في عام ${patriarchData.startYear} ميلادية واستمر في خدمته لمدة ${serviceDuration} عاماً ${patriarchData.endYear ? `حتى عام ${patriarchData.endYear}` : 'ولا يزال يخدم'}، وهي فترة تقع في ${patriarchData.era}.
-
-الإنجازات والمساهمات:
-${patriarchData.contributions}
-
-التحديات اللاهوتية والعقائدية:
-واجه البطريرك تحديات عقائدية مهمة شملت: ${heresiesText}
-
-الأثر التاريخي:
-ترك هذا البطريرك إرثاً مهماً في تاريخ الكنيسة القبطية من خلال قيادته الحكيمة والمتوازنة في عصر تميز بتحدياته الخاصة.`;
-
-      } else { // easy tone
-        summary = `🏛️ تعرف على البابا ${patriarchData.arabicName || patriarchData.name} 🏛️
-
-البابا ${patriarchData.arabicName || patriarchData.name} هو البطريرك رقم ${patriarchData.orderNumber} في تاريخ الكنيسة القبطية.
-
-⏰ متى خدم؟
-خدم لمدة ${serviceDuration} سنة، من ${patriarchData.startYear} ${patriarchData.endYear ? `إلى ${patriarchData.endYear}` : 'وحتى الآن'}
-
-🌍 في أي عصر عاش؟
-عاش في ${patriarchData.era}، وكان هذا وقتاً مهماً في تاريخ مصر والكنيسة.
-
-✨ ما هي أهم أعماله؟
-${patriarchData.contributions}
-
-🛡️ كيف دافع عن الإيمان؟
-دافع البابا عن تعاليم الكنيسة الصحيحة ووقف ضد من يحاولون تغيير الإيمان المسيحي.
-
-💫 هو مثال رائع للقيادة الروحية والحكمة في خدمة الكنيسة والشعب.`;
+        tonePrompt = "استخدم لغة أكاديمية متخصصة ومصطلحات تاريخية دقيقة";
+      } else {
+        tonePrompt = "استخدم لغة سهلة ومبسطة للقارئ العادي";
       }
+
+      const patriarchInfo = `اسم البطريرك: ${patriarch.arabicName || patriarch.name}
+رقم البطريرك: ${patriarch.orderNumber}
+العصر: ${patriarch.era}
+سنة البداية: ${patriarch.startYear}
+سنة النهاية: ${patriarch.endYear || 'حتى الآن'}
+المساهمات: ${patriarch.contributions}
+السيرة الذاتية: ${patriarch.biography || 'غير متوفرة'}
+البدع المحاربة: ${Array.isArray(patriarch.heresiesFought) ? patriarch.heresiesFought.join(', ') : patriarch.heresiesFought}`;
+
+      const prompt = `اكتب ملخصاً ذكياً عن البطريرك التالي:
+${patriarchInfo}
+
+${tonePrompt}
+
+يجب أن يكون الملخص شاملاً ومفيداً ويحتوي على المعلومات المهمة حول حياة وإنجازات هذا البطريرك.`;
+
+      const summary = await askPatriarch(prompt);
 
       res.json({
         summary,
         patriarch: {
-          name: patriarchData.arabicName || patriarchData.name,
-          orderNumber: patriarchData.orderNumber,
-          startYear: patriarchData.startYear,
-          endYear: patriarchData.endYear,
-          era: patriarchData.era
+          name: patriarch.arabicName || patriarch.name,
+          orderNumber: patriarch.orderNumber,
+          startYear: patriarch.startYear,
+          endYear: patriarch.endYear,
+          era: patriarch.era
         }
       });
     } catch (error) {

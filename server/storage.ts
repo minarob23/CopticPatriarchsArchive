@@ -156,7 +156,7 @@ export class DatabaseStorage implements IStorage {
 
   async getPatriarchByName(name: string): Promise<Patriarch | undefined> {
     const searchName = name.toLowerCase().trim();
-    
+
     const [patriarch] = await db
       .select()
       .from(patriarchs)
@@ -170,7 +170,7 @@ export class DatabaseStorage implements IStorage {
         )
       )
       .limit(1);
-    
+
     return patriarch;
   }
 
