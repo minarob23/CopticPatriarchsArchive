@@ -329,11 +329,15 @@ export default function Home() {
               </Button>
 
               <Button
-                variant={viewMode === "charts" ? "default" : "outline"}
+                variant="outline"
                 onClick={() => setViewMode("charts")}
-                className={`${viewMode === "charts" ? "bg-orange-600 text-white" : "bg-white bg-opacity-20 text-orange-600 border-orange-600"} px-6 py-3`}
+                className={`${
+                  viewMode === "charts"
+                    ? "bg-blue-600 text-white"
+                    : "bg-white text-blue-600 hover:bg-blue-50"
+                } border-blue-600 shadow-md transform hover:scale-105 transition-all duration-300`}
               >
-                <i className="fas fa-chart-bar ml-2"></i>
+                <i className="fas fa-chart-bar w-4 h-4 ml-2"></i>
                 الإحصائيات والتحليلات
               </Button>
 

@@ -5,12 +5,12 @@ let geminiClient: GoogleGenAI | null = null;
 
 async function getGeminiClient(): Promise<GoogleGenAI | null> {
   if (geminiClient) return geminiClient;
-  
+
   const apiKeySetting = await storage.getSetting('gemini_api_key');
   if (!apiKeySetting?.value) {
     return null;
   }
-  
+
   geminiClient = new GoogleGenAI({ apiKey: apiKeySetting.value });
   return geminiClient;
 }
@@ -24,7 +24,7 @@ export async function askPatriarch(question: string): Promise<string> {
   try {
     // Get all patriarchs data for context
     const patriarchs = await storage.getPatriarchs();
-    
+
     // Create context from patriarchs data
     const context = patriarchs.map(p => 
       `البطريرك ${p.name} (رقم ${p.orderNumber}) - العصر: ${p.era} - الفترة: ${p.startYear}${p.endYear ? `-${p.endYear}` : '-الآن'} - المساهمات: ${p.contributions} - السيرة: ${p.biography || 'غير متوفرة'} - البدع المحاربة: ${p.heresiesFought.join(', ')}`
@@ -64,72 +64,94 @@ export async function setGeminiApiKey(apiKey: string): Promise<void> {
   geminiClient = null; // Reset client to use new API key
 }
 
-export async function generateSmartSummary(patriarchName: string, tone: string = "easy"): Promise<string> {
-  const client = await getGeminiClient();
-  if (!client) {
-    return "عذراً، لم يتم تكوين مفتاح API الخاص بـ Gemini. يرجى إضافة المفتاح في صفحة الإدارة.";
+export async function generateSmartSummary(patriarch: any, tone: string): Promise<string> {
+  const apiKey = await storage.getSetting("gemini_api_key");
+
+  if (!apiKey?.value) {
+    throw new Error("Gemini API key not configured");
   }
 
-  try {
-    // Get patriarch data
-    const patriarch = await storage.getPatriarchByName(patriarchName);
-    if (!patriarch) {
-      return "عذراً، لم يتم العثور على البطريرك المطلوب. يرجى التأكد من الاسم والمحاولة مرة أخرى.";
+  const toneInstructions = {
+    easy: "استخدم لغة سهلة ومبسطة مناسبة للعامة",
+    academic: "استخدم لغة أكاديمية ومتخصصة مناسبة للباحثين والطلاب",
+    kids: "استخدم لغة مبسطة جداً مناسبة للأطفال مع أمثلة واضحة"
+  };
+
+  const instruction = toneInstructions[tone as keyof typeof toneInstructions] || toneInstructions.easy;
+
+  const prompt = `
+اكتب ملخصاً ذكياً ومفصلاً عن البطريرك التالي:
+
+الاسم: ${patriarch.name}
+الاسم العربي: ${patriarch.arabicName || "غير متوفر"}
+البابا رقم: ${patriarch.orderNumber}
+فترة الخدمة: ${patriarch.startYear} - ${patriarch.endYear || "الآن"}
+العصر: ${patriarch.era}
+المساهمات: ${patriarch.contributions}
+السيرة الذاتية: ${patriarch.biography || "غير متوفر"}
+البدع التي حاربها: ${patriarch.heresiesFought}
+
+المطلوب:
+- ${instruction}
+- اكتب ملخصاً شاملاً يغطي حياته وإنجازاته الروحية والكنسية
+- اذكر أهم المساهمات والأحداث في فترة خدمته
+- أضف معلومات عن السياق التاريخي للفترة
+- اذكر البدع التي حاربها وكيف دافع عن الإيمان
+- اكتب بطريقة شيقة وجذابة
+
+طول الملخص: حوالي 300-500 كلمة
+اللغة: العربية فقط
+`;
+
+  const requestBody = {
+    contents: [{
+      parts: [{
+        text: prompt
+      }]
+    }],
+    generationConfig: {
+      temperature: 0.7,
+      topK: 40,
+      topP: 0.95,
+      maxOutputTokens: 1024
     }
+  };
 
-    let tonePrompt = "";
-    if (tone === "kids") {
-      tonePrompt = "استخدم لغة بسيطة ومناسبة للأطفال مع الرموز التعبيرية والأمثلة السهلة";
-    } else if (tone === "academic") {
-      tonePrompt = "استخدم لغة أكاديمية متخصصة ومصطلحات تاريخية دقيقة";
-    } else {
-      tonePrompt = "استخدم لغة سهلة ومبسطة للقارئ العادي";
+  const response = await fetch(
+    `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent?key=${apiKey.value}`,
+    {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(requestBody)
     }
+  );
 
-    const prompt = `اكتب ملخصاً ذكياً وشاملاً عن البطريرك: ${patriarch.name}
-
-معلومات البطريرك:
-- الاسم: ${patriarch.name}
-- الرقم: ${patriarch.orderNumber}
-- العصر: ${patriarch.era}
-- فترة الخدمة: ${patriarch.startYear} - ${patriarch.endYear || 'حتى الآن'}
-- المساهمات: ${patriarch.contributions}
-- السيرة: ${patriarch.biography || 'غير متوفرة'}
-- البدع المحاربة: ${Array.isArray(patriarch.heresiesFought) ? patriarch.heresiesFought.join(', ') : patriarch.heresiesFought}
-
-${tonePrompt}
-
-يجب أن يكون الملخص شاملاً ومفيداً ويحتوي على:
-1. نبذة عن حياته الشخصية
-2. أهم إنجازاته وأعماله
-3. دوره في الكنيسة والمجتمع
-4. التحديات التي واجهها
-5. إرثه وتأثيره
-
-اكتب باللغة العربية فقط.`;
-
-    const response = await client.models.generateContent({
-      model: "gemini-2.5-flash",
-      contents: prompt,
-    });
-
-    return response.text || "عذراً، لم أتمكن من توليد الملخص. يرجى المحاولة مرة أخرى.";
-  } catch (error) {
-    console.error("Gemini summary error:", error);
-    return "عذراً، حدث خطأ أثناء توليد الملخص. يرجى التأكد من صحة مفتاح API والمحاولة مرة أخرى.";
+  if (!response.ok) {
+    throw new Error(`Gemini API error: ${response.status}`);
   }
+
+  const data = await response.json();
+
+  if (!data.candidates?.[0]?.content?.parts?.[0]?.text) {
+    throw new Error('Invalid response from Gemini API');
+  }
+
+  const responseText = data.candidates[0].content.parts[0].text;
+  return responseText.trim();
 }
 
 export async function testGeminiConnection(): Promise<boolean> {
   try {
     const client = await getGeminiClient();
     if (!client) return false;
-    
+
     const response = await client.models.generateContent({
       model: "gemini-2.5-flash",
       contents: "اختبار الاتصال",
     });
-    
+
     return !!response.text;
   } catch (error) {
     console.error("Gemini connection test failed:", error);
