@@ -4,19 +4,7 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Ensure Smart Summary button is always visible */
-.smart-summary-button {
-  z-index: 50 !important;
-  display: flex !important;
-  visibility: visible !important;
-  opacity: 1 !important;
-}
 
-/* Force visibility for all Smart Summary related elements */
-[data-smart-summary] {
-  display: block !important;
-  visibility: visible !important;
-}
 
 :root {
   --background: hsl(0, 0%, 100%);

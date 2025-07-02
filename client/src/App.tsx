@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { Switch, Route } from "wouter";
 import { QueryClientProvider } from "@tanstack/react-query";
 import { queryClient } from "./lib/queryClient";
@@ -15,6 +16,8 @@ import SmartSummary from "@/pages/smart-summary";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { useAuth } from "@/hooks/useAuth";
 import Loading from "@/components/ui/loading";
+import SmartSummaryModal from "@/components/smart-summary-modal";
+import type { Patriarch } from "@shared/schema";
 
 function Router() {
   const { isAuthenticated, isLoading } = useAuth();
@@ -40,11 +43,20 @@ function Router() {
 }
 
 function App() {
+  const { isAuthenticated, logout } = useAuth();
+  const [showSmartSummary, setShowSmartSummary] = useState(false);
+
   return (
     <QueryClientProvider client={queryClient}>
       <TooltipProvider>
         <Toaster />
         <Router />
+
+        {/* Smart Summary Modal */}
+        <SmartSummaryModal 
+          isOpen={showSmartSummary} 
+          onClose={() => setShowSmartSummary(false)} 
+        />
       </TooltipProvider>
     </QueryClientProvider>
   );

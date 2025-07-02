@@ -265,38 +265,7 @@ export default function Home() {
                   </Button>
                 </div>
 
-                {/* Smart Summary Button - Ultra Visible Display */}
-                <div className="mt-8 text-center smart-summary-button" data-smart-summary="main">
-                  <div className="relative bg-gradient-to-r from-red-400 via-yellow-400 via-green-400 to-emerald-500 p-3 rounded-3xl shadow-2xl transform hover:scale-105 transition-all duration-300 animate-pulse hover:animate-none border-4 border-yellow-300">
-                    {/* Glowing effect */}
-                    <div className="absolute inset-0 bg-gradient-to-r from-yellow-400 to-green-400 rounded-3xl blur-lg opacity-75 animate-pulse"></div>
-                    
-                    <Button
-                      onClick={() => setShowSmartSummary(true)}
-                      size="lg"
-                      className="relative z-10 bg-gradient-to-r from-green-600 to-emerald-700 hover:from-green-700 hover:to-emerald-800 text-white shadow-2xl border-0 transform hover:scale-105 transition-all duration-300 px-12 md:px-20 py-8 md:py-12 text-xl md:text-3xl font-black rounded-3xl w-full flex items-center justify-center gap-4 smart-summary-button"
-                      style={{ minHeight: '80px' }}
-                    >
-                      <div className="flex items-center gap-3 md:gap-6">
-                        <div className="bg-yellow-400 rounded-full p-2 md:p-3 animate-bounce">
-                          <i className="fas fa-brain text-2xl md:text-4xl text-green-800"></i>
-                        </div>
-                        <span className="text-lg md:text-3xl font-black">🤖 الملخص الذكي بالذكاء الاصطناعي 🧠</span>
-                        <div className="bg-yellow-400 rounded-full p-2 md:p-3 animate-spin">
-                          <i className="fas fa-sparkles text-2xl md:text-4xl text-green-800"></i>
-                        </div>
-                      </div>
-                    </Button>
-                  </div>
-                  
-                  <div className="mt-6 bg-gradient-to-r from-green-600 to-emerald-600 rounded-2xl px-6 md:px-8 py-4 md:py-6 mx-auto max-w-2xl shadow-2xl border-2 border-yellow-400">
-                    <p className="text-white text-base md:text-xl font-black flex items-center justify-center gap-3 animate-pulse">
-                      <i className="fas fa-magic text-2xl text-yellow-300 animate-spin"></i>
-                      ⭐ احصل على ملخص ذكي ومفصل عن أي بطريرك باستخدام تقنية Gemini AI ⭐
-                      <i className="fas fa-star text-2xl text-yellow-300 animate-bounce"></i>
-                    </p>
-                  </div>
-                </div>
+                
               </CardContent>
             </Card>
           </div>
@@ -367,23 +336,7 @@ export default function Home() {
                 اسأل البطريرك
               </Button>
 
-              <div className="bg-gradient-to-r from-red-400 via-yellow-400 to-green-400 p-2 rounded-2xl shadow-2xl animate-pulse border-2 border-yellow-300 smart-summary-button" data-smart-summary="stats">
-                <Button
-                  onClick={() => setShowSmartSummary(true)}
-                  className="bg-gradient-to-r from-green-500 to-emerald-600 text-white hover:from-green-600 hover:to-emerald-700 px-6 md:px-10 py-4 md:py-6 shadow-2xl hover:shadow-3xl transition-all duration-300 text-lg md:text-xl font-black border-0 transform hover:scale-110 rounded-2xl w-full smart-summary-button"
-                  style={{ minHeight: '60px' }}
-                >
-                  <div className="flex items-center gap-2 md:gap-3">
-                    <div className="bg-yellow-400 rounded-full p-1 animate-spin">
-                      <i className="fas fa-brain text-lg md:text-xl text-green-800"></i>
-                    </div>
-                    <span className="font-black">🤖 الملخص الذكي 🧠</span>
-                    <div className="bg-yellow-400 rounded-full p-1 animate-bounce">
-                      <i className="fas fa-sparkles text-sm md:text-lg text-green-800"></i>
-                    </div>
-                  </div>
-                </Button>
-              </div>
+              
             </div>
 
             {/* Authentication Buttons */}
