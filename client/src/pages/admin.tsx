@@ -403,6 +403,17 @@ ${index + 1}. ${p.name}
                   </div>
                 </DialogContent>
               </Dialog>
+              
+              {/* زر تصدير البيانات CSV */}
+              <Button 
+                variant="secondary"
+                onClick={handleExportData}
+                className="bg-white text-orange-600 hover:bg-gray-100"
+              >
+                <i className="fas fa-download ml-2"></i>
+                تصدير CSV
+              </Button>
+              
               <Button 
                 variant="secondary" 
                 onClick={logout}
