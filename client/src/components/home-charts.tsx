@@ -92,12 +92,15 @@ export default function HomeCharts({ patriarchs }: HomeChartsProps) {
     // أطول فترات الخدمة (أعلى 5)
     const longestService = patriarchs
       .filter(p => p.endYear)
-      .map(p => ({
-        name: p.name.length > 15 ? p.name.substring(0, 15) + "..." : p.name,
-        fullName: p.name,
-        duration: p.endYear! - p.startYear,
-        era: eraLabels[p.era] || p.era
-      }))
+      .map(p => {
+        const arabicName = p.arabicName || p.name;
+        return {
+          name: arabicName.length > 15 ? arabicName.substring(0, 15) + "..." : arabicName,
+          fullName: arabicName,
+          duration: p.endYear! - p.startYear,
+          era: eraLabels[p.era] || p.era
+        };
+      })
       .sort((a, b) => b.duration - a.duration)
       .slice(0, 5);
 
@@ -213,7 +216,7 @@ export default function HomeCharts({ patriarchs }: HomeChartsProps) {
             <CardHeader className="bg-gradient-to-r from-blue-500 to-purple-500 text-white">
               <CardTitle className="text-center font-amiri text-xl">
                 <i className="fas fa-chart-pie mr-2"></i>
-                التوزيع حسب العصور التاريخية
+                التوزيع الإجمالي للبطاركة
               </CardTitle>
             </CardHeader>
             <CardContent className="p-6">
@@ -276,7 +279,7 @@ export default function HomeCharts({ patriarchs }: HomeChartsProps) {
           <CardContent className="p-6">
             <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
               {chartsData.longestService.map((patriarch, index) => (
-                <div key={patriarch.fullName} className="bg-gradient-to-br from-gray-50 to-white p-4 rounded-lg border-2 border-gray-100 hover:border-yellow-300 transition-all duration-300">
+                <div key={`${patriarch.fullName}-${index}`} className="bg-gradient-to-br from-gray-50 to-white p-4 rounded-lg border-2 border-gray-100 hover:border-yellow-300 transition-all duration-300">
                   <div className="text-center">
                     <div className={`w-12 h-12 rounded-full flex items-center justify-center text-white font-bold mx-auto mb-3 ${
                       index === 0 ? 'bg-yellow-500' : 
@@ -285,7 +288,7 @@ export default function HomeCharts({ patriarchs }: HomeChartsProps) {
                     }`}>
                       {index + 1}
                     </div>
-                    <h4 className="font-semibold text-gray-800 mb-2" title={patriarch.fullName}>
+                    <h4 className="font-semibold text-gray-800 mb-2 text-sm" title={patriarch.fullName}>
                       {patriarch.name}
                     </h4>
                     <Badge variant="secondary" className="mb-2">

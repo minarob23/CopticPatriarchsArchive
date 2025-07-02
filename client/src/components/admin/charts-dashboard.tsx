@@ -98,7 +98,8 @@ export default function ChartsDashboard({ patriarchs }: ChartsDashboardProps) {
     const serviceData = patriarchs
       .filter(p => p.endYear)
       .map(p => ({
-        name: p.name,
+        name: p.arabicName || p.name,
+        fullName: p.arabicName || p.name,
         duration: p.endYear! - p.startYear,
         startYear: p.startYear,
         era: eraLabels[p.era] || p.era
@@ -275,7 +276,7 @@ export default function ChartsDashboard({ patriarchs }: ChartsDashboardProps) {
         {/* توزيع البطاركة حسب العصور - رسم بياني دائري */}
         <Card>
           <CardHeader>
-            <CardTitle className="text-center font-amiri text-lg">توزيع البطاركة حسب العصور التاريخية</CardTitle>
+            <CardTitle className="text-center font-amiri text-lg">توزيع البطاركة عبر العصور التاريخية</CardTitle>
           </CardHeader>
           <CardContent>
             <ResponsiveContainer width="100%" height={400}>
@@ -328,22 +329,30 @@ export default function ChartsDashboard({ patriarchs }: ChartsDashboardProps) {
         {/* مدة الخدمة للبطاركة */}
         <Card>
           <CardHeader>
-            <CardTitle className="text-center font-amiri text-lg">أطول فترات الخدمة للبطاركة</CardTitle>
+            <CardTitle className="text-center font-amiri text-lg">أطول فترات الخدمة للبطاركة (رسم بياني)</CardTitle>
           </CardHeader>
           <CardContent>
             <ResponsiveContainer width="100%" height={400}>
-              <BarChart data={chartsData.serviceData} layout="horizontal">
+              <BarChart data={chartsData.serviceData} layout="vertical">
                 <CartesianGrid strokeDasharray="3 3" />
                 <XAxis type="number" />
                 <YAxis 
                   dataKey="name" 
                   type="category" 
-                  width={120}
-                  fontSize={12}
+                  width={150}
+                  fontSize={11}
+                  interval={0}
                 />
                 <Tooltip 
-                  formatter={(value) => [`${value} سنة`, 'مدة الخدمة']}
+                  formatter={(value, name, props) => [`${value} سنة`, 'مدة الخدمة']}
                   labelFormatter={(label) => `البابا ${label}`}
+                  contentStyle={{
+                    backgroundColor: 'white',
+                    border: '1px solid #ccc',
+                    borderRadius: '8px',
+                    fontSize: '14px',
+                    direction: 'rtl'
+                  }}
                 />
                 <Bar dataKey="duration" fill="#10B981" radius={[0, 4, 4, 0]} />
               </BarChart>
@@ -451,12 +460,12 @@ export default function ChartsDashboard({ patriarchs }: ChartsDashboardProps) {
       {/* جدول أطول فترات الخدمة */}
       <Card>
         <CardHeader>
-          <CardTitle className="text-center font-amiri text-lg">قائمة أطول فترات الخدمة</CardTitle>
+          <CardTitle className="text-center font-amiri text-lg">التصنيف التفصيلي لأطول الخدمات البطريركية</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {chartsData.serviceData.slice(0, 9).map((patriarch, index) => (
-              <div key={patriarch.name} className="bg-gradient-to-r from-blue-50 to-purple-50 p-4 rounded-lg border">
+              <div key={`${patriarch.fullName}-${index}`} className="bg-gradient-to-r from-blue-50 to-purple-50 p-4 rounded-lg border">
                 <div className="flex items-center space-x-reverse space-x-3">
                   <div className={`w-8 h-8 rounded-full flex items-center justify-center text-white font-bold ${
                     index === 0 ? 'bg-yellow-500' : 
@@ -466,7 +475,7 @@ export default function ChartsDashboard({ patriarchs }: ChartsDashboardProps) {
                     {index + 1}
                   </div>
                   <div>
-                    <h4 className="font-semibold text-gray-800">{patriarch.name}</h4>
+                    <h4 className="font-semibold text-gray-800 text-sm">{patriarch.name}</h4>
                     <p className="text-sm text-gray-600">{patriarch.era}</p>
                     <div className="flex items-center space-x-reverse space-x-2 mt-1">
                       <Badge variant="secondary">{patriarch.duration} سنة</Badge>
