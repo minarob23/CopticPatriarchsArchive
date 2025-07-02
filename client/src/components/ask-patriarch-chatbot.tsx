@@ -159,8 +159,40 @@ export default function AskPatriarchChatbot() {
                         className="whitespace-pre-wrap leading-relaxed text-sm"
                         dangerouslySetInnerHTML={{
                           __html: message.content
+                            // Handle tables with | separators
+                            .replace(/\|([^|\n]+)\|([^|\n]+)\|([^|\n]+)\|/g, 
+                              '<table class="w-full border-collapse border border-amber-300 dark:border-amber-700 my-3 text-xs"><tr><td class="border border-amber-300 dark:border-amber-700 p-2 bg-amber-50 dark:bg-amber-900/30">$1</td><td class="border border-amber-300 dark:border-amber-700 p-2 bg-amber-50 dark:bg-amber-900/30">$2</td><td class="border border-amber-300 dark:border-amber-700 p-2 bg-amber-50 dark:bg-amber-900/30">$3</td></tr></table>')
+                            
+                            // Handle table headers with :--- separators
+                            .replace(/\|([^|\n]+)\|([^|\n]+)\|([^|\n]+)\|\s*\n\s*\|[\s\-:]+\|[\s\-:]+\|[\s\-:]+\|/g,
+                              '<table class="w-full border-collapse border border-amber-300 dark:border-amber-700 my-3 text-xs"><thead><tr><th class="border border-amber-300 dark:border-amber-700 p-2 bg-amber-100 dark:bg-amber-800 font-bold">$1</th><th class="border border-amber-300 dark:border-amber-700 p-2 bg-amber-100 dark:bg-amber-800 font-bold">$2</th><th class="border border-amber-300 dark:border-amber-700 p-2 bg-amber-100 dark:bg-amber-800 font-bold">$3</th></tr></thead><tbody>')
+                            
+                            // Handle ### headings
+                            .replace(/###\s*(.*?)$/gm, '<h3 class="text-lg font-bold text-amber-700 dark:text-amber-300 mt-4 mb-2 border-b border-amber-300 dark:border-amber-700 pb-1">$1</h3>')
+                            
+                            // Handle ## headings  
+                            .replace(/##\s*(.*?)$/gm, '<h2 class="text-xl font-bold text-amber-800 dark:text-amber-200 mt-5 mb-3 border-b-2 border-amber-400 dark:border-amber-600 pb-2">$1</h2>')
+                            
+                            // Handle # headings
+                            .replace(/#\s*(.*?)$/gm, '<h1 class="text-2xl font-bold text-amber-900 dark:text-amber-100 mt-6 mb-4 border-b-2 border-amber-500 dark:border-amber-500 pb-2">$1</h1>')
+                            
+                            // Handle bullet points with *
+                            .replace(/^\*\s*(.*?)$/gm, '<li class="text-amber-800 dark:text-amber-200 mb-1 mr-4">• $1</li>')
+                            
+                            // Handle numbered lists
+                            .replace(/^(\d+)\.\s*(.*?)$/gm, '<li class="text-amber-800 dark:text-amber-200 mb-1 mr-4">$1. $2</li>')
+                            
+                            // Handle bold text
                             .replace(/\*\*(.*?)\*\*/g, '<strong class="font-bold text-amber-800 dark:text-amber-200">$1</strong>')
-                            .replace(/\*(.*?)\*/g, '<em class="italic">$1</em>')
+                            
+                            // Handle italic text
+                            .replace(/\*(.*?)\*/g, '<em class="italic text-amber-700 dark:text-amber-300">$1</em>')
+                            
+                            // Wrap consecutive list items in ul tags
+                            .replace(/((<li[^>]*>.*?<\/li>\s*){2,})/g, '<ul class="list-none mr-4 my-2">$1</ul>')
+                            
+                            // Handle line breaks
+                            .replace(/\n/g, '<br/>')
                         }}
                       />
                       <div className="text-xs opacity-70 mt-2 text-left">
