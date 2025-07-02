@@ -1,0 +1,118 @@
+# smart_summary_model_flask.py (مع واجهة HTML حقيقية)
+
+import pandas as pd
+from flask import Flask, request, jsonify, render_template, redirect, url_for
+from sklearn.feature_extraction.text import TfidfVectorizer
+from sklearn.metrics.pairwise import cosine_similarity
+import numpy as np
+import os
+
+app = Flask(__name__)
+
+# تحميل البيانات
+DATA_PATH = r"D:\AI Projects\AI Recommendations Patricks Archive\coptic_patriarchs_2025.csv"
+df = pd.read_csv(DATA_PATH, encoding='utf-8')
+
+summaries = []
+names = []
+for _, row in df.iterrows():
+    text = f"""
+    الاسم: {row['الاسم']}.
+    الرقم: {row['الرقم']}.
+    من سنة {row['سنة البداية']} إلى {row['سنة النهاية']}.
+    العصر: {row['العصر']}.
+    المساهمات: {row['المساهمات']}.
+    البدع المحاربة: {row['البدع المحاربة']}.
+    """
+    summaries.append(text)
+    names.append(row['الاسم'])
+
+vectorizer = TfidfVectorizer()
+X = vectorizer.fit_transform(summaries)
+
+def generate_summary(query_name, tone):
+    query_vec = vectorizer.transform([query_name])
+    similarity = cosine_similarity(query_vec, X)
+    best_match_index = np.argmax(similarity)
+    row = df.iloc[best_match_index]
+
+    if similarity[0, best_match_index] < 0.3:
+        return "لم يتم العثور على بطريرك بهذا الاسم."
+
+    style_texts = {
+        'easy': f"""
+        {row['الاسم']} كان بطريركًا خدم الكنيسة من سنة {int(row['سنة البداية'])} لغاية {int(row['سنة النهاية'])}، في زمن {row['العصر']}. 
+        أهم أعماله: {row['المساهمات']}. وكان بيواجه تحديات زي: {row['البدع المحاربة']}.
+        """,
+
+        'academic': f"""
+        البطريرك رقم {row['الرقم']}، {row['الاسم']}، تولى الكرسي البابوي في الفترة من {int(row['سنة البداية'])} حتى {int(row['سنة النهاية'])}. 
+        ينتمي إلى {row['العصر']}، وشارك في: {row['المساهمات']}، كما تصدى لـ: {row['البدع المحاربة']}.
+        """,
+
+        'kids': f"""
+        زمان كان فيه بطريرك اسمه {row['الاسم']}. خدم ربنا من سنة {int(row['سنة البداية'])} لسنة {int(row['سنة النهاية'])}. 
+        عمل حاجات حلوة زي: {row['المساهمات']}، وكمان علّم الناس يبعدوا عن الغلط زي: {row['البدع المحاربة']}.
+        """
+    }
+
+    return style_texts.get(tone, style_texts['easy'])
+
+# واجهة HTML للرئيسية
+@app.route("/", methods=["GET", "POST"])
+def home():
+    if request.method == "POST":
+        name = request.form.get("name")
+        tone = request.form.get("tone")
+        return redirect(url_for("result", name=name, tone=tone))
+    return '''
+    <html>
+        <head>
+            <title>ملخص البطاركة</title>
+        </head>
+        <body style="font-family: Cairo, sans-serif; direction: rtl; padding: 40px;">
+            <h2>✝️ ملخص ذكي لسير بطاركة الكنيسة القبطية الأرثوذكسية</h2>
+            <form method="POST">
+                <label>اسم البطريرك:</label><br>
+                <input name="name" required><br><br>
+                <label>اختر نوع اللغة:</label><br>
+                <select name="tone">
+                    <option value="easy">لغة سهلة</option>
+                    <option value="academic">لغة أكاديمية</option>
+                    <option value="kids">ملخص للأطفال</option>
+                </select><br><br>
+                <input type="submit" value="احصل على الملخص">
+            </form>
+        </body>
+    </html>
+    '''
+
+# صفحة النتيجة
+@app.route("/result")
+def result():
+    name = request.args.get("name", "")
+    tone = request.args.get("tone", "easy")
+    summary = generate_summary(name, tone)
+    return f'''
+    <html>
+        <head><title>الملخص</title></head>
+        <body style="font-family: Cairo, sans-serif; direction: rtl; padding: 40px;">
+            <h3>الملخص:</h3>
+            <p>{summary.replace("\n", "<br>")}</p>
+            <a href="/">🔙 رجوع</a>
+        </body>
+    </html>
+    '''
+
+# API JSON أيضًا
+@app.route("/summarize", methods=["POST"])
+def summarize():
+    data = request.json
+    name = data.get("name", "")
+    tone = data.get("tone", "easy")
+    summary = generate_summary(name, tone)
+    return jsonify({"summary": summary})
+
+if __name__ == '__main__':
+    from werkzeug.serving import run_simple
+    run_simple('localhost', 5000, app)
