@@ -36,17 +36,17 @@ export const users = pgTable("users", {
 export const patriarchs = pgTable("patriarchs", {
   id: serial("id").primaryKey(),
   name: text("name").notNull(),
-  arabicName: text("arabic_name"),
-  orderNumber: integer("order_number").notNull(),
-  startYear: integer("start_year").notNull(),
-  endYear: integer("end_year"),
+  arabicName: text("arabicName"),
+  orderNumber: integer("orderNumber").notNull(),
+  startYear: integer("startYear").notNull(),
+  endYear: integer("endYear"),
   era: text("era").notNull(), // apostolic, golden, councils, persecution, modern
   contributions: text("contributions").notNull(),
   biography: text("biography"),
-  heresiesFought: text("heresies_fought").notNull().default("[]"), // JSON array as text
-  isActive: boolean("is_active").notNull().default(true),
-  createdAt: timestamp("created_at").defaultNow(),
-  updatedAt: timestamp("updated_at").defaultNow(),
+  heresiesFought: text("heresiesFought").array().notNull(),
+  active: boolean("active").notNull().default(true),
+  createdAt: timestamp("createdAt").defaultNow(),
+  updatedAt: timestamp("updatedAt").defaultNow(),
 });
 
 // Settings table for storing API keys and configuration

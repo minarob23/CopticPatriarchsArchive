@@ -1441,7 +1441,7 @@ async function importCompleteData() {
     // إدراج البيانات الجديدة
     for (const patriarch of completePatriarchsData) {
       await pool.query(`
-        INSERT INTO patriarchs (name, arabic_name, order_number, start_year, end_year, era, contributions, biography, heresies_fought, is_active)
+        INSERT INTO patriarchs (name, "arabicName", "orderNumber", "startYear", "endYear", era, contributions, biography, "heresiesFought", active)
         VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)
       `, [
         patriarch.name,
@@ -1450,9 +1450,9 @@ async function importCompleteData() {
         patriarch.start_year,
         patriarch.end_year,
         patriarch.era,
-        patriarch.contributions,
+        patriarch.contributions,    
         patriarch.biography,
-        JSON.stringify(patriarch.heresies_fought),
+        patriarch.heresies_fought,
         patriarch.is_active
       ]);
     }
