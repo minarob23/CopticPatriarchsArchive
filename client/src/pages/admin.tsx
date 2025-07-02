@@ -411,7 +411,7 @@ ${index + 1}. ${p.name}
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-green-100 text-sm font-medium">العصر الحديث</p>
-                  <p className="text-4xl font-bold">{finalStats?.byEra?.modern || 0}</p>
+                  <p className="text-4xl font-bold">{(finalStats?.byEra?.["العصر الحديث"] || 0) + (finalStats?.byEra?.["العصر المعاصر"] || 0)}</p>
                   <p className="text-green-200 text-xs mt-1">بطريرك</p>
                 </div>
                 <div className="w-16 h-16 bg-white bg-opacity-20 rounded-full flex items-center justify-center">
@@ -443,7 +443,7 @@ ${index + 1}. ${p.name}
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-blue-100 text-sm font-medium">العصر الذهبي</p>
-                  <p className="text-4xl font-bold">{finalStats?.byEra?.golden || 0}</p>
+                  <p className="text-4xl font-bold">{finalStats?.byEra?.["العصر الذهبي"] || 0}</p>
                   <p className="text-blue-200 text-xs mt-1">أزهى فترات الكنيسة</p>
                 </div>
                 <div className="w-16 h-16 bg-white bg-opacity-20 rounded-full flex items-center justify-center">
