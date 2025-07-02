@@ -26,9 +26,19 @@ export async function askPatriarch(question: string): Promise<string> {
     const patriarchs = await storage.getPatriarchs();
 
     // Create context from patriarchs data
-    const context = patriarchs.map(p => 
-      `البطريرك ${p.name} (رقم ${p.orderNumber}) - العصر: ${p.era} - الفترة: ${p.startYear}${p.endYear ? `-${p.endYear}` : '-الآن'} - المساهمات: ${p.contributions} - السيرة: ${p.biography || 'غير متوفرة'} - البدع المحاربة: ${p.heresiesFought.join(', ')}`
-    ).join('\n\n');
+    const context = patriarchs.map(p => {
+      let heresiesList = '';
+      try {
+        const heresies = Array.isArray(p.heresiesFought) 
+          ? p.heresiesFought 
+          : JSON.parse(p.heresiesFought || '[]');
+        heresiesList = heresies.join(', ');
+      } catch (error) {
+        heresiesList = 'غير متوفرة';
+      }
+      
+      return `البطريرك ${p.name} (رقم ${p.orderNumber}) - العصر: ${p.era} - الفترة: ${p.startYear}${p.endYear ? `-${p.endYear}` : '-الآن'} - المساهمات: ${p.contributions} - السيرة: ${p.biography || 'غير متوفرة'} - البدع المحاربة: ${heresiesList}`;
+    }).join('\n\n');
 
     const systemPrompt = `أنت خبير في تاريخ الكنيسة القبطية الأرثوذكسية والبطاركة الأقباط. 
 تتحدث بالعربية فقط وتجيب على الأسئلة بناءً على المعلومات التاريخية الموثقة للبطاركة الأقباط الأرثوذكس.
@@ -89,7 +99,16 @@ export async function generateSmartSummary(patriarch: any, tone: string): Promis
 العصر: ${patriarch.era}
 المساهمات: ${patriarch.contributions}
 السيرة الذاتية: ${patriarch.biography || "غير متوفر"}
-البدع التي حاربها: ${patriarch.heresiesFought}
+البدع التي حاربها: ${(() => {
+  try {
+    const heresies = Array.isArray(patriarch.heresiesFought) 
+      ? patriarch.heresiesFought 
+      : JSON.parse(patriarch.heresiesFought || '[]');
+    return heresies.join(', ') || 'غير متوفر';
+  } catch (error) {
+    return 'غير متوفر';
+  }
+})()}
 
 المطلوب:
 - ${instruction}
