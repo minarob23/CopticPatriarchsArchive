@@ -265,22 +265,28 @@ export default function Home() {
                   </Button>
                 </div>
 
-                {/* Smart Summary Button - More Prominent Display */}
+                {/* Smart Summary Button - Highly Visible Display */}
                 <div className="mt-8 text-center">
-                  <div className="bg-gradient-to-r from-green-400 to-emerald-500 p-1 rounded-3xl shadow-2xl transform hover:scale-105 transition-all duration-300">
+                  <div className="bg-gradient-to-r from-yellow-400 via-green-400 to-emerald-500 p-2 rounded-2xl shadow-2xl transform hover:scale-105 transition-all duration-300 animate-pulse hover:animate-none">
                     <Button
                       onClick={() => setShowSmartSummary(true)}
                       size="lg"
-                      className="bg-gradient-to-r from-green-600 to-emerald-700 hover:from-green-700 hover:to-emerald-800 text-white shadow-2xl border-0 transform hover:scale-105 transition-all duration-300 px-16 py-8 text-2xl font-bold rounded-3xl w-full"
+                      className="bg-gradient-to-r from-green-600 to-emerald-700 hover:from-green-700 hover:to-emerald-800 text-white shadow-2xl border-0 transform hover:scale-105 transition-all duration-300 px-8 md:px-16 py-6 md:py-8 text-lg md:text-2xl font-bold rounded-2xl w-full flex items-center justify-center gap-3"
                     >
-                      <i className="fas fa-brain ml-4 text-3xl animate-pulse"></i>
-                      🤖 الملخص الذكي بالذكاء الاصطناعي
-                      <i className="fas fa-sparkles mr-4 text-yellow-300"></i>
+                      <div className="flex items-center gap-2 md:gap-4">
+                        <i className="fas fa-brain text-xl md:text-3xl animate-pulse text-yellow-300"></i>
+                        <span className="text-base md:text-2xl">🤖 الملخص الذكي بالذكاء الاصطناعي</span>
+                        <i className="fas fa-sparkles text-xl md:text-2xl text-yellow-300 animate-bounce"></i>
+                      </div>
                     </Button>
                   </div>
-                  <p className="text-green-100 text-lg mt-4 font-bold bg-black bg-opacity-20 rounded-xl px-6 py-3 mx-auto max-w-md">
-                    ✨ احصل على ملخص ذكي ومفصل عن أي بطريرك باستخدام تقنية Gemini AI
-                  </p>
+                  <div className="mt-4 bg-gradient-to-r from-green-600 to-emerald-600 rounded-xl px-4 md:px-6 py-3 mx-auto max-w-lg shadow-lg">
+                    <p className="text-white text-sm md:text-lg font-bold flex items-center justify-center gap-2">
+                      <i className="fas fa-magic text-yellow-300"></i>
+                      ✨ احصل على ملخص ذكي ومفصل عن أي بطريرك باستخدام تقنية Gemini AI
+                      <i className="fas fa-star text-yellow-300"></i>
+                    </p>
+                  </div>
                 </div>
               </CardContent>
             </Card>
@@ -352,14 +358,18 @@ export default function Home() {
                 اسأل البطريرك
               </Button>
 
-              <Button
-                onClick={() => setShowSmartSummary(true)}
-                className="bg-gradient-to-r from-green-500 to-emerald-600 text-white hover:from-green-600 hover:to-emerald-700 px-8 py-4 shadow-lg hover:shadow-xl transition-all duration-300 text-lg font-bold border-2 border-green-400 hover:border-green-300 transform hover:scale-105"
-              >
-                <i className="fas fa-brain ml-2 text-xl animate-pulse"></i>
-                🤖 الملخص الذكي
-                <i className="fas fa-sparkles mr-2 text-yellow-300"></i>
-              </Button>
+              <div className="bg-gradient-to-r from-yellow-400 to-green-400 p-1 rounded-xl shadow-xl">
+                <Button
+                  onClick={() => setShowSmartSummary(true)}
+                  className="bg-gradient-to-r from-green-500 to-emerald-600 text-white hover:from-green-600 hover:to-emerald-700 px-6 md:px-8 py-3 md:py-4 shadow-lg hover:shadow-xl transition-all duration-300 text-base md:text-lg font-bold border-0 transform hover:scale-105 rounded-xl w-full"
+                >
+                  <div className="flex items-center gap-2">
+                    <i className="fas fa-brain text-lg md:text-xl animate-pulse text-yellow-300"></i>
+                    <span>🤖 الملخص الذكي</span>
+                    <i className="fas fa-sparkles text-sm md:text-lg text-yellow-300 animate-bounce"></i>
+                  </div>
+                </Button>
+              </div>
             </div>
 
             {/* Authentication Buttons */}
