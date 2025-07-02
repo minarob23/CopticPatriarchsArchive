@@ -48,6 +48,7 @@ const eraOptions = [
   { value: "councils", label: "عصر المجامع" },
   { value: "persecution", label: "عصر الاضطهاد" },
   { value: "modern", label: "العصر الحديث" },
+  { value: "custom", label: "أخرى (حدد بنفسك)" },
 ];
 
 type PatriarchFormData = {
@@ -57,9 +58,11 @@ type PatriarchFormData = {
   startYear: number;
   endYear?: number;
   era: string;
+  customEra?: string;
   contributions: string;
   biography?: string;
   heresiesFought: string[];
+  customHeresies: string;
 };
 
 export default function PatriarchForm({ patriarch, onClose }: PatriarchFormProps) {
@@ -75,9 +78,11 @@ export default function PatriarchForm({ patriarch, onClose }: PatriarchFormProps
       startYear: patriarch?.startYear || new Date().getFullYear(),
       endYear: patriarch?.endYear || undefined,
       era: patriarch?.era || "",
+      customEra: "",
       contributions: patriarch?.contributions || "",
       biography: patriarch?.biography || "",
       heresiesFought: patriarch?.heresiesFought || [],
+      customHeresies: "",
     },
   });
 
@@ -120,7 +125,27 @@ export default function PatriarchForm({ patriarch, onClose }: PatriarchFormProps
   });
 
   const onSubmit = (data: PatriarchFormData) => {
-    mutation.mutate(data);
+    // Process custom era
+    const finalEra = data.era === "custom" ? data.customEra || data.era : data.era;
+    
+    // Process custom heresies
+    let finalHeresies = [...data.heresiesFought];
+    if (data.customHeresies.trim()) {
+      const customHeresiesList = data.customHeresies.split(',').map(h => h.trim()).filter(h => h);
+      finalHeresies = [...finalHeresies, ...customHeresiesList];
+    }
+    
+    const submissionData = {
+      ...data,
+      era: finalEra,
+      heresiesFought: finalHeresies,
+    };
+    
+    // Remove custom fields before submission
+    delete submissionData.customEra;
+    delete submissionData.customHeresies;
+    
+    mutation.mutate(submissionData);
   };
 
   return (
@@ -251,6 +276,26 @@ export default function PatriarchForm({ patriarch, onClose }: PatriarchFormProps
                   </FormItem>
                 )}
               />
+
+              {/* Custom Era Input - Only show if "custom" is selected */}
+              {form.watch("era") === "custom" && (
+                <FormField
+                  control={form.control}
+                  name="customEra"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>اسم العصر المخصص</FormLabel>
+                      <FormControl>
+                        <Input 
+                          placeholder="مثال: عصر التجديد الروحي" 
+                          {...field} 
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              )}
             </div>
 
             {/* Theological Contributions */}
@@ -301,6 +346,27 @@ export default function PatriarchForm({ patriarch, onClose }: PatriarchFormProps
                         />
                       ))}
                     </div>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              {/* Custom Heresies Input */}
+              <FormField
+                control={form.control}
+                name="customHeresies"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>بدع أخرى (منفصلة بفواصل)</FormLabel>
+                    <FormControl>
+                      <Input
+                        placeholder="مثال: البدعة الأولى، البدعة الثانية، البدعة الثالثة"
+                        {...field}
+                      />
+                    </FormControl>
+                    <p className="text-sm text-gray-500">
+                      يمكنك إضافة بدع جديدة غير موجودة في القائمة أعلاه، مفصولة بفواصل
+                    </p>
                     <FormMessage />
                   </FormItem>
                 )}
