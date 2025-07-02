@@ -189,56 +189,39 @@ export default function AskPatriarchChatbot() {
                 {suggestedQuestions.map((suggestion, index) => (
                   <div
                     key={index}
-                    className="group relative overflow-hidden rounded-2xl border border-amber-200/50 dark:border-amber-700/50 bg-gradient-to-br from-white/90 via-amber-50/40 to-orange-50/40 dark:from-gray-800/90 dark:via-amber-950/30 dark:to-orange-950/30 backdrop-blur-sm hover:shadow-2xl hover:shadow-amber-500/20 dark:hover:shadow-amber-500/10 transition-all duration-500 hover:scale-[1.05] hover:-translate-y-2 animate-in slide-in-from-bottom-8 fade-in-0"
+                    className="group relative overflow-hidden rounded-xl border-2 border-amber-300/60 dark:border-amber-700/60 bg-gradient-to-br from-amber-50 via-orange-50 to-yellow-50 dark:from-amber-900/40 dark:via-orange-900/40 dark:to-yellow-900/40 hover:border-amber-500 dark:hover:border-amber-500 hover:shadow-xl hover:shadow-amber-500/25 transition-all duration-300 hover:scale-[1.02] animate-in slide-in-from-bottom-4 fade-in-0"
                     style={{ 
-                      animationDelay: `${index * 150}ms`,
-                      animationDuration: '600ms',
+                      animationDelay: `${index * 100}ms`,
+                      animationDuration: '400ms',
                       animationFillMode: 'both'
                     }}
                   >
-                    {/* Shimmer effect */}
-                    <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000 ease-out"></div>
-
-                    {/* Animated border */}
-                    <div className="absolute inset-0 rounded-2xl bg-gradient-to-r from-amber-400 via-orange-400 to-amber-400 opacity-0 group-hover:opacity-30 transition-opacity duration-500 animate-pulse"></div>
-                    <div className="absolute inset-[1px] rounded-2xl bg-gradient-to-br from-white/90 via-amber-50/40 to-orange-50/40 dark:from-gray-800/90 dark:via-amber-950/30 dark:to-orange-950/30"></div>
+                    {/* Glowing background on hover */}
+                    <div className="absolute inset-0 bg-gradient-to-r from-amber-200/0 via-amber-200/50 to-amber-200/0 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
 
                     <Button
                       variant="ghost"
-                      className="relative w-full h-auto p-5 text-right justify-start bg-transparent hover:bg-transparent transition-all duration-500 min-h-[70px] z-10 group-hover:scale-105"
+                      className="relative w-full h-auto p-4 text-right justify-start bg-transparent hover:bg-transparent transition-all duration-300 min-h-[65px] z-10"
                       onClick={() => setQuestion(suggestion)}
                       disabled={askPatriarchMutation.isPending}
                     >
-                      {/* Floating icons */}
-                      <div className="absolute top-3 right-3 opacity-20 group-hover:opacity-60 transition-all duration-500 group-hover:rotate-12 group-hover:scale-110">
-                        <Lightbulb className="h-4 w-4 text-amber-600 animate-pulse" />
+                      {/* Icon */}
+                      <div className="absolute top-3 right-3 opacity-40 group-hover:opacity-80 transition-all duration-300 group-hover:scale-110">
+                        <Lightbulb className="h-4 w-4 text-amber-600 group-hover:text-amber-700" />
                       </div>
 
-                      <div className="w-full">
-                        <span className="text-sm leading-relaxed text-amber-800 dark:text-amber-200 font-medium group-hover:text-amber-900 dark:group-hover:text-amber-100 transition-all duration-500 text-right block group-hover:translate-x-1">
+                      <div className="w-full pr-8">
+                        <span className="text-sm leading-relaxed text-amber-800 dark:text-amber-200 font-medium group-hover:text-amber-900 dark:group-hover:text-amber-100 transition-colors duration-300 text-right block">
                           {suggestion}
                         </span>
 
                         {/* Animated underline */}
-                        <div className="h-0.5 bg-gradient-to-r from-amber-500 to-orange-500 mt-2 w-0 group-hover:w-full transition-all duration-500 ease-out"></div>
+                        <div className="h-0.5 bg-gradient-to-r from-amber-500/80 to-orange-500/80 mt-2 w-0 group-hover:w-full transition-all duration-400 ease-out rounded-full"></div>
                       </div>
                     </Button>
 
-                    {/* Floating particles */}
-                    <div className="absolute top-2 left-2 w-2 h-2 bg-amber-400 rounded-full opacity-0 group-hover:opacity-60 group-hover:animate-bounce transition-all duration-500" style={{ animationDelay: '0ms' }}></div>
-                    <div className="absolute bottom-3 right-8 w-1.5 h-1.5 bg-orange-500 rounded-full opacity-0 group-hover:opacity-70 group-hover:animate-bounce transition-all duration-500" style={{ animationDelay: '200ms' }}></div>
-                    <div className="absolute top-1/2 left-1 w-1 h-1 bg-amber-300 rounded-full opacity-0 group-hover:opacity-50 group-hover:animate-ping transition-all duration-500" style={{ animationDelay: '400ms' }}></div>
-
-                    {/* Morphing background blobs */}
-                    <div className="absolute top-0 right-0 w-20 h-20 bg-gradient-to-bl from-amber-400/20 to-transparent rounded-full -translate-y-10 translate-x-10 group-hover:scale-150 group-hover:rotate-45 transition-all duration-700 ease-out"></div>
-                    <div className="absolute bottom-0 left-0 w-16 h-16 bg-gradient-to-tr from-orange-400/20 to-transparent rounded-full translate-y-8 -translate-x-8 group-hover:scale-150 group-hover:-rotate-45 transition-all duration-700 ease-out"></div>
-                    <div className="absolute top-1/2 left-1/2 w-12 h-12 bg-gradient-to-r from-amber-300/10 to-orange-300/10 rounded-full -translate-x-6 -translate-y-6 group-hover:scale-200 group-hover:rotate-180 transition-all duration-1000 ease-out"></div>
-
-                    {/* Ripple effect on hover */}
-                    <div className="absolute inset-0 rounded-2xl bg-gradient-to-r from-amber-500/0 via-amber-500/10 to-orange-500/0 opacity-0 group-hover:opacity-100 group-hover:animate-pulse transition-all duration-300"></div>
-
-                    {/* Glow effect */}
-                    <div className="absolute -inset-1 bg-gradient-to-r from-amber-500 via-orange-500 to-amber-500 rounded-2xl opacity-0 group-hover:opacity-20 blur-sm transition-all duration-500 -z-10"></div>
+                    {/* Subtle glow effect */}
+                    <div className="absolute -inset-0.5 bg-gradient-to-r from-amber-400/20 via-orange-400/20 to-amber-400/20 rounded-xl opacity-0 group-hover:opacity-100 blur-sm transition-all duration-300 -z-10"></div>
                   </div>
                 ))}
               </div>
