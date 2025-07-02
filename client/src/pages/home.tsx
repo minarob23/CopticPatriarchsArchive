@@ -381,6 +381,8 @@ export default function Home() {
         {/* Content Display */}
         {viewMode === "timeline" ? (
           <PatriarchTimeline patriarchs={filteredPatriarchs} />
+        ) : viewMode === "charts" ? (
+          <HomeCharts patriarchs={filteredPatriarchs} />
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8">
             {filteredPatriarchs.map((patriarch) => (
