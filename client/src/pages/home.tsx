@@ -65,7 +65,7 @@ export default function Home() {
   const [viewMode, setViewMode] = useState<"cards" | "timeline" | "charts">("cards");
   const [showChatbot, setShowChatbot] = useState(false);
   const [showSmartSummary, setShowSmartSummary] = useState(false);
-  
+
 
 
   const { data: patriarchs, isLoading } = useQuery<Patriarch[]>({
@@ -337,7 +337,7 @@ export default function Home() {
                 الإحصائيات والتحليلات
               </Button>
 
-              
+
 
               {isAuthenticated && (
                 <Button
@@ -416,7 +416,7 @@ export default function Home() {
         onClose={() => setShowSmartSummary(false)} 
       />
 
-      
+
     </div>
   );
 }
