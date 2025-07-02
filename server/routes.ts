@@ -5,6 +5,7 @@ import { setupAuth, isAuthenticated } from "./replitAuth";
 import { askPatriarch, setGeminiApiKey, testGeminiConnection } from "./gemini";
 import { insertPatriarchSchema, updatePatriarchSchema } from "@shared/schema";
 import { z } from "zod";
+import { eq, and, like, desc, asc, or } from "drizzle-orm";
 
 export async function registerRoutes(app: Express): Promise<Server> {
   // Auth middleware
@@ -187,6 +188,88 @@ export async function registerRoutes(app: Express): Promise<Server> {
     } catch (error) {
       console.error("Error checking API key status:", error);
       res.status(500).json({ hasApiKey: false });
+    }
+  });
+
+   // Generate smart summary for a patriarch
+   app.post("/api/generate-smart-summary", async (req, res) => {
+    try {
+      const { name, tone } = req.body;
+
+      if (!name) {
+        return res.status(400).json({ error: "اسم البطريرك مطلوب" });
+      }
+
+      // @ts-ignore
+      const patriarch = await storage.getPatriarchByName(name);
+
+      if (!patriarch) {
+        return res.status(404).json({ error: "لم يتم العثور على البطريرك" });
+      }
+
+      const patriarchData = patriarch;
+
+      // Generate summary based on tone
+      let summary = "";
+      const toneStyle = tone === "academic" ? "أكاديمي ومتخصص" : 
+                       tone === "kids" ? "مبسط للأطفال" : "سهل ومبسط";
+
+      summary = `هذا ملخص ${toneStyle} عن ${patriarchData.arabicName || patriarchData.name}:
+
+${patriarchData.arabicName || patriarchData.name} هو البابا رقم ${patriarchData.orderNumber} في تاريخ الكنيسة القبطية الأرثوذكسية.
+
+فترة الخدمة: خدم من عام ${patriarchData.startYear} ${patriarchData.endYear ? `حتى عام ${patriarchData.endYear}` : 'وحتى الآن'} ميلادية، أي لمدة ${patriarchData.endYear ? patriarchData.endYear - patriarchData.startYear : new Date().getFullYear() - patriarchData.startYear} سنة تقريباً.
+
+العصر التاريخي: عاش في ${patriarchData.era}، وهو عصر مهم في تاريخ الكنيسة المسيحية.
+
+المساهمات الرئيسية:
+${patriarchData.contributions || 'معلومات غير متوفرة حالياً'}
+
+البدع والتحديات التي واجهها:
+${(() => {
+  try {
+    const heresies = Array.isArray(patriarchData.heresiesFought) 
+      ? patriarchData.heresiesFought 
+      : JSON.parse(patriarchData.heresiesFought || '[]');
+    return heresies.length > 0 ? heresies.join('، ') : 'لا توجد معلومات متاحة';
+  } catch (e) {
+    return 'لا توجد معلومات متاحة';
+  }
+})()}
+
+هذا البطريرك ترك أثراً عميقاً في تاريخ الكنيسة القبطية وساهم في تطوير الإيمان المسيحي في مصر والعالم.`;
+
+      res.json({
+        summary,
+        patriarch: {
+          name: patriarchData.arabicName || patriarchData.name,
+          orderNumber: patriarchData.orderNumber,
+          startYear: patriarchData.startYear,
+          endYear: patriarchData.endYear,
+          era: patriarchData.era
+        }
+      });
+    } catch (error) {
+      console.error("Error generating smart summary:", error);
+      res.status(500).json({ error: "خطأ في الخادم" });
+    }
+  });
+
+  // Get all patriarchs with optional filtering
+  app.get("/api/patriarchs", async (req, res) => {
+    try {
+      const { search, era, heresies } = req.query;
+      const filters = {
+        searchQuery: search as string,
+        era: era as string,
+        heresies: heresies ? (heresies as string).split(',') : undefined,
+      };
+
+      const patriarchs = await storage.getPatriarchs(filters);
+      res.json(patriarchs);
+    } catch (error) {
+      console.error("Error fetching patriarchs:", error);
+      res.status(500).json({ message: "Failed to fetch patriarchs" });
     }
   });
 

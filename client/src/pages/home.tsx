@@ -9,7 +9,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Badge } from "@/components/ui/badge";
 import PatriarchTimeline from "@/components/patriarch-timeline";
 import PatriarchCard from "@/components/patriarch-card";
-import SmartSummaryModal from "@/components/smart-summary-modal";
+
 import Loading from "@/components/ui/loading";
 import type { Patriarch } from "@shared/schema";
 import { getArabicHeresyName } from "@shared/patriarch-names";
@@ -59,7 +59,7 @@ export default function Home() {
   const [selectedEra, setSelectedEra] = useState("all");
   const [selectedHeresies, setSelectedHeresies] = useState<string[]>([]);
   const [viewMode, setViewMode] = useState<"cards" | "timeline">("cards");
-  const [showSmartSummary, setShowSmartSummary] = useState(false);
+  
 
   const { data: patriarchs, isLoading } = useQuery<Patriarch[]>({
     queryKey: ["/api/patriarchs", { search: searchQuery, era: selectedEra !== "all" ? selectedEra : undefined }],
@@ -259,7 +259,7 @@ export default function Home() {
 
                   {/* زر الملخص الذكي */}
                   <Button
-                    onClick={() => setShowSmartSummary(true)}
+                    onClick={() => setLocation("/smart-summary")}
                     className="bg-gradient-to-r from-green-500 to-teal-600 text-white hover:from-green-600 hover:to-teal-700 shadow-lg transform hover:scale-105 transition-all duration-300 px-6 py-3"
                   >
                     <i className="fas fa-brain ml-2"></i>
@@ -326,7 +326,7 @@ export default function Home() {
 
               {/* زر الملخص الذكي */}
               <Button
-                onClick={() => setShowSmartSummary(true)}
+                onClick={() => setLocation("/smart-summary")}
                 className="bg-gradient-to-r from-green-500 to-teal-600 text-white hover:from-green-600 hover:to-teal-700 shadow-lg transform hover:scale-105 transition-all duration-300 px-6 py-3 text-lg font-bold"
               >
                 <i className="fas fa-brain ml-2 text-xl"></i>
@@ -379,11 +379,7 @@ export default function Home() {
         )}
       </div>
 
-      {/* Smart Summary Modal */}
-      <SmartSummaryModal 
-        isOpen={showSmartSummary} 
-        onClose={() => setShowSmartSummary(false)} 
-      />
+      
     </div>
   );
 }
