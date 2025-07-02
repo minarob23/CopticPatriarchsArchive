@@ -14,6 +14,7 @@ import GeminiSettings from "@/components/admin/gemini-settings";
 import ChartsDashboard from "@/components/admin/charts-dashboard";
 import Loading from "@/components/ui/loading";
 import type { Patriarch } from "@shared/schema";
+import { getArabicHeresyName } from "@shared/patriarch-names";
 import {
   Dialog,
   DialogContent,
@@ -184,7 +185,7 @@ export default function Admin() {
     const csvContent = [
       headers.join(","),
       ...patriarchs.map(p => [
-        `"${p.name}"`,
+        `"${p.arabicName || p.name}"`,
         p.orderNumber,
         p.startYear,
         p.endYear || "",
@@ -199,7 +200,7 @@ export default function Admin() {
           } catch (e) {
             heresies = [];
           }
-          return heresies.join('; ');
+          return heresies.map(heresy => getArabicHeresyName(heresy)).join('; ');
         })()}"`
       ].join(","))
     ].join("\n");
@@ -249,7 +250,7 @@ ${Object.entries(finalStats.byEra).map(([era, count]) =>
 قائمة البطاركة التفصيلية:
 
 ${patriarchs.map((p, index) => `
-${index + 1}. ${p.name}
+${index + 1}. ${p.arabicName || p.name}
    الرقم: البابا ${p.orderNumber}
    الفترة: ${p.startYear} - ${p.endYear || "الآن"} م
    العصر: ${eraLabels[p.era] || p.era}
@@ -263,7 +264,7 @@ ${index + 1}. ${p.name}
      } catch (e) {
        heresies = [];
      }
-     return heresies.length > 0 ? heresies.join(', ') : 'لا توجد';
+     return heresies.length > 0 ? heresies.map(heresy => getArabicHeresyName(heresy)).join(', ') : 'لا توجد';
    })()}
 `).join('\n')}
 
