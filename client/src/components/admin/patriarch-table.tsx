@@ -5,6 +5,7 @@ import { isUnauthorizedError } from "@/lib/authUtils";
 import { apiRequest } from "@/lib/queryClient";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { ArrowUp, ArrowDown } from "lucide-react";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -44,6 +45,9 @@ export default function PatriarchTable({ patriarchs, onEdit }: PatriarchTablePro
   const { toast } = useToast();
   const queryClient = useQueryClient();
 
+  // Sort patriarchs by order number for display
+  const sortedPatriarchs = [...patriarchs].sort((a, b) => a.orderNumber - b.orderNumber);
+
   const deleteMutation = useMutation({
     mutationFn: async (id: number) => {
       await apiRequest("DELETE", `/api/admin/patriarchs/${id}`);
@@ -76,6 +80,37 @@ export default function PatriarchTable({ patriarchs, onEdit }: PatriarchTablePro
     },
   });
 
+  const swapOrderMutation = useMutation({
+    mutationFn: async ({ patriarch1Id, patriarch2Id }: { patriarch1Id: number; patriarch2Id: number }) => {
+      await apiRequest("POST", "/api/admin/patriarchs/swap-order", { patriarch1Id, patriarch2Id });
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/patriarchs"] });
+      toast({
+        title: "تم التبديل",
+        description: "تم تبديل ترتيب البطاركة بنجاح",
+      });
+    },
+    onError: (error) => {
+      if (isUnauthorizedError(error)) {
+        toast({
+          title: "غير مخول",
+          description: "تم تسجيل خروجك. جارٍ تسجيل الدخول مرة أخرى...",
+          variant: "destructive",
+        });
+        setTimeout(() => {
+          window.location.href = "/api/login";
+        }, 500);
+        return;
+      }
+      toast({
+        title: "خطأ",
+        description: "فشل في تبديل ترتيب البطاركة",
+        variant: "destructive",
+      });
+    },
+  });
+
   const handleDelete = (id: number) => {
     setDeleteId(id);
   };
@@ -83,6 +118,28 @@ export default function PatriarchTable({ patriarchs, onEdit }: PatriarchTablePro
   const confirmDelete = () => {
     if (deleteId) {
       deleteMutation.mutate(deleteId);
+    }
+  };
+
+  const handleSwapUp = (patriarch: Patriarch) => {
+    const currentIndex = sortedPatriarchs.findIndex(p => p.id === patriarch.id);
+    if (currentIndex > 0) {
+      const previousPatriarch = sortedPatriarchs[currentIndex - 1];
+      swapOrderMutation.mutate({
+        patriarch1Id: patriarch.id,
+        patriarch2Id: previousPatriarch.id
+      });
+    }
+  };
+
+  const handleSwapDown = (patriarch: Patriarch) => {
+    const currentIndex = sortedPatriarchs.findIndex(p => p.id === patriarch.id);
+    if (currentIndex < sortedPatriarchs.length - 1) {
+      const nextPatriarch = sortedPatriarchs[currentIndex + 1];
+      swapOrderMutation.mutate({
+        patriarch1Id: patriarch.id,
+        patriarch2Id: nextPatriarch.id
+      });
     }
   };
 
@@ -111,7 +168,7 @@ export default function PatriarchTable({ patriarchs, onEdit }: PatriarchTablePro
             </tr>
           </thead>
           <tbody className="bg-white divide-y divide-gray-200">
-            {patriarchs.map((patriarch) => (
+            {sortedPatriarchs.map((patriarch, index) => (
               <tr key={patriarch.id} className="hover:bg-gray-50 transition-colors duration-200">
                 <td className="px-6 py-4 whitespace-nowrap">
                   <div className="flex items-center">
@@ -168,6 +225,28 @@ export default function PatriarchTable({ patriarchs, onEdit }: PatriarchTablePro
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
                   <div className="flex space-x-reverse space-x-2">
+                    {/* Swap Up Button */}
+                    <Button
+                      size="sm"
+                      variant="ghost"
+                      onClick={() => handleSwapUp(patriarch)}
+                      disabled={index === 0 || swapOrderMutation.isPending}
+                      className="text-green-600 hover:text-green-900 disabled:text-gray-400"
+                      title="نقل للأعلى"
+                    >
+                      <ArrowUp size={16} />
+                    </Button>
+                    {/* Swap Down Button */}
+                    <Button
+                      size="sm"
+                      variant="ghost"
+                      onClick={() => handleSwapDown(patriarch)}
+                      disabled={index === sortedPatriarchs.length - 1 || swapOrderMutation.isPending}
+                      className="text-green-600 hover:text-green-900 disabled:text-gray-400"
+                      title="نقل للأسفل"
+                    >
+                      <ArrowDown size={16} />
+                    </Button>
                     <Button
                       size="sm"
                       variant="ghost"

@@ -114,6 +114,27 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Swap patriarch order numbers
+  app.post('/api/admin/patriarchs/swap-order', isAuthenticated, async (req, res) => {
+    try {
+      const { patriarch1Id, patriarch2Id } = req.body;
+      
+      if (!patriarch1Id || !patriarch2Id) {
+        return res.status(400).json({ message: "Both patriarch IDs are required" });
+      }
+
+      const success = await storage.swapPatriarchOrder(patriarch1Id, patriarch2Id);
+      if (!success) {
+        return res.status(404).json({ message: "One or both patriarchs not found" });
+      }
+
+      res.json({ message: "Patriarch order numbers swapped successfully" });
+    } catch (error) {
+      console.error("Error swapping patriarch order:", error);
+      res.status(500).json({ message: "Failed to swap patriarch order" });
+    }
+  });
+
   // Admin stats route
   app.get('/api/admin/stats', isAuthenticated, async (req, res) => {
     try {

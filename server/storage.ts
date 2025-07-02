@@ -38,6 +38,9 @@ export interface IStorage {
   // Settings operations
   getSetting(key: string): Promise<Setting | undefined>;
   setSetting(key: string, value: string): Promise<Setting>;
+
+  // Swap patriarch order numbers
+  swapPatriarchOrder(patriarch1Id: number, patriarch2Id: number): Promise<boolean>;
 }
 
 export class DatabaseStorage implements IStorage {
@@ -102,12 +105,22 @@ export class DatabaseStorage implements IStorage {
   }
 
   async createPatriarch(patriarch: InsertPatriarch): Promise<Patriarch> {
+    const values = {
+      name: patriarch.name,
+      arabicName: patriarch.arabicName,
+      orderNumber: patriarch.orderNumber,
+      startYear: patriarch.startYear,
+      endYear: patriarch.endYear,
+      era: patriarch.era,
+      contributions: patriarch.contributions,
+      biography: patriarch.biography,
+      heresiesFought: JSON.stringify(patriarch.heresiesFought || []),
+      isActive: patriarch.isActive ?? true
+    };
+
     const [created] = await db
       .insert(patriarchs)
-      .values({
-        ...patriarch,
-        heresiesFought: patriarch.heresiesFought || []
-      })
+      .values(values)
       .returning();
     return created;
   }
@@ -210,6 +223,30 @@ export class DatabaseStorage implements IStorage {
     } catch (error) {
       console.error('Error in setSetting:', error);
       throw error;
+    }
+  }
+
+  async swapPatriarchOrder(patriarch1Id: number, patriarch2Id: number): Promise<boolean> {
+    try {
+      // Get the two patriarchs
+      const patriarch1 = await db.select().from(patriarchs).where(eq(patriarchs.id, patriarch1Id));
+      const patriarch2 = await db.select().from(patriarchs).where(eq(patriarchs.id, patriarch2Id));
+
+      if (patriarch1.length === 0 || patriarch2.length === 0) {
+        return false;
+      }
+
+      const order1 = patriarch1[0].orderNumber;
+      const order2 = patriarch2[0].orderNumber;
+
+      // Swap the order numbers
+      await db.update(patriarchs).set({ orderNumber: order2 }).where(eq(patriarchs.id, patriarch1Id));
+      await db.update(patriarchs).set({ orderNumber: order1 }).where(eq(patriarchs.id, patriarch2Id));
+
+      return true;
+    } catch (error) {
+      console.error('Error swapping patriarch order:', error);
+      return false;
     }
   }
 }
