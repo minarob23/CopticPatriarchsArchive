@@ -277,20 +277,20 @@ export default function Home() {
               </div>
             </div>
 
-            <div className="flex gap-3">
-              {/* زر الملخص الذكي */}
+            <div className="flex gap-3 flex-wrap">
+              {/* زر الملخص الذكي - دائماً ظاهر */}
               <Button
                 onClick={() => setShowSmartSummary(true)}
-                className="bg-gradient-to-r from-green-500 to-teal-600 text-white hover:from-green-600 hover:to-teal-700 shadow-lg transform hover:scale-105 transition-all duration-300"
+                className="bg-gradient-to-r from-green-500 to-teal-600 text-white hover:from-green-600 hover:to-teal-700 shadow-lg transform hover:scale-105 transition-all duration-300 px-6 py-3 text-lg font-bold"
               >
-                <i className="fas fa-brain ml-2"></i>
-                ملخص ذكي
+                <i className="fas fa-brain ml-2 text-xl"></i>
+                ملخص ذكي للبطاركة
               </Button>
 
               {isAuthenticated && (
                 <Button
                   onClick={() => setLocation("/admin")}
-                  className="bg-gradient-to-r from-blue-600 to-purple-600 text-white hover:from-blue-700 hover:to-purple-700"
+                  className="bg-gradient-to-r from-blue-600 to-purple-600 text-white hover:from-blue-700 hover:to-purple-700 px-6 py-3"
                 >
                   <i className="fas fa-cog ml-2"></i>
                   لوحة الإدارة
@@ -301,7 +301,7 @@ export default function Home() {
                 <Button
                   onClick={() => setLocation("/login")}
                   variant="outline"
-                  className="border-blue-600 text-blue-600 hover:bg-blue-600 hover:text-white"
+                  className="border-blue-600 text-blue-600 hover:bg-blue-600 hover:text-white px-6 py-3"
                 >
                   <i className="fas fa-sign-in-alt ml-2"></i>
                   دخول الإدارة
