@@ -158,6 +158,7 @@ Changelog:
 - July 2, 2025. Successfully completed migration from Replit Agent to Replit environment with full functionality
 - July 2, 2025. Fixed JSON parsing errors in heresiesFought data and resolved admin interface issues
 - July 2, 2025. Database now contains 118 authentic patriarch records with proper PostgreSQL integration
+- July 2, 2025. Fixed logout functionality to properly redirect to homepage after logout
 
 ## User Preferences
 

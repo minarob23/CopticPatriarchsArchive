@@ -67,16 +67,20 @@ export async function setupAuth(app: Express) {
     }
   });
 
-  // Logout route
-  app.post('/api/auth/logout', (req, res) => {
-    req.session.destroy((err) => {
+  // Logout routes (both GET and POST for compatibility)
+  const handleLogout = (req: any, res: any) => {
+    req.session.destroy((err: any) => {
       if (err) {
-        res.status(500).json({ message: "خطأ في تسجيل الخروج" });
-      } else {
-        res.json({ message: "تم تسجيل الخروج بنجاح" });
+        console.error('Logout error:', err);
+        return res.redirect('/');
       }
+      res.clearCookie('connect.sid');
+      res.redirect('/');
     });
-  });
+  };
+
+  app.post('/api/auth/logout', handleLogout);
+  app.get('/api/logout', handleLogout);
 
   // Get current user route
   app.get('/api/auth/user', (req, res) => {

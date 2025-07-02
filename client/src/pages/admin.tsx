@@ -298,13 +298,31 @@ ${index + 1}. ${p.arabicName || p.name}
     { value: "modern", label: "العصر الحديث" },
   ];
 
-  const logout = () => {
-    // Check if demo user
-    if (localStorage.getItem('demo-auth')) {
-      localStorage.removeItem('demo-auth');
-      setLocation("/login");
-    } else {
-      window.location.href = "/api/logout";
+  const logout = async () => {
+    try {
+      // Check if demo user
+      if (localStorage.getItem('demo-auth')) {
+        localStorage.removeItem('demo-auth');
+        setLocation("/");
+        return;
+      }
+      
+      // Call logout API for session users
+      const response = await fetch('/api/auth/logout', {
+        method: 'POST',
+        credentials: 'include'
+      });
+      
+      if (response.ok) {
+        // Redirect to homepage after successful logout
+        window.location.href = "/";
+      } else {
+        // If API call fails, still redirect to homepage
+        window.location.href = "/";
+      }
+    } catch (error) {
+      // In case of any error, redirect to homepage
+      window.location.href = "/";
     }
   }
 
