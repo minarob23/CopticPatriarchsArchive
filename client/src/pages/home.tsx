@@ -310,7 +310,7 @@ export default function Home() {
             </div>
 
             {/* View Mode Buttons */}
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-4">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-3 mb-4">
               <Button
                 variant={viewMode === "cards" ? "default" : "outline"}
                 onClick={() => setViewMode("cards")}
@@ -337,11 +337,22 @@ export default function Home() {
                 <i className="fas fa-chart-bar ml-2"></i>
                 الإحصائيات
               </Button>
+            </div>
+
+            {/* Action Buttons */}
+            <div className="flex gap-3 flex-wrap justify-center md:justify-start mb-4">
+              <Button
+                onClick={() => setShowChatbot(true)}
+                className="bg-gradient-to-r from-green-600 to-emerald-600 text-white hover:from-green-700 hover:to-emerald-700 px-6 py-3 shadow-md hover:shadow-lg transition-all duration-300"
+              >
+                <i className="fas fa-comments ml-2"></i>
+                اسأل البطريرك
+              </Button>
 
               <Button
                 variant="outline"
                 onClick={() => setShowSmartSummary(true)}
-                className="bg-gradient-to-r from-purple-600 to-indigo-600 text-white border-purple-600 hover:from-purple-700 hover:to-indigo-700 px-4 py-3 shadow-md hover:shadow-lg transition-all duration-300"
+                className="bg-gradient-to-r from-purple-600 to-indigo-600 text-white border-purple-600 hover:from-purple-700 hover:to-indigo-700 px-6 py-3 shadow-md hover:shadow-lg transition-all duration-300"
               >
                 <i className="fas fa-brain ml-2"></i>
                 الملخص الذكي
