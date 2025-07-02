@@ -41,7 +41,6 @@ const eraColors: Record<string, string> = {
 
 export default function PatriarchTable({ patriarchs, onEdit }: PatriarchTableProps) {
   const [deleteId, setDeleteId] = useState<number | null>(null);
-  const [showNumbers, setShowNumbers] = useState(true); // true = order numbers, false = database IDs
   const { toast } = useToast();
   const queryClient = useQueryClient();
 
@@ -99,35 +98,10 @@ export default function PatriarchTable({ patriarchs, onEdit }: PatriarchTablePro
 
   return (
     <>
-      {/* Number Display Toggle */}
-      <div className="mb-4 flex justify-end">
-        <div className="flex items-center gap-2 bg-gray-50 rounded-lg p-1">
-          <Button
-            size="sm"
-            variant={showNumbers ? "default" : "ghost"}
-            onClick={() => setShowNumbers(true)}
-            className="text-xs"
-          >
-            رقم البطريرك
-          </Button>
-          <Button
-            size="sm"
-            variant={!showNumbers ? "default" : "ghost"}
-            onClick={() => setShowNumbers(false)}
-            className="text-xs"
-          >
-            رقم قاعدة البيانات
-          </Button>
-        </div>
-      </div>
-
       <div className="overflow-x-auto">
         <table className="w-full">
           <thead className="bg-gray-50">
             <tr>
-              <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
-                {showNumbers ? "رقم البطريرك" : "رقم قاعدة البيانات"}
-              </th>
               <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">البطريرك</th>
               <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">فترة الخدمة</th>
               <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">المساهمات الرئيسية</th>
@@ -139,14 +113,6 @@ export default function PatriarchTable({ patriarchs, onEdit }: PatriarchTablePro
           <tbody className="bg-white divide-y divide-gray-200">
             {patriarchs.map((patriarch) => (
               <tr key={patriarch.id} className="hover:bg-gray-50 transition-colors duration-200">
-                <td className="px-6 py-4 whitespace-nowrap text-center">
-                  <div className="text-lg font-bold text-blue-600">
-                    {showNumbers ? patriarch.orderNumber : patriarch.id}
-                  </div>
-                  <div className="text-xs text-gray-500">
-                    {showNumbers ? "البابا" : "معرف"}
-                  </div>
-                </td>
                 <td className="px-6 py-4 whitespace-nowrap">
                   <div className="flex items-center">
                     <div className="flex-shrink-0 h-10 w-10">
@@ -156,9 +122,7 @@ export default function PatriarchTable({ patriarchs, onEdit }: PatriarchTablePro
                     </div>
                     <div className="mr-4">
                       <div className="text-sm font-medium text-gray-900">{patriarch.arabicName || patriarch.name}</div>
-                      <div className="text-sm text-gray-500">
-                        {showNumbers ? `ID: ${patriarch.id}` : `البابا ${patriarch.orderNumber}`}
-                      </div>
+                      <div className="text-sm text-gray-500">البابا {patriarch.orderNumber}</div>
                     </div>
                   </div>
                 </td>
