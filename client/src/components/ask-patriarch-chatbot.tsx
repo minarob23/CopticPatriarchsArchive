@@ -7,7 +7,6 @@ import { Separator } from "@/components/ui/separator";
 import { useMutation } from "@tanstack/react-query";
 import { apiRequest } from "@/lib/queryClient";
 import { MessageCircle, Send, Loader2, Crown, Lightbulb, Sparkles } from "lucide-react";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 
 interface Message {
   id: string;
@@ -117,206 +116,6 @@ export default function AskPatriarchChatbot() {
     "كيف تطورت مؤسسة البطريركية عبر العصور المختلفة؟"
   ];
 
-  const parseTableData = (text: string) => {
-    const lines = text.split('\n');
-    const tables: Array<{rows: string[][], startIndex: number, endIndex: number}> = [];
-    let currentTable: string[][] = [];
-    let tableStartIndex = -1;
-
-    for (let i = 0; i < lines.length; i++) {
-      const line = lines[i].trim();
-
-      // Check if line contains table format
-      if (line.includes('|') && line.split('|').length > 2) {
-        if (tableStartIndex === -1) {
-          tableStartIndex = i;
-        }
-
-        // Parse table row
-        const cells = line.split('|').map(cell => cell.trim()).filter(cell => cell !== '');
-        if (cells.length > 0) {
-          currentTable.push(cells);
-        }
-      } else if (currentTable.length > 0) {
-        // End of table
-        tables.push({
-          rows: currentTable,
-          startIndex: tableStartIndex,
-          endIndex: i - 1
-        });
-        currentTable = [];
-        tableStartIndex = -1;
-      }
-    }
-
-    // Handle table at end of text
-    if (currentTable.length > 0) {
-      tables.push({
-        rows: currentTable,
-        startIndex: tableStartIndex,
-        endIndex: lines.length - 1
-      });
-    }
-
-    return tables;
-  };
-
-  const formatText = (text: string) => {
-    const tables = parseTableData(text);
-    const lines = text.split('\n');
-    const processedIndices = new Set<number>();
-
-    // Mark table lines as processed
-    tables.forEach(table => {
-      for (let i = table.startIndex; i <= table.endIndex; i++) {
-        processedIndices.add(i);
-      }
-    });
-
-    const elements: React.ReactNode[] = [];
-    let currentParagraph: string[] = [];
-
-    for (let i = 0; i < lines.length; i++) {
-      const line = lines[i];
-
-      // Check if this line is part of a table
-      const table = tables.find(t => i >= t.startIndex && i <= t.endIndex);
-      if (table && i === table.startIndex) {
-        // Add current paragraph if exists
-        if (currentParagraph.length > 0) {
-          elements.push(formatParagraph(currentParagraph.join('\n'), elements.length));
-          currentParagraph = [];
-        }
-
-        // Add table
-        elements.push(formatTable(table.rows, elements.length));
-
-        // Skip to end of table
-        i = table.endIndex;
-        continue;
-      }
-
-      if (!processedIndices.has(i)) {
-        currentParagraph.push(line);
-      }
-
-      // Add paragraph when we hit empty line or end
-      if ((line.trim() === '' || i === lines.length - 1) && currentParagraph.length > 0) {
-        elements.push(formatParagraph(currentParagraph.join('\n'), elements.length));
-        currentParagraph = [];
-      }
-    }
-
-    return elements;
-  };
-
-  const formatTable = (rows: string[][], key: number) => {
-    if (rows.length === 0) return null;
-
-    // First row is header if it doesn't contain :--- patterns
-    const hasHeaderSeparator = rows.length > 1 && rows[1].some(cell => cell.includes(':---') || cell.includes('---'));
-    const headerRow = hasHeaderSeparator ? rows[0] : null;
-    const dataRows = hasHeaderSeparator ? rows.slice(2) : rows;
-
-    return (
-      <div key={key} className="my-4 overflow-x-auto">
-        <Table className="border border-gray-300">
-          {headerRow && (
-            <TableHeader>
-              <TableRow className="bg-blue-50">
-                {headerRow.map((cell, cellIndex) => (
-                  <TableHead key={cellIndex} className="border border-gray-300 px-4 py-2 font-semibold text-blue-900">
-                    {cell}
-                  </TableHead>
-                ))}
-              </TableRow>
-            </TableHeader>
-          )}
-          <TableBody>
-            {dataRows.map((row, rowIndex) => (
-              <TableRow key={rowIndex} className="hover:bg-gray-50">
-                {row.map((cell, cellIndex) => (
-                  <TableCell key={cellIndex} className="border border-gray-300 px-4 py-2">
-                    {cell}
-                  </TableCell>
-                ))}
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-      </div>
-    );
-  };
-
-  const formatParagraph = (text: string, key: number) => {
-    if (!text.trim()) return null;
-
-    const lines = text.split('\n');
-
-    return (
-      <div key={key} className="mb-4">
-        {lines.map((line, lineIndex) => {
-          const trimmed = line.trim();
-
-          // Headers
-          if (trimmed.startsWith('###')) {
-            return (
-              <h3 key={lineIndex} className="text-lg font-bold text-blue-800 mb-2 border-b-2 border-blue-200 pb-1">
-                {trimmed.replace(/^#+\s*/, '')}
-              </h3>
-            );
-          }
-
-          if (trimmed.startsWith('##')) {
-            return (
-              <h2 key={lineIndex} className="text-xl font-bold text-blue-900 mb-3 border-b-2 border-blue-300 pb-1">
-                {trimmed.replace(/^#+\s*/, '')}
-              </h2>
-            );
-          }
-
-          if (trimmed.startsWith('#')) {
-            return (
-              <h1 key={lineIndex} className="text-2xl font-bold text-blue-950 mb-4 border-b-4 border-blue-400 pb-2">
-                {trimmed.replace(/^#+\s*/, '')}
-              </h1>
-            );
-          }
-
-          // Bullet points
-          if (trimmed.startsWith('*') || trimmed.startsWith('-')) {
-            return (
-              <li key={lineIndex} className="list-disc list-inside text-gray-700 mb-1 mr-4">
-                {trimmed.replace(/^[\*\-]\s*/, '')}
-              </li>
-            );
-          }
-
-          // Numbered lists
-          if (/^\d+\./.test(trimmed)) {
-            return (
-              <li key={lineIndex} className="list-decimal list-inside text-gray-700 mb-1 mr-4">
-                {trimmed.replace(/^\d+\.\s*/, '')}
-              </li>
-            );
-          }
-
-          // Bold text
-          const boldFormatted = trimmed.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
-
-          // Regular paragraphs
-          if (trimmed) {
-            return (
-              <p key={lineIndex} className="text-gray-800 mb-2 leading-relaxed" dangerouslySetInnerHTML={{ __html: boldFormatted }} />
-            );
-          }
-
-          return null;
-        })}
-      </div>
-    );
-  };
-
   return (
     <div className="w-full h-full flex flex-col animate-in fade-in-0 duration-500">
       <div className="bg-gradient-to-br from-amber-50 via-orange-50 to-amber-50 dark:from-amber-950/20 dark:via-orange-950/20 dark:to-amber-950/20 border border-amber-200 dark:border-amber-800 rounded-lg flex-1 flex flex-col shadow-xl backdrop-blur-sm">
@@ -358,9 +157,12 @@ export default function AskPatriarchChatbot() {
                       )}
                       <div 
                         className="whitespace-pre-wrap leading-relaxed text-sm"
-                      >
-                        {formatText(message.content)}
-                      </div>
+                        dangerouslySetInnerHTML={{
+                          __html: message.content
+                            .replace(/\*\*(.*?)\*\*/g, '<strong class="font-bold text-amber-800 dark:text-amber-200">$1</strong>')
+                            .replace(/\*(.*?)\*/g, '<em class="italic">$1</em>')
+                        }}
+                      />
                       <div className="text-xs opacity-70 mt-2 text-left">
                         {message.timestamp.toLocaleTimeString('ar-EG')}
                       </div>
