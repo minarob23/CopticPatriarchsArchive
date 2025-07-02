@@ -340,7 +340,7 @@ export default function Recommendations() {
                   <CardHeader>
                     <CardTitle className="flex items-center gap-2">
                       <Brain className="h-5 w-5 text-purple-600" />
-                      محرك الاقتراحات الذكي بـ Gemini AI
+                      محرك الاقتراحات الذكية
                     </CardTitle>
                     <CardDescription>
                       أخبرنا عن اهتماماتك وسيقوم الذكاء الاصطناعي بتحليلها واقتراح أفضل البطاركة المناسبين لك
