@@ -32,6 +32,31 @@ export default function AskPatriarchChatbot() {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   };
 
+  const askPatriarchMutation = useMutation({
+    mutationFn: async (question: string) => {
+      const response = await apiRequest('POST', '/api/ask-patriarch', { question });
+      return response.json().then(data => data.answer);
+    },
+    onSuccess: (answer) => {
+      const newMessage: Message = {
+        id: Date.now().toString(),
+        type: 'patriarch',
+        content: answer,
+        timestamp: new Date()
+      };
+      setMessages(prev => [...prev, newMessage]);
+    },
+    onError: (error) => {
+      const errorMessage: Message = {
+        id: Date.now().toString(),
+        type: 'patriarch',
+        content: 'عذراً، حدث خطأ أثناء معالجة سؤالك. يرجى المحاولة مرة أخرى.',
+        timestamp: new Date()
+      };
+      setMessages(prev => [...prev, errorMessage]);
+    }
+  });
+
   useEffect(() => {
     scrollToBottom();
   }, [messages]);
@@ -61,31 +86,6 @@ export default function AskPatriarchChatbot() {
       window.removeEventListener('sendToChatbot', handleSendToChatbot as EventListener);
     };
   }, [askPatriarchMutation]);
-
-  const askPatriarchMutation = useMutation({
-    mutationFn: async (question: string) => {
-      const response = await apiRequest('POST', '/api/ask-patriarch', { question });
-      return response.json().then(data => data.answer);
-    },
-    onSuccess: (answer) => {
-      const newMessage: Message = {
-        id: Date.now().toString(),
-        type: 'patriarch',
-        content: answer,
-        timestamp: new Date()
-      };
-      setMessages(prev => [...prev, newMessage]);
-    },
-    onError: (error) => {
-      const errorMessage: Message = {
-        id: Date.now().toString(),
-        type: 'patriarch',
-        content: 'عذراً، حدث خطأ أثناء معالجة سؤالك. يرجى المحاولة مرة أخرى.',
-        timestamp: new Date()
-      };
-      setMessages(prev => [...prev, errorMessage]);
-    }
-  });
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();

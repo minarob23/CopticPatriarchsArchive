@@ -143,17 +143,17 @@ export default function Landing() {
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     <Button
                       onClick={handleSearch}
-                      className="w-full py-4 text-lg bg-gradient-to-r from-yellow-500 to-orange-500 hover:from-yellow-600 hover:to-orange-600 text-white rounded-xl shadow-lg transform hover:scale-105 transition-all duration-300"
+                      className="w-full py-4 text-lg bg-gradient-to-r from-yellow-500 to-orange-500 hover:from-yellow-600 hover:to-orange-600 text-white rounded-xl shadow-lg transform hover:scale-105 transition-all duration-300 flex items-center justify-center"
                       disabled={isLoading}
                     >
                       {isLoading ? (
                         <>
-                          <i className="fas fa-spinner fa-spin ml-2"></i>
+                          <i className="fas fa-spinner fa-spin mr-2"></i>
                           جاري البحث...
                         </>
                       ) : (
                         <>
-                          <i className="fas fa-search ml-2"></i>
+                          <i className="fas fa-search mr-2"></i>
                           بحث عادي
                         </>
                       )}
@@ -163,7 +163,7 @@ export default function Landing() {
                     <Sheet>
                       <SheetTrigger asChild>
                         <Button
-                          className="w-full py-4 text-lg bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white rounded-xl shadow-lg transform hover:scale-105 transition-all duration-300"
+                          className="w-full py-4 text-lg bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white rounded-xl shadow-lg transform hover:scale-105 transition-all duration-300 flex items-center justify-center"
                           onClick={() => {
                             // Send search input to chatbot if available
                             if (searchInput.trim()) {
@@ -176,7 +176,7 @@ export default function Landing() {
                             }
                           }}
                         >
-                          <i className="fas fa-brain ml-2"></i>
+                          <i className="fas fa-brain mr-2"></i>
                           بحث ذكي
                         </Button>
                       </SheetTrigger>
