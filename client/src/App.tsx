@@ -20,12 +20,6 @@ import SmartSummaryModal from "@/components/smart-summary-modal";
 import type { Patriarch } from "@shared/schema";
 
 function Router() {
-  const { isAuthenticated, isLoading } = useAuth();
-
-  if (isLoading) {
-    return <Loading />;
-  }
-
   return (
     <Switch>
       <Route path="/" component={Landing} />
@@ -42,21 +36,32 @@ function Router() {
   );
 }
 
-function App() {
-  const { isAuthenticated, logout } = useAuth();
+function AppContent() {
+  const { isLoading } = useAuth();
   const [showSmartSummary, setShowSmartSummary] = useState(false);
 
+  if (isLoading) {
+    return <Loading />;
+  }
+
+  return (
+    <>
+      <Router />
+      {/* Smart Summary Modal */}
+      <SmartSummaryModal 
+        isOpen={showSmartSummary} 
+        onClose={() => setShowSmartSummary(false)} 
+      />
+    </>
+  );
+}
+
+function App() {
   return (
     <QueryClientProvider client={queryClient}>
       <TooltipProvider>
         <Toaster />
-        <Router />
-
-        {/* Smart Summary Modal */}
-        <SmartSummaryModal 
-          isOpen={showSmartSummary} 
-          onClose={() => setShowSmartSummary(false)} 
-        />
+        <AppContent />
       </TooltipProvider>
     </QueryClientProvider>
   );
