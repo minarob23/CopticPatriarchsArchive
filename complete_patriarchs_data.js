@@ -1452,7 +1452,7 @@ async function importCompleteData() {
         patriarch.era,
         patriarch.contributions,
         patriarch.biography,
-        patriarch.heresies_fought,
+        JSON.stringify(patriarch.heresies_fought),
         patriarch.is_active
       ]);
     }

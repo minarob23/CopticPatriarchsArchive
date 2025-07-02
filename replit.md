@@ -165,6 +165,8 @@ Changelog:
 - July 2, 2025. Successfully completed migration from Replit Agent to Replit environment
 - July 2, 2025. Installed required packages and created PostgreSQL database with proper schema
 - July 2, 2025. Imported complete database of 118 authentic Coptic Orthodox Patriarchs with Arabic support
+- July 2, 2025. Fixed patriarch numbering issue - ID now correctly matches order_number for all 118 patriarchs
+- July 2, 2025. Resolved JSON parsing errors for heresiesFought data by properly formatting array values
 
 ## User Preferences
 
