@@ -10,7 +10,7 @@ import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/co
 import PatriarchTimeline from "@/components/patriarch-timeline";
 import PatriarchCard from "@/components/patriarch-card";
 import AskPatriarchChatbot from "@/components/ask-patriarch-chatbot";
-
+import { useAuth } from "@/hooks/useAuth";
 import HomeCharts from "@/components/home-charts";
 import Loading from "@/components/ui/loading";
 import type { Patriarch } from "@shared/schema";

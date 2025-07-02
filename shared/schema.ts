@@ -1,4 +1,3 @@
-
 import {
   pgTable,
   text,
@@ -53,10 +52,10 @@ export const patriarchs = pgTable("patriarchs", {
 // Settings table for storing API keys and configuration
 export const settings = pgTable("settings", {
   id: serial("id").primaryKey(),
-  key: text("key").notNull().unique(),
-  value: text("value"),
-  createdAt: timestamp("created_at").defaultNow(),
-  updatedAt: timestamp("updated_at").defaultNow(),
+  key: text("key").unique().notNull(),
+  value: text("value").notNull(),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
 });
 
 export const insertPatriarchSchema = createInsertSchema(patriarchs).omit({

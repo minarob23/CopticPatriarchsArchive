@@ -179,20 +179,33 @@ export class DatabaseStorage implements IStorage {
     const [setting] = await db
       .select()
       .from(settings)
-      .where(eq(settings.key, key));
+      .where(eq(settings.key, key))
+      .limit(1);
     return setting;
   }
 
   async setSetting(key: string, value: string): Promise<Setting> {
-    const [setting] = await db
-      .insert(settings)
-      .values({ key, value })
-      .onConflictDoUpdate({
-        target: settings.key,
-        set: { value, updatedAt: new Date() }
-      })
-      .returning();
-    return setting;
+    // First try to update existing setting
+    const [existingSetting] = await db
+      .select()
+      .from(settings)
+      .where(eq(settings.key, key))
+      .limit(1);
+
+    if (existingSetting) {
+      const [updated] = await db
+        .update(settings)
+        .set({ value, updatedAt: new Date() })
+        .where(eq(settings.key, key))
+        .returning();
+      return updated;
+    } else {
+      const [created] = await db
+        .insert(settings)
+        .values({ key, value })
+        .returning();
+      return created;
+    }
   }
 }
 
