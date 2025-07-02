@@ -11,6 +11,7 @@ import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/co
 import PatriarchTimeline from "@/components/patriarch-timeline";
 import PatriarchCard from "@/components/patriarch-card";
 import AskPatriarchChatbot from "@/components/ask-patriarch-chatbot";
+import HomeCharts from "@/components/home-charts";
 import Loading from "@/components/ui/loading";
 import type { Patriarch } from "@shared/schema";
 import { getArabicHeresyName } from "@shared/patriarch-names";
@@ -294,6 +295,11 @@ export default function Landing() {
           </Card>
         )}
       </div>
+
+      {/* Charts Section */}
+      {patriarchs && patriarchs.length > 0 && (
+        <HomeCharts patriarchs={patriarchs} />
+      )}
 
       {/* Floating Ask Patriarch Button */}
       <Sheet>

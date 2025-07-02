@@ -11,6 +11,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import PatriarchTable from "@/components/admin/patriarch-table";
 import PatriarchForm from "@/components/admin/patriarch-form";
 import GeminiSettings from "@/components/admin/gemini-settings";
+import ChartsDashboard from "@/components/admin/charts-dashboard";
 import Loading from "@/components/ui/loading";
 import type { Patriarch } from "@shared/schema";
 import {
@@ -86,6 +87,7 @@ export default function Admin() {
   const [showForm, setShowForm] = useState(false);
   const [editingPatriarch, setEditingPatriarch] = useState<Patriarch | null>(null);
   const [showGeminiModal, setShowGeminiModal] = useState(false);
+  const [showChartsModal, setShowChartsModal] = useState(false);
   const [currentDateTime, setCurrentDateTime] = useState(new Date());
 
   // Redirect to login if not authenticated
@@ -353,6 +355,33 @@ ${index + 1}. ${p.name}
 
             <div className="flex items-center space-x-reverse space-x-4">
               <span className="text-blue-200">{(user as any)?.firstName || "الأدمن"}</span>
+              
+              {/* زر عرض الرسومات البيانية */}
+              <Dialog open={showChartsModal} onOpenChange={setShowChartsModal}>
+                <DialogTrigger asChild>
+                  <Button 
+                    variant="secondary"
+                    className="bg-white text-green-600 hover:bg-gray-100"
+                  >
+                    <i className="fas fa-chart-pie ml-2"></i>
+                    عرض الرسومات البيانية
+                  </Button>
+                </DialogTrigger>
+                <DialogContent className="max-w-[95vw] max-h-[95vh] overflow-y-auto" dir="rtl">
+                  <DialogHeader>
+                    <DialogTitle className="text-center text-green-600 font-amiri text-xl">
+                      الرسومات البيانية الشاملة لبطاركة الكنيسة القبطية
+                    </DialogTitle>
+                    <DialogDescription className="text-center text-gray-600">
+                      تحليل شامل وتصور بياني لجميع البيانات التاريخية للبطاركة
+                    </DialogDescription>
+                  </DialogHeader>
+                  <div className="mt-4">
+                    {allPatriarchs && <ChartsDashboard patriarchs={allPatriarchs} />}
+                  </div>
+                </DialogContent>
+              </Dialog>
+
               <Dialog open={showGeminiModal} onOpenChange={setShowGeminiModal}>
                 <DialogTrigger asChild>
                   <Button 
