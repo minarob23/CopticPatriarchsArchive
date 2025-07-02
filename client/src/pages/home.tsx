@@ -344,11 +344,13 @@ export default function Home() {
               <Button
                 variant="outline"
                 onClick={() => setShowSmartSummary(true)}
-                className="bg-gradient-to-r from-purple-600 to-indigo-600 text-white border-purple-600 hover:from-purple-700 hover:to-indigo-700 shadow-lg transform hover:scale-105 transition-all duration-300"
+                className="bg-gradient-to-r from-purple-600 to-indigo-600 text-white border-purple-600 hover:from-purple-700 hover:to-indigo-700 shadow-md transform hover:scale-105 transition-all duration-300"
               >
                 <i className="fas fa-brain w-4 h-4 ml-2"></i>
                 الملخص الذكي
               </Button>
+
+
 
               {isAuthenticated && (
                 <Button
@@ -371,14 +373,7 @@ export default function Home() {
                 </Button>
               )}
 
-              <Button
-                onClick={() => setShowSmartSummary(true)}
-                size="lg"
-                className="bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white shadow-xl border-2 border-green-400 hover:border-green-300 transform hover:scale-105 transition-all duration-300 px-8 py-4 text-lg font-semibold"
-              >
-                <i className="fas fa-brain ml-2 text-xl"></i>
-                الملخص الذكي بالذكاء الاصطناعي
-              </Button>
+
             </div>
           </div>
         </div>

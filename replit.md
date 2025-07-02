@@ -168,6 +168,7 @@ Changelog:
 - July 2, 2025. Fixed patriarch numbering issue - ID now correctly matches order_number for all 118 patriarchs
 - July 2, 2025. Resolved JSON parsing errors for heresiesFought data by properly formatting array values
 - July 2, 2025. Added patriarch order swapping functionality to admin interface with up/down arrow buttons
+- July 2, 2025. Added Smart Summary button to main homepage alongside the three main view buttons (Cards, Timeline, Charts)
 
 ## User Preferences
 
