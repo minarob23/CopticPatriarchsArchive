@@ -309,11 +309,12 @@ export default function Home() {
               </div>
             </div>
 
-            <div className="flex gap-3 flex-wrap">
+            <div className="flex gap-3 flex-wrap justify-center md:justify-start">
+              {/* View Mode Buttons */}
               <Button
                 variant={viewMode === "cards" ? "default" : "outline"}
                 onClick={() => setViewMode("cards")}
-                className={`${viewMode === "cards" ? "bg-blue-600 text-white" : "bg-white bg-opacity-20 text-blue-600 border-blue-600"} px-6 py-3`}
+                className={`${viewMode === "cards" ? "bg-blue-600 text-white" : "bg-white text-blue-600 border-blue-600"} px-4 py-2 shadow-md hover:shadow-lg transition-all duration-300`}
               >
                 <i className="fas fa-th-large ml-2"></i>
                 البطاقات
@@ -322,31 +323,27 @@ export default function Home() {
               <Button
                 variant={viewMode === "timeline" ? "default" : "outline"}
                 onClick={() => setViewMode("timeline")}
-                className={`${viewMode === "timeline" ? "bg-purple-600 text-white" : "bg-white bg-opacity-20 text-purple-600 border-purple-600"} px-6 py-3`}
+                className={`${viewMode === "timeline" ? "bg-purple-600 text-white" : "bg-white text-purple-600 border-purple-600"} px-4 py-2 shadow-md hover:shadow-lg transition-all duration-300`}
               >
                 <i className="fas fa-history ml-2"></i>
                 الخط الزمني
               </Button>
 
               <Button
-                variant="outline"
+                variant={viewMode === "charts" ? "default" : "outline"}
                 onClick={() => setViewMode("charts")}
-                className={`${
-                  viewMode === "charts"
-                    ? "bg-blue-600 text-white"
-                    : "bg-white text-blue-600 hover:bg-blue-50"
-                } border-blue-600 shadow-md transform hover:scale-105 transition-all duration-300`}
+                className={`${viewMode === "charts" ? "bg-green-600 text-white" : "bg-white text-green-600 border-green-600"} px-4 py-2 shadow-md hover:shadow-lg transition-all duration-300`}
               >
-                <i className="fas fa-chart-bar w-4 h-4 ml-2"></i>
-                الإحصائيات والتحليلات
+                <i className="fas fa-chart-bar ml-2"></i>
+                الإحصائيات
               </Button>
 
               <Button
                 variant="outline"
                 onClick={() => setShowSmartSummary(true)}
-                className="bg-gradient-to-r from-purple-600 to-indigo-600 text-white border-purple-600 hover:from-purple-700 hover:to-indigo-700 shadow-md transform hover:scale-105 transition-all duration-300"
+                className="bg-gradient-to-r from-purple-600 to-indigo-600 text-white border-purple-600 hover:from-purple-700 hover:to-indigo-700 px-4 py-2 shadow-md hover:shadow-lg transition-all duration-300"
               >
-                <i className="fas fa-brain w-4 h-4 ml-2"></i>
+                <i className="fas fa-brain ml-2"></i>
                 الملخص الذكي
               </Button>
 
