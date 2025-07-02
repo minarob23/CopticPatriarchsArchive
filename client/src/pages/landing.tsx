@@ -139,8 +139,8 @@ export default function Landing() {
                     </div>
                   </div>
 
-                  {/* Search Button */}
-                  <div>
+                  {/* Search Buttons */}
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     <Button
                       onClick={handleSearch}
                       className="w-full py-4 text-lg bg-gradient-to-r from-yellow-500 to-orange-500 hover:from-yellow-600 hover:to-orange-600 text-white rounded-xl shadow-lg transform hover:scale-105 transition-all duration-300"
@@ -154,10 +154,34 @@ export default function Landing() {
                       ) : (
                         <>
                           <i className="fas fa-search ml-2"></i>
-                          بحث
+                          بحث عادي
                         </>
                       )}
                     </Button>
+                    
+                    {/* AI Search Button opens chatbot directly */}
+                    <Sheet>
+                      <SheetTrigger asChild>
+                        <Button
+                          className="w-full py-4 text-lg bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white rounded-xl shadow-lg transform hover:scale-105 transition-all duration-300"
+                        >
+                          <i className="fas fa-brain ml-2"></i>
+                          بحث ذكي
+                        </Button>
+                      </SheetTrigger>
+                      <SheetContent className="w-full sm:max-w-2xl p-0 overflow-hidden" side="right">
+                        <SheetHeader className="bg-gradient-to-r from-purple-600 to-pink-600 text-white p-6">
+                          <SheetTitle className="text-right text-xl font-bold flex items-center justify-center gap-3">
+                            <i className="fas fa-brain"></i>
+                            🔍 البحث الذكي عن البطاركة
+                            <i className="fas fa-brain"></i>
+                          </SheetTitle>
+                        </SheetHeader>
+                        <div className="p-6 h-full overflow-auto">
+                          <AskPatriarchChatbot />
+                        </div>
+                      </SheetContent>
+                    </Sheet>
                   </div>
 
                   {/* Era Filter */}
