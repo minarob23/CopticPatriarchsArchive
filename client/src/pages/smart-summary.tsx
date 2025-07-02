@@ -7,6 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
 import Loading from "@/components/ui/loading";
+import { useLocation } from "wouter";
 
 interface SummaryResponse {
   summary: string;
@@ -20,6 +21,7 @@ interface SummaryResponse {
 }
 
 export default function SmartSummary() {
+  const [, setLocation] = useLocation();
   const [patriarchName, setPatriarchName] = useState("");
   const [tone, setTone] = useState("easy");
   const [result, setResult] = useState<SummaryResponse | null>(null);
@@ -66,8 +68,18 @@ export default function SmartSummary() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-green-50 via-white to-teal-50" dir="rtl">
+      {/* Home Button */}
+      <Button
+        onClick={() => setLocation("/")}
+        variant="outline"
+        className="fixed top-4 right-4 z-10 bg-white/90 backdrop-blur-sm border-green-300 text-green-600 hover:bg-green-50 shadow-lg"
+      >
+        <i className="fas fa-home ml-2"></i>
+        الصفحة الرئيسية
+      </Button>
+
       {/* Hero Section */}
-      <div className="bg-gradient-to-r from-green-600 via-teal-600 to-green-800 text-white relative overflow-hidden">
+      <div className="bg-gradient-to-r from-green-600 via-teal-600 to-green-800 text-white relative overflow-hidden"></div>
         <div className="absolute inset-0 bg-black bg-opacity-10"></div>
         <div className="absolute top-0 left-0 w-full h-full">
           <div className="absolute top-10 right-10 w-64 h-64 bg-white bg-opacity-10 rounded-full blur-3xl"></div>
