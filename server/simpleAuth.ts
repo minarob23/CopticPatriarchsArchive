@@ -36,6 +36,7 @@ export async function setupAuth(app: Express) {
         secure: false, // Set to true in production with HTTPS
         httpOnly: true,
         maxAge: sessionTtl,
+        sameSite: 'lax'
       },
     })
   );

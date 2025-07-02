@@ -39,7 +39,12 @@ export default function Login() {
           username: username,
           password: password
         }),
+        credentials: 'include'
       });
+
+      if (!response.ok) {
+        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+      }
 
       const result = await response.json();
 
