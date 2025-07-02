@@ -591,6 +591,13 @@ ${index + 1}. ${p.name}
             إضافة بطريرك جديد
           </Button>
           <Button 
+            onClick={() => setLocation("/charts")}
+            className="bg-gradient-to-r from-purple-500 to-purple-600 text-white hover:from-purple-600 hover:to-purple-700"
+          >
+            <i className="fas fa-chart-line ml-2"></i>
+            عرض الرسومات البيانية
+          </Button>
+          <Button 
             variant="secondary"
             onClick={handleExportData}
           >

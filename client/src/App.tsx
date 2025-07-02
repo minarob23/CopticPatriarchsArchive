@@ -6,7 +6,8 @@ import NotFound from "./pages/not-found";
 import Landing from "./pages/landing";
 import Home from "./pages/home";
 import Login from "./pages/login";
-import Admin from "./pages/admin";
+import Admin from "@/pages/admin";
+import Charts from "@/pages/charts";
 import About from "./pages/about";
 import ChurchHistory from "./pages/church-history";
 import References from "./pages/references";
@@ -28,6 +29,7 @@ function Router() {
       <Route path="/home" component={Home} />
       <Route path="/login" component={Login} />
       <Route path="/admin" component={Admin} />
+      <Route path="/charts" component={Charts} />
       <Route path="/about" component={About} />
       <Route path="/church-history" component={ChurchHistory} />
       <Route path="/references" component={References} />
