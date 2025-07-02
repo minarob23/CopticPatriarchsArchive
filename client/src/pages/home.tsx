@@ -253,177 +253,48 @@ export default function Home() {
 
       {/* Results Section */}
       <div className="container mx-auto px-4 py-12">
-        {/* Stats Bar - Enhanced Beautiful Design */}
-        <div className="relative bg-gradient-to-br from-white via-blue-50 to-purple-50 rounded-3xl shadow-2xl p-8 mb-12 border border-white/20 backdrop-blur-sm overflow-hidden">
-          {/* Background decorative elements */}
-          <div className="absolute -top-4 -right-4 w-32 h-32 bg-gradient-to-br from-blue-500/10 to-purple-500/10 rounded-full blur-2xl"></div>
-          <div className="absolute -bottom-4 -left-4 w-24 h-24 bg-gradient-to-br from-yellow-500/10 to-orange-500/10 rounded-full blur-xl"></div>
-          
-          <div className="relative z-10">
-            {/* Header Section */}
-            <div className="text-center mb-8">
-              <h2 className="text-2xl font-bold font-amiri text-gray-800 mb-2 bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
-                نظرة سريعة على الإحصائيات
-              </h2>
-              <p className="text-gray-600">ملخص شامل للبيانات المتاحة</p>
+        {/* Stats Bar */}
+        <div className="bg-white rounded-2xl shadow-lg p-6 mb-8">
+          <div className="flex flex-wrap items-center justify-between gap-4">
+            <div className="flex items-center gap-8">
+              <div className="text-center">
+                <p className="text-3xl font-bold text-blue-600">{filteredPatriarchs.length}</p>
+                <p className="text-sm text-gray-600">بطريرك</p>
+              </div>
+              <div className="text-center">
+                <p className="text-3xl font-bold text-purple-600">
+                  {filteredPatriarchs.filter(p => p.heresiesFought.length > 0).length}
+                </p>
+                <p className="text-sm text-gray-600">محارب بدع</p>
+              </div>
+              <div className="text-center">
+                <p className="text-3xl font-bold text-green-600">
+                  {new Set(filteredPatriarchs.map(p => p.era)).size}
+                </p>
+                <p className="text-sm text-gray-600">عصر تاريخي</p>
+              </div>
             </div>
 
-            {/* Stats Cards */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-              {/* البطاركة */}
-              <Card className="group hover:scale-105 transition-all duration-300 shadow-xl hover:shadow-2xl border-0 bg-gradient-to-br from-blue-500 to-blue-600 text-white overflow-hidden relative">
-                <div className="absolute top-0 right-0 w-20 h-20 bg-white/10 rounded-full -translate-y-10 translate-x-10"></div>
-                <div className="absolute bottom-0 left-0 w-16 h-16 bg-white/5 rounded-full translate-y-8 -translate-x-8"></div>
-                <CardContent className="p-6 relative z-10">
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <p className="text-blue-100 text-sm font-medium mb-1">إجمالي</p>
-                      <p className="text-4xl font-bold mb-1">{filteredPatriarchs.length}</p>
-                      <p className="text-blue-200 text-lg font-semibold">بطريرك</p>
-                    </div>
-                    <div className="w-16 h-16 bg-white/20 rounded-full flex items-center justify-center backdrop-blur-sm group-hover:rotate-12 transition-transform duration-300">
-                      <i className="fas fa-users text-2xl"></i>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-
-              {/* محاربو البدع */}
-              <Card className="group hover:scale-105 transition-all duration-300 shadow-xl hover:shadow-2xl border-0 bg-gradient-to-br from-purple-500 to-purple-600 text-white overflow-hidden relative">
-                <div className="absolute top-0 right-0 w-20 h-20 bg-white/10 rounded-full -translate-y-10 translate-x-10"></div>
-                <div className="absolute bottom-0 left-0 w-16 h-16 bg-white/5 rounded-full translate-y-8 -translate-x-8"></div>
-                <CardContent className="p-6 relative z-10">
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <p className="text-purple-100 text-sm font-medium mb-1">المدافعون</p>
-                      <p className="text-4xl font-bold mb-1">
-                        {filteredPatriarchs.filter(p => {
-                          let heresies = [];
-                          try {
-                            heresies = Array.isArray(p.heresiesFought) 
-                              ? p.heresiesFought 
-                              : JSON.parse(p.heresiesFought || '[]');
-                          } catch (e) {
-                            heresies = [];
-                          }
-                          return heresies.length > 0;
-                        }).length}
-                      </p>
-                      <p className="text-purple-200 text-lg font-semibold">محارب بدع</p>
-                    </div>
-                    <div className="w-16 h-16 bg-white/20 rounded-full flex items-center justify-center backdrop-blur-sm group-hover:rotate-12 transition-transform duration-300">
-                      <i className="fas fa-shield-alt text-2xl"></i>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-
-              {/* العصور التاريخية */}
-              <Card className="group hover:scale-105 transition-all duration-300 shadow-xl hover:shadow-2xl border-0 bg-gradient-to-br from-green-500 to-green-600 text-white overflow-hidden relative">
-                <div className="absolute top-0 right-0 w-20 h-20 bg-white/10 rounded-full -translate-y-10 translate-x-10"></div>
-                <div className="absolute bottom-0 left-0 w-16 h-16 bg-white/5 rounded-full translate-y-8 -translate-x-8"></div>
-                <CardContent className="p-6 relative z-10">
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <p className="text-green-100 text-sm font-medium mb-1">التنوع</p>
-                      <p className="text-4xl font-bold mb-1">
-                        {new Set(filteredPatriarchs.map(p => p.era)).size}
-                      </p>
-                      <p className="text-green-200 text-lg font-semibold">عصر تاريخي</p>
-                    </div>
-                    <div className="w-16 h-16 bg-white/20 rounded-full flex items-center justify-center backdrop-blur-sm group-hover:rotate-12 transition-transform duration-300">
-                      <i className="fas fa-history text-2xl"></i>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-            </div>
-
-            {/* Action Buttons */}
-            <div className="flex flex-wrap items-center justify-center gap-4">
-              {isAuthenticated && (
-                <Button
-                  onClick={() => setLocation("/admin")}
-                  className="group bg-gradient-to-r from-blue-600 via-purple-600 to-blue-700 text-white hover:from-blue-700 hover:via-purple-700 hover:to-blue-800 px-8 py-3 rounded-xl shadow-lg hover:shadow-xl transform hover:-translate-y-1 transition-all duration-300 font-semibold"
-                >
-                  <div className="flex items-center space-x-reverse space-x-2">
-                    <i className="fas fa-cog group-hover:rotate-180 transition-transform duration-500"></i>
-                    <span>لوحة الإدارة</span>
-                  </div>
-                </Button>
-              )}
-
-              {!isAuthenticated && (
-                <Button
-                  onClick={() => setLocation("/login")}
-                  className="group bg-gradient-to-r from-orange-500 to-red-500 text-white hover:from-orange-600 hover:to-red-600 px-8 py-3 rounded-xl shadow-lg hover:shadow-xl transform hover:-translate-y-1 transition-all duration-300 font-semibold"
-                >
-                  <div className="flex items-center space-x-reverse space-x-2">
-                    <i className="fas fa-sign-in-alt group-hover:translate-x-1 transition-transform duration-300"></i>
-                    <span>دخول الإدارة</span>
-                  </div>
-                </Button>
-              )}
-
-              {/* Additional Info Button */}
+            {isAuthenticated && (
               <Button
-                variant="outline"
-                className="group border-2 border-gray-300 hover:border-blue-500 text-gray-700 hover:text-blue-700 px-6 py-3 rounded-xl hover:shadow-lg transition-all duration-300 bg-white/80 backdrop-blur-sm"
+                onClick={() => setLocation("/admin")}
+                className="bg-gradient-to-r from-blue-600 to-purple-600 text-white hover:from-blue-700 hover:to-purple-700"
               >
-                <div className="flex items-center space-x-reverse space-x-2">
-                  <i className="fas fa-info-circle group-hover:scale-110 transition-transform duration-300"></i>
-                  <span>المزيد من التفاصيل</span>
-                </div>
+                <i className="fas fa-cog ml-2"></i>
+                لوحة الإدارة
               </Button>
-            </div>
+            )}
 
-            {/* Additional Stats Row */}
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-8 pt-6 border-t border-gray-200/50">
-              <div className="text-center group hover:scale-105 transition-transform duration-200">
-                <div className="w-12 h-12 bg-gradient-to-br from-yellow-400 to-orange-500 rounded-full flex items-center justify-center mx-auto mb-2 shadow-lg">
-                  <i className="fas fa-crown text-white"></i>
-                </div>
-                <p className="text-2xl font-bold text-gray-800">
-                  {Math.max(...filteredPatriarchs.filter(p => p.endYear).map(p => p.endYear! - p.startYear), 0)}
-                </p>
-                <p className="text-sm text-gray-600">أطول خدمة (سنة)</p>
-              </div>
-              
-              <div className="text-center group hover:scale-105 transition-transform duration-200">
-                <div className="w-12 h-12 bg-gradient-to-br from-pink-400 to-rose-500 rounded-full flex items-center justify-center mx-auto mb-2 shadow-lg">
-                  <i className="fas fa-calendar-alt text-white"></i>
-                </div>
-                <p className="text-2xl font-bold text-gray-800">
-                  {Math.round(
-                    filteredPatriarchs
-                      .filter(p => p.endYear)
-                      .reduce((sum, p) => sum + (p.endYear! - p.startYear), 0) /
-                    (filteredPatriarchs.filter(p => p.endYear).length || 1)
-                  )}
-                </p>
-                <p className="text-sm text-gray-600">متوسط الخدمة</p>
-              </div>
-
-              <div className="text-center group hover:scale-105 transition-transform duration-200">
-                <div className="w-12 h-12 bg-gradient-to-br from-teal-400 to-cyan-500 rounded-full flex items-center justify-center mx-auto mb-2 shadow-lg">
-                  <i className="fas fa-star text-white"></i>
-                </div>
-                <p className="text-2xl font-bold text-gray-800">
-                  {filteredPatriarchs.filter(p => 
-                    p.era.includes("الحديث") || p.era.includes("المعاصر") || p.era.includes("التحديث")
-                  ).length}
-                </p>
-                <p className="text-sm text-gray-600">العصر الحديث</p>
-              </div>
-
-              <div className="text-center group hover:scale-105 transition-transform duration-200">
-                <div className="w-12 h-12 bg-gradient-to-br from-indigo-400 to-purple-500 rounded-full flex items-center justify-center mx-auto mb-2 shadow-lg">
-                  <i className="fas fa-book text-white"></i>
-                </div>
-                <p className="text-2xl font-bold text-gray-800">1900+</p>
-                <p className="text-sm text-gray-600">سنة تاريخ</p>
-              </div>
-            </div>
+            {!isAuthenticated && (
+              <Button
+                onClick={() => setLocation("/login")}
+                variant="outline"
+                className="border-blue-600 text-blue-600 hover:bg-blue-600 hover:text-white"
+              >
+                <i className="fas fa-sign-in-alt ml-2"></i>
+                دخول الإدارة
+              </Button>
+            )}
           </div>
         </div>
 
