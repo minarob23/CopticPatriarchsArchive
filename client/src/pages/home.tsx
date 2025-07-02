@@ -263,9 +263,21 @@ export default function Home() {
                     <i className="fas fa-chart-bar ml-2"></i>
                     الإحصائيات والتحليلات
                   </Button>
+                </div>
 
-                  
-                  
+                {/* Smart Summary Button - Prominent Display */}
+                <div className="mt-8 text-center">
+                  <Button
+                    onClick={() => setShowSmartSummary(true)}
+                    size="lg"
+                    className="bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white shadow-2xl border-2 border-green-400 hover:border-green-300 transform hover:scale-110 transition-all duration-300 px-12 py-6 text-xl font-bold rounded-2xl animate-pulse hover:animate-none"
+                  >
+                    <i className="fas fa-brain ml-3 text-2xl"></i>
+                    🤖 الملخص الذكي بالذكاء الاصطناعي
+                  </Button>
+                  <p className="text-green-200 text-sm mt-2 font-medium">
+                    احصل على ملخص ذكي ومفصل عن أي بطريرك باستخدام تقنية Gemini AI
+                  </p>
                 </div>
               </CardContent>
             </Card>
@@ -350,10 +362,11 @@ export default function Home() {
 
               <Button
                 onClick={() => setShowSmartSummary(true)}
-                className="bg-gradient-to-r from-green-500 to-teal-600 text-white hover:from-green-600 hover:to-teal-700 shadow-lg transform hover:scale-105 transition-all duration-300 px-6 py-3"
+                size="lg"
+                className="bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white shadow-xl border-2 border-green-400 hover:border-green-300 transform hover:scale-105 transition-all duration-300 px-8 py-4 text-lg font-semibold"
               >
-                <i className="fas fa-brain ml-2"></i>
-                الملخص الذكي
+                <i className="fas fa-brain ml-2 text-xl"></i>
+                الملخص الذكي بالذكاء الاصطناعي
               </Button>
             </div>
           </div>

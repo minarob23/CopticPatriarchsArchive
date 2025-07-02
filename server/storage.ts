@@ -11,7 +11,7 @@ import {
   type InsertSetting,
 } from "@shared/schema";
 import { db } from "./db";
-import { eq, ilike, and, inArray, desc, or } from "drizzle-orm";
+import { eq, ilike, and, inArray, desc, or, like } from "drizzle-orm";
 
 export interface IStorage {
   // User operations for Replit Auth
@@ -130,6 +130,26 @@ export class DatabaseStorage implements IStorage {
     return !!deleted;
   }
 
+  async getPatriarchByName(name: string): Promise<Patriarch | undefined> {
+    const searchName = name.toLowerCase().trim();
+
+    const [patriarch] = await db
+      .select()
+      .from(patriarchs)
+      .where(
+        and(
+          eq(patriarchs.isActive, true),
+          or(
+            ilike(patriarchs.name, `%${searchName}%`),
+            ilike(patriarchs.arabicName, `%${searchName}%`)
+          )
+        )
+      )
+      .limit(1);
+
+    return patriarch;
+  }
+
   async getPatriarchStats(): Promise<{
     total: number;
     byEra: Record<string, number>;
@@ -154,25 +174,7 @@ export class DatabaseStorage implements IStorage {
     return { total, byEra, totalDefenders };
   }
 
-  async getPatriarchByName(name: string): Promise<Patriarch | undefined> {
-    const searchName = name.toLowerCase().trim();
 
-    const [patriarch] = await db
-      .select()
-      .from(patriarchs)
-      .where(
-        and(
-          eq(patriarchs.isActive, true),
-          or(
-            ilike(patriarchs.name, `%${searchName}%`),
-            ilike(patriarchs.arabicName, `%${searchName}%`)
-          )
-        )
-      )
-      .limit(1);
-
-    return patriarch;
-  }
 
   // Settings operations
   async getSetting(key: string): Promise<Setting | undefined> {

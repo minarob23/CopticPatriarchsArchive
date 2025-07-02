@@ -1,7 +1,7 @@
 
 import { useState } from "react";
 import { useMutation } from "@tanstack/react-query";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -85,6 +85,9 @@ export default function SmartSummaryModal({ isOpen, onClose }: SmartSummaryModal
             <i className="fas fa-brain ml-3"></i>
             الملخص الذكي لسير البطاركة
           </DialogTitle>
+          <DialogDescription className="text-center text-gray-600 mt-2">
+            أدخل اسم البطريرك واختر نوع اللغة للحصول على ملخص ذكي مفصل عن حياته وإنجازاته
+          </DialogDescription>
         </DialogHeader>
 
         <div className="space-y-6">
