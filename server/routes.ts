@@ -200,44 +200,81 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(400).json({ error: "اسم البطريرك مطلوب" });
       }
 
-      // @ts-ignore
       const patriarch = await storage.getPatriarchByName(name);
 
       if (!patriarch) {
         return res.status(404).json({ error: "لم يتم العثور على البطريرك" });
       }
 
-      const patriarchData = patriarch;
-
-      // Generate summary based on tone
+      // Generate intelligent summary based on tone
       let summary = "";
-      const toneStyle = tone === "academic" ? "أكاديمي ومتخصص" : 
-                       tone === "kids" ? "مبسط للأطفال" : "سهل ومبسط";
+      const patriarchData = patriarch;
+      const serviceDuration = patriarchData.endYear ? 
+        patriarchData.endYear - patriarchData.startYear : 
+        new Date().getFullYear() - patriarchData.startYear;
 
-      summary = `هذا ملخص ${toneStyle} عن ${patriarchData.arabicName || patriarchData.name}:
+      if (tone === "kids") {
+        summary = `🌟 قصة البابا ${patriarchData.arabicName || patriarchData.name} 🌟
 
-${patriarchData.arabicName || patriarchData.name} هو البابا رقم ${patriarchData.orderNumber} في تاريخ الكنيسة القبطية الأرثوذكسية.
+هل تعرف من هو البابا ${patriarchData.arabicName || patriarchData.name}؟ إنه البابا رقم ${patriarchData.orderNumber} في الكنيسة القبطية! 
 
-فترة الخدمة: خدم من عام ${patriarchData.startYear} ${patriarchData.endYear ? `حتى عام ${patriarchData.endYear}` : 'وحتى الآن'} ميلادية، أي لمدة ${patriarchData.endYear ? patriarchData.endYear - patriarchData.startYear : new Date().getFullYear() - patriarchData.startYear} سنة تقريباً.
+كان بابا عظيماً عاش منذ زمن طويل في ${patriarchData.era}. خدم ربنا لمدة ${serviceDuration} سنة من عام ${patriarchData.startYear} ${patriarchData.endYear ? `إلى عام ${patriarchData.endYear}` : 'وحتى الآن'}.
 
-العصر التاريخي: عاش في ${patriarchData.era}، وهو عصر مهم في تاريخ الكنيسة المسيحية.
+🎯 ماذا فعل؟
+${patriarchData.contributions}
 
-المساهمات الرئيسية:
-${patriarchData.contributions || 'معلومات غير متوفرة حالياً'}
+💪 كان شجاعاً وقوياً ودافع عن الكنيسة ضد الذين يريدون تغيير تعاليم المسيح.
 
-البدع والتحديات التي واجهها:
-${(() => {
-  try {
-    const heresies = Array.isArray(patriarchData.heresiesFought) 
-      ? patriarchData.heresiesFought 
-      : JSON.parse(patriarchData.heresiesFought || '[]');
-    return heresies.length > 0 ? heresies.join('، ') : 'لا توجد معلومات متاحة';
-  } catch (e) {
-    return 'لا توجد معلومات متاحة';
-  }
-})()}
+✨ هو مثال رائع لنا جميعاً في المحبة والخدمة!`;
 
-هذا البطريرك ترك أثراً عميقاً في تاريخ الكنيسة القبطية وساهم في تطوير الإيمان المسيحي في مصر والعالم.`;
+      } else if (tone === "academic") {
+        const heresiesText = (() => {
+          try {
+            const heresies = Array.isArray(patriarchData.heresiesFought) 
+              ? patriarchData.heresiesFought 
+              : JSON.parse(patriarchData.heresiesFought || '[]');
+            return heresies.length > 0 ? heresies.join('، ') : 'لا توجد معلومات متاحة';
+          } catch (e) {
+            return 'لا توجد معلومات متاحة';
+          }
+        })();
+
+        summary = `📚 دراسة أكاديمية للبابا ${patriarchData.arabicName || patriarchData.name} 📚
+
+السيرة التاريخية والإدارية:
+يُعد البابا ${patriarchData.arabicName || patriarchData.name} البطريرك رقم ${patriarchData.orderNumber} في السلسلة البطريركية للكنيسة القبطية الأرثوذكسية، والذي تولى مسؤولية الكرسي المرقسي في فترة تاريخية مهمة.
+
+السياق التاريخي والزمني:
+تولى البطريركية في عام ${patriarchData.startYear} ميلادية واستمر في خدمته لمدة ${serviceDuration} عاماً ${patriarchData.endYear ? `حتى عام ${patriarchData.endYear}` : 'ولا يزال يخدم'}، وهي فترة تقع في ${patriarchData.era}.
+
+الإنجازات والمساهمات:
+${patriarchData.contributions}
+
+التحديات اللاهوتية والعقائدية:
+واجه البطريرك تحديات عقائدية مهمة شملت: ${heresiesText}
+
+الأثر التاريخي:
+ترك هذا البطريرك إرثاً مهماً في تاريخ الكنيسة القبطية من خلال قيادته الحكيمة والمتوازنة في عصر تميز بتحدياته الخاصة.`;
+
+      } else { // easy tone
+        summary = `🏛️ تعرف على البابا ${patriarchData.arabicName || patriarchData.name} 🏛️
+
+البابا ${patriarchData.arabicName || patriarchData.name} هو البطريرك رقم ${patriarchData.orderNumber} في تاريخ الكنيسة القبطية.
+
+⏰ متى خدم؟
+خدم لمدة ${serviceDuration} سنة، من ${patriarchData.startYear} ${patriarchData.endYear ? `إلى ${patriarchData.endYear}` : 'وحتى الآن'}
+
+🌍 في أي عصر عاش؟
+عاش في ${patriarchData.era}، وكان هذا وقتاً مهماً في تاريخ مصر والكنيسة.
+
+✨ ما هي أهم أعماله؟
+${patriarchData.contributions}
+
+🛡️ كيف دافع عن الإيمان؟
+دافع البابا عن تعاليم الكنيسة الصحيحة ووقف ضد من يحاولون تغيير الإيمان المسيحي.
+
+💫 هو مثال رائع للقيادة الروحية والحكمة في خدمة الكنيسة والشعب.`;
+      }
 
       res.json({
         summary,

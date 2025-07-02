@@ -11,7 +11,7 @@ import {
   type InsertSetting,
 } from "@shared/schema";
 import { db } from "./db";
-import { eq, ilike, and, inArray, desc } from "drizzle-orm";
+import { eq, ilike, and, inArray, desc, or } from "drizzle-orm";
 
 export interface IStorage {
   // User operations for Replit Auth
@@ -33,6 +33,7 @@ export interface IStorage {
     byEra: Record<string, number>;
     totalDefenders: number;
   }>;
+  getPatriarchByName(name: string): Promise<Patriarch | undefined>;
 
   // Settings operations
   getSetting(key: string): Promise<Setting | undefined>;
@@ -151,6 +152,26 @@ export class DatabaseStorage implements IStorage {
     });
 
     return { total, byEra, totalDefenders };
+  }
+
+  async getPatriarchByName(name: string): Promise<Patriarch | undefined> {
+    const searchName = name.toLowerCase().trim();
+    
+    const [patriarch] = await db
+      .select()
+      .from(patriarchs)
+      .where(
+        and(
+          eq(patriarchs.isActive, true),
+          or(
+            ilike(patriarchs.name, `%${searchName}%`),
+            ilike(patriarchs.arabicName, `%${searchName}%`)
+          )
+        )
+      )
+      .limit(1);
+    
+    return patriarch;
   }
 
   // Settings operations

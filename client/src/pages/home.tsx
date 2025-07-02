@@ -1,18 +1,21 @@
 import { useState, useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { useLocation } from "wouter";
-import { useAuth } from "@/hooks/useAuth";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
+import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 import PatriarchTimeline from "@/components/patriarch-timeline";
 import PatriarchCard from "@/components/patriarch-card";
-
+import AskPatriarchChatbot from "@/components/ask-patriarch-chatbot";
+import SmartSummaryModal from "@/components/smart-summary-modal";
+import HomeCharts from "@/components/home-charts";
 import Loading from "@/components/ui/loading";
 import type { Patriarch } from "@shared/schema";
 import { getArabicHeresyName } from "@shared/patriarch-names";
+import { MessageCircle, Crown } from "lucide-react";
 
 const eraLabels: Record<string, string> = {
   // English keys (for backwards compatibility)
@@ -58,8 +61,10 @@ export default function Home() {
   const [searchInput, setSearchInput] = useState("");
   const [selectedEra, setSelectedEra] = useState("all");
   const [selectedHeresies, setSelectedHeresies] = useState<string[]>([]);
-  const [viewMode, setViewMode] = useState<"cards" | "timeline">("cards");
-  
+  const [viewMode, setViewMode] = useState<"cards" | "timeline" | "charts">("cards");
+  const [showChatbot, setShowChatbot] = useState(false);
+  const [showSmartSummary, setShowSmartSummary] = useState(false);
+
 
   const { data: patriarchs, isLoading } = useQuery<Patriarch[]>({
     queryKey: ["/api/patriarchs", { search: searchQuery, era: selectedEra !== "all" ? selectedEra : undefined }],
@@ -259,7 +264,7 @@ export default function Home() {
 
                   {/* زر الملخص الذكي */}
                   <Button
-                    onClick={() => setLocation("/smart-summary")}
+                    onClick={() => setShowSmartSummary(true)}
                     className="bg-gradient-to-r from-green-500 to-teal-600 text-white hover:from-green-600 hover:to-teal-700 shadow-lg transform hover:scale-105 transition-all duration-300 px-6 py-3"
                   >
                     <i className="fas fa-brain ml-2"></i>
@@ -326,7 +331,7 @@ export default function Home() {
 
               {/* زر الملخص الذكي */}
               <Button
-                onClick={() => setLocation("/smart-summary")}
+                onClick={() => setShowSmartSummary(true)}
                 className="bg-gradient-to-r from-green-500 to-teal-600 text-white hover:from-green-600 hover:to-teal-700 shadow-lg transform hover:scale-105 transition-all duration-300 px-6 py-3 text-lg font-bold"
               >
                 <i className="fas fa-brain ml-2 text-xl"></i>
@@ -379,7 +384,21 @@ export default function Home() {
         )}
       </div>
 
-      
+      {/* Chatbot */}
+      {showChatbot && (
+        <AskPatriarchChatbot 
+          isOpen={showChatbot} 
+          onClose={() => setShowChatbot(false)} 
+        />
+      )}
+
+      {/* Smart Summary Modal */}
+      {showSmartSummary && (
+        <SmartSummaryModal 
+          isOpen={showSmartSummary} 
+          onClose={() => setShowSmartSummary(false)} 
+        />
+      )}
     </div>
   );
 }
