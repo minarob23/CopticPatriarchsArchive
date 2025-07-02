@@ -53,8 +53,8 @@ export const patriarchs = pgTable("patriarchs", {
 export const settings = pgTable("settings", {
   key: text("key").primaryKey(),
   value: text("value").notNull(),
-  createdAt: timestamp("created_at").defaultNow().notNull(),
-  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().notNull(),
 });
 
 export const insertPatriarchSchema = createInsertSchema(patriarchs).omit({
