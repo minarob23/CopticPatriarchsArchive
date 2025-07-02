@@ -81,6 +81,19 @@ export async function generateSmartSummary(patriarch: any, tone: string): Promis
     throw new Error("Gemini API key not configured");
   }
 
+  // Read additional CSV data
+  let csvData = '';
+  try {
+    const fs = await import('fs');
+    const path = await import('path');
+    const csvPath = path.join(process.cwd(), 'patriarchs_data.csv');
+    if (fs.existsSync(csvPath)) {
+      csvData = fs.readFileSync(csvPath, 'utf-8');
+    }
+  } catch (error) {
+    console.log('CSV file not found, using database data only');
+  }
+
   const toneInstructions = {
     easy: "استخدم لغة سهلة ومبسطة مناسبة للعامة",
     academic: "استخدم لغة أكاديمية ومتخصصة مناسبة للباحثين والطلاب",
@@ -88,6 +101,8 @@ export async function generateSmartSummary(patriarch: any, tone: string): Promis
   };
 
   const instruction = toneInstructions[tone as keyof typeof toneInstructions] || toneInstructions.easy;
+
+  const csvInfo = csvData ? `\n\nمصادر إضافية من ملف البيانات:\n${csvData.substring(0, 2000)}` : '';
 
   const prompt = `
 اكتب ملخصاً ذكياً ومفصلاً عن البطريرك التالي:
@@ -108,7 +123,7 @@ export async function generateSmartSummary(patriarch: any, tone: string): Promis
   } catch (error) {
     return 'غير متوفر';
   }
-})()}
+})()}${csvInfo}
 
 المطلوب:
 - ${instruction}
@@ -117,6 +132,7 @@ export async function generateSmartSummary(patriarch: any, tone: string): Promis
 - أضف معلومات عن السياق التاريخي للفترة
 - اذكر البدع التي حاربها وكيف دافع عن الإيمان
 - اكتب بطريقة شيقة وجذابة
+- استخدم المعلومات من ملف البيانات الإضافية إذا كانت متوفرة لإثراء الملخص
 
 طول الملخص: حوالي 300-500 كلمة
 اللغة: العربية فقط

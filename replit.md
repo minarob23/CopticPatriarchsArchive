@@ -160,6 +160,8 @@ Changelog:
 - July 2, 2025. Database now contains 118 authentic patriarch records with proper PostgreSQL integration
 - July 2, 2025. Fixed logout functionality to properly redirect to homepage after logout
 - July 2, 2025. Fixed Ask Patriarch chatbot API call format error (corrected parameter order in apiRequest)
+- July 2, 2025. Enhanced Smart Summary feature to read additional CSV data file for enriched patriarch information
+- July 2, 2025. Fixed JSON parsing errors in heresiesFought data for both Ask Patriarch and Smart Summary features
 
 ## User Preferences
 
