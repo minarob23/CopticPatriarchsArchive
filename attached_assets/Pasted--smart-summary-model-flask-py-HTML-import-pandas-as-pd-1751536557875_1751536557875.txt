@@ -1,0 +1,98 @@
+# smart_summary_model_flask.py (واجهة HTML تلخص النصوص العربية بأنماط مختلفة)
+
+import pandas as pd
+from flask import Flask, request, render_template_string
+from sklearn.feature_extraction.text import TfidfVectorizer
+from sklearn.metrics.pairwise import cosine_similarity
+import numpy as np
+
+app = Flask(__name__)
+
+# تحميل البيانات
+DATA_PATH = r"patriarchs_data.csv"
+df = pd.read_csv(DATA_PATH, encoding='utf-8')
+
+# تجهيز النصوص
+summaries = []
+names = []
+
+for _, row in df.iterrows():
+    text = f"""
+    الاسم: {row['الاسم']}.
+    من سنة {row['سنة البداية']} إلى {row['سنة النهاية']}.
+    المساهمات: {row['المساهمات']}.
+    البدع المحاربة: {row['البدع المحاربة']}.
+    """
+    summaries.append(text)
+    names.append(row['الاسم'])
+
+vectorizer = TfidfVectorizer()
+X = vectorizer.fit_transform(summaries)
+
+def generate_summary(name, tone):
+    query_vec = vectorizer.transform([name])
+    similarity = cosine_similarity(query_vec, X)
+    best_index = np.argmax(similarity)
+    row = df.iloc[best_index]
+
+    if similarity[0, best_index] < 0.3:
+        return "لم يتم العثور على بطريرك بهذا الاسم."
+
+    styles = {
+        'easy': f"""
+        {row['الاسم']} كان بطريركًا خدم الكنيسة من سنة {row['سنة البداية']} إلى {row['سنة النهاية']}. 
+        أهم أعماله كانت: {row['المساهمات']}. وكان يواجه تحديات مثل: {row['البدع المحاربة']}.
+        """,
+
+        'academic': f"""
+        البطريرك {row['الاسم']} تولى المنصب في الفترة من {row['سنة البداية']} حتى {row['سنة النهاية']}. 
+        شارك في: {row['المساهمات']}. كما تصدى للبدع التالية: {row['البدع المحاربة']}.
+        """,
+
+        'kids': f"""
+        كان في زمان بطريرك اسمه {row['الاسم']}. خدم الكنيسة من سنة {row['سنة البداية']} لسنة {row['سنة النهاية']}. 
+        عمل حاجات جميلة زي: {row['المساهمات']}، وكمان واجه حاجات غلط زي: {row['البدع المحاربة']}.
+        """
+    }
+
+    return styles.get(tone, styles['easy'])
+
+# HTML Template (inline)
+html_form = '''
+<html>
+<head><title>تلخيص سير البطاركة</title></head>
+<body style="font-family: Cairo; direction: rtl; padding: 40px;">
+    <h2>✝️ تلخيص سيرة بطريرك</h2>
+    <form method="post">
+        <label>اسم البطريرك:</label><br>
+        <input type="text" name="name" required><br><br>
+
+        <label>اختر نوع الملخص:</label><br>
+        <select name="tone">
+            <option value="easy">لغة سهلة</option>
+            <option value="academic">لغة أكاديمية</option>
+            <option value="kids">ملخص للأطفال</option>
+        </select><br><br>
+
+        <input type="submit" value="تلخيص">
+    </form>
+
+    {% if summary %}
+        <h3>الملخص:</h3>
+        <p>{{ summary }}</p>
+    {% endif %}
+</body>
+</html>
+'''
+
+@app.route("/", methods=["GET", "POST"])
+def summarize_page():
+    summary = ""
+    if request.method == "POST":
+        name = request.form.get("name")
+        tone = request.form.get("tone")
+        summary = generate_summary(name, tone)
+    return render_template_string(html_form, summary=summary)
+
+if __name__ == '__main__':
+    app.run(debug=True)
