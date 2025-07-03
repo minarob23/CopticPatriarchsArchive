@@ -1,12 +1,15 @@
-import express, { type Request, Response, NextFunction } from "express";
 import dotenv from "dotenv";
+// Load environment variables from .env.local first
+dotenv.config({ path: '.env.local' });
 
-// Load environment variables silently
-dotenv.config({ 
-  path: '.env.local',
-  silent: true,
-  debug: false
-});
+import express, { type Request, Response, NextFunction } from "express";
+
+// Load environment variables silently - This line is not needed because dotenv.config({ path: '.env.local' }); already load environment variables from .env.local
+// dotenv.config({ 
+//   path: '.env.local',
+//   silent: true,
+//   debug: false
+// });
 
 import { registerRoutes } from "./routes";
 import { setupVite, serveStatic, log } from "./vite";
