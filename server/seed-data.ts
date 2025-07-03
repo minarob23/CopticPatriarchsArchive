@@ -1,4 +1,3 @@
-
 import { db } from "./db";
 import { patriarchs } from "@shared/schema";
 
@@ -13,7 +12,7 @@ export const seedPatriarchs = [
     contributions: "مؤسس الكنيسة القبطية ومبشر مصر بالمسيحية، كاتب الإنجيل الثاني",
     biography: "القديس مرقس الرسول هو مؤسس الكنيسة القبطية الأرثوذكسية ومبشر مصر. وُلد في القيروان وكان أحد السبعين رسولاً. جاء إلى الإسكندرية عام 61م وأسس الكنيسة هناك.",
     heresiesFought: JSON.stringify([]),
-    isActive: true
+    active: true
   },
   {
     name: "Pope Anianus",
@@ -25,7 +24,7 @@ export const seedPatriarchs = [
     contributions: "أول بطريرك بعد القديس مرقس، نظم الكنيسة وأسس المدرسة اللاهوتية",
     biography: "كان إسكافياً بسيطاً آمن على يد القديس مرقس. خلف القديس مرقس في رئاسة الكنيسة وأسس نظام الإكليريكية.",
     heresiesFought: JSON.stringify([]),
-    isActive: true
+    active: true
   },
   {
     name: "Pope Athanasius I",
@@ -37,7 +36,7 @@ export const seedPatriarchs = [
     contributions: "محارب الآريوسية، لقب بـ'أبو الأرثوذكسية'، دافع عن لاهوت المسيح",
     biography: "من أعظم آباء الكنيسة، دافع عن الإيمان الأرثوذكسي ضد الهرطقات. نُفي خمس مرات بسبب دفاعه عن الإيمان.",
     heresiesFought: JSON.stringify(["Arianism"]),
-    isActive: true
+    active: true
   },
   {
     name: "Pope Cyril I",
@@ -49,7 +48,7 @@ export const seedPatriarchs = [
     contributions: "حارب النسطورية، رئس مجمع أفسس، لقب بـ'عمود الدين'",
     biography: "من أعظم اللاهوتيين في تاريخ الكنيسة، دافع عن وحدة طبيعتي المسيح ضد النسطورية.",
     heresiesFought: JSON.stringify(["Nestorianism"]),
-    isActive: true
+    active: true
   },
   {
     name: "Pope Dioscorus I",
@@ -61,7 +60,7 @@ export const seedPatriarchs = [
     contributions: "دافع عن الإيمان الأرثوذكسي في مجمع خلقيدونية، رفض التقسيم",
     biography: "خلف البابا كيرلس ودافع عن تعاليمه. رفض قرارات مجمع خلقيدونية ونُفي إلى جزيرة جاجري.",
     heresiesFought: JSON.stringify(["Chalcedonianism"]),
-    isActive: true
+    active: true
   },
   {
     name: "Pope Benjamin I",
@@ -73,7 +72,7 @@ export const seedPatriarchs = [
     contributions: "قاوم الاضطهاد البيزنطي، استقبل الفتح العربي بترحيب",
     biography: "عاش فترة الاضطهاد البيزنطي القاسي، اختبأ في الصحراء 13 عاماً. عاد بعد الفتح العربي وأعاد بناء الكنيسة.",
     heresiesFought: JSON.stringify([]),
-    isActive: true
+    active: true
   },
   {
     name: "Pope Shenouda III",
@@ -85,7 +84,7 @@ export const seedPatriarchs = [
     contributions: "أعاد نهضة الكنيسة، أسس المعاهد اللاهوتية، طور الخدمات الكنسية",
     biography: "من أعظم البطاركة في العصر الحديث، أعاد للكنيسة القبطية مجدها وانتشارها عالمياً.",
     heresiesFought: JSON.stringify([]),
-    isActive: true
+    active: true
   },
   {
     name: "Pope Tawadros II",
@@ -97,20 +96,25 @@ export const seedPatriarchs = [
     contributions: "تطوير الكنيسة في العصر الرقمي، تعزيز الحوار المسكوني، بناء الكاتدرائية الجديدة",
     biography: "البطريرك الحالي للكنيسة القبطية الأرثوذكسية، يقود الكنيسة في عصر التحديات الحديثة والتطور التكنولوجي.",
     heresiesFought: JSON.stringify([]),
-    isActive: true
+    active: true
   }
 ];
 
 export async function seedDatabase() {
   try {
     console.log("جاري إدراج بيانات البطاركة...");
-    
+
     // حذف البيانات الموجودة
     await db.delete(patriarchs);
-    
+
     // إدراج البيانات الجديدة
-    await db.insert(patriarchs).values(seedPatriarchs);
-    
+    await db.insert(patriarchs).values(seedPatriarchs.map(patriarch => ({
+      ...patriarch,
+      heresiesFought: Array.isArray(JSON.parse(patriarch.heresiesFought))
+          ? JSON.parse(patriarch.heresiesFought).join(', ')
+          : (patriarch.heresiesFought as string) || '',
+    })));
+
     console.log(`تم إدراج ${seedPatriarchs.length} بطاركة بنجاح`);
   } catch (error) {
     console.error("خطأ في إدراج البيانات:", error);

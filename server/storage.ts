@@ -73,8 +73,16 @@ export class DatabaseStorage implements IStorage {
   }): Promise<Patriarch[]> {
     const conditions = [eq(patriarchs.active, true)];
 
-    if (filters?.searchQuery) {
-      conditions.push(ilike(patriarchs.name, `%${filters.searchQuery}%`));
+    if (filters?.searchQuery && filters.searchQuery.trim()) {
+      const searchQuery = filters.searchQuery;
+      conditions.push(
+        or(
+          ilike(patriarchs.name, `%${searchQuery}%`),
+          ilike(patriarchs.arabicName, `%${searchQuery}%`),
+          ilike(patriarchs.biography, `%${searchQuery}%`),
+          ilike(patriarchs.contributions, `%${searchQuery}%`)
+        )!
+      );
     }
 
     if (filters?.era && filters.era !== "all") {
@@ -83,9 +91,11 @@ export class DatabaseStorage implements IStorage {
 
     if (filters?.heresies && filters.heresies.length > 0) {
       // Check if any of the patriarch's heresies match the filter
+      const heresyConditions = filters.heresies.map(heresy => 
+        like(patriarchs.heresiesFought, `%${heresy}%`)
+      );
       conditions.push(
-        // This is a simplified approach - in production you might want a more sophisticated array query
-        inArray(patriarchs.era, filters.heresies)
+        or(...heresyConditions)!
       );
     }
 
@@ -114,7 +124,7 @@ export class DatabaseStorage implements IStorage {
       era: patriarch.era,
       contributions: patriarch.contributions,
       biography: patriarch.biography,
-      heresiesFought: patriarch.heresiesFought || [],
+      heresiesFought: patriarch.heresiesFought || "",
       active: patriarch.active ?? true
     };
 
@@ -126,9 +136,16 @@ export class DatabaseStorage implements IStorage {
   }
 
   async updatePatriarch(id: number, patriarch: UpdatePatriarch): Promise<Patriarch | undefined> {
+    // Ensure heresiesFought is properly formatted
+    const updateData = {
+      ...patriarch,
+      heresiesFought: patriarch.heresiesFought || "",
+      updatedAt: new Date()
+    };
+
     const [updated] = await db
       .update(patriarchs)
-      .set({ ...patriarch, updatedAt: new Date() })
+      .set(updateData)
       .where(and(eq(patriarchs.id, id), eq(patriarchs.active, true)))
       .returning();
     return updated;
