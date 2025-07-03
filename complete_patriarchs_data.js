@@ -1434,7 +1434,7 @@ arabic_name: 'شنودة الأول',
 async function importCompleteData() {
   // تحقق من وجود متغير البيئة أو استخدم إعدادات افتراضية
   const pool = new Pool({
-    connectionString: process.env.DATABASE_URL || 'postgresql://postgres:your_password@localhost:5432/coptic_patriarchs'
+    connectionString: process.env.DATABASE_URL || 'postgresql://postgres:123456@localhost:5432/coptic_patriarchs'
   });
 
   try {

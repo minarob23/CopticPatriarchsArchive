@@ -8,7 +8,7 @@ const pool = new Pool({
   user: 'postgres',
   host: 'localhost',
   database: 'postgres', // اتصل بقاعدة البيانات الافتراضية أولاً
-  password: 'YOUR_ACTUAL_PASSWORD', // ضع كلمة المرور الصحيحة هنا
+  password: '123456', // ضع كلمة المرور الصحيحة هنا
   port: 5432,
 });
 

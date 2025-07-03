@@ -32,7 +32,7 @@ export async function askPatriarch(question: string): Promise<string> {
     try {
       const fs = await import('fs');
       const path = await import('path');
-      const csvPath = path.join(process.cwd(), 'attached_assets/coptic_patriarchs_2025_1751464991874.csv');
+      const csvPath = path.join(process.cwd(), 'attached_assets/patriarchs_data.csv');
       if (fs.existsSync(csvPath)) {
         const csvContent = fs.readFileSync(csvPath, 'utf-8');
         externalSources += `\n\nمصادر إضافية من ملف البيانات التاريخية:\n${csvContent.substring(0, 4000)}\n`;
@@ -133,7 +133,7 @@ export async function generateSmartSummary(patriarch: any, tone: string): Promis
   try {
     const fs = await import('fs');
     const path = await import('path');
-    const csvPath = path.join(process.cwd(), 'attached_assets/coptic_patriarchs_2025_1751464991874.csv');
+    const csvPath = path.join(process.cwd(), 'attached_assets/patriarchs_data.csv');
     if (fs.existsSync(csvPath)) {
       const csvContent = fs.readFileSync(csvPath, 'utf-8');
       const lines = csvContent.split('\n');
