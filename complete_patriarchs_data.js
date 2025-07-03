@@ -1427,8 +1427,9 @@ const completePatriarchsData = [
 ];
 
 async function importCompleteData() {
+  // تحقق من وجود متغير البيئة أو استخدم إعدادات افتراضية
   const pool = new Pool({
-    connectionString: process.env.DATABASE_URL
+    connectionString: process.env.DATABASE_URL || 'postgresql://postgres:your_password@localhost:5432/coptic_patriarchs'
   });
 
   try {
