@@ -1,5 +1,10 @@
-// قاعدة بيانات كاملة لجميع بطاركة الكنيسة القبطية الأرثوذكسية الـ 118
+// ملف استيراد البيانات الكاملة للبطاركة الـ 118
 import pkg from 'pg';
+import dotenv from 'dotenv';
+
+// Load environment variables from .env.local
+dotenv.config({ path: '.env.local' });
+
 const { Pool } = pkg;
 
 const completePatriarchsData = [
@@ -742,7 +747,7 @@ const completePatriarchsData = [
   },
   {
     name: 'Shenouda I',
-    arabic_name: 'شنودة الأول',
+arabic_name: 'شنودة الأول',
     order_number: 62,
     start_year: 1032,
     end_year: 1046,
@@ -1434,11 +1439,11 @@ async function importCompleteData() {
 
   try {
     console.log('بدء استيراد قاعدة البيانات الكاملة للبطاركة الـ 118...');
-    
+
     // حذف البيانات الموجودة
     await pool.query('DELETE FROM patriarchs');
     console.log('تم حذف البيانات القديمة');
-    
+
     // إدراج البيانات الجديدة
     for (const patriarch of completePatriarchsData) {
       await pool.query(`
@@ -1457,7 +1462,7 @@ async function importCompleteData() {
         patriarch.is_active
       ]);
     }
-    
+
     console.log(`تم استيراد ${completePatriarchsData.length} بطريرك بنجاح!`);
   } catch (error) {
     console.error('خطأ في استيراد البيانات:', error);
