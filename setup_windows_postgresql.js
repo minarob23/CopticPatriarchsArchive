@@ -7,14 +7,19 @@ const { Pool } = pkg;
 const pool = new Pool({
   user: 'postgres',
   host: 'localhost',
-  database: 'coptic_patriarchs',
-  password: 'your_password_here', // ضع كلمة المرور الخاصة بك
+  database: 'postgres', // اتصل بقاعدة البيانات الافتراضية أولاً
+  password: 'YOUR_ACTUAL_PASSWORD', // ضع كلمة المرور الصحيحة هنا
   port: 5432,
 });
 
 async function setupDatabase() {
   try {
     console.log('بدء إعداد قاعدة البيانات...');
+    
+    // إنشاء قاعدة البيانات إذا لم تكن موجودة
+    await pool.query(`CREATE DATABASE coptic_patriarchs`).catch(() => {
+      console.log('قاعدة البيانات موجودة بالفعل أو تم إنشاؤها');
+    });
     
     // إنشاء جدول الجلسات
     await pool.query(`
