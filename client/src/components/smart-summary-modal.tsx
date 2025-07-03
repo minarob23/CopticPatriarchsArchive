@@ -51,37 +51,10 @@ export default function SmartSummaryModal({ isOpen, onClose }: SmartSummaryModal
     },
   });
 
-  const traditionalMutation = useMutation({
-    mutationFn: async ({ name, tone }: { name: string; tone: string }) => {
-      const response = await fetch("/api/generate-traditional-summary", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ name, tone }),
-      });
-
-      if (!response.ok) {
-        throw new Error("فشل في إنشاء الملخص التقليدي");
-      }
-
-      return response.json();
-    },
-    onSuccess: (data) => {
-      setResult(data);
-    },
-  });
-
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (patriarchName.trim()) {
       summaryMutation.mutate({ name: patriarchName.trim(), tone });
-    }
-  };
-
-  const handleTraditionalSummary = () => {
-    if (patriarchName.trim()) {
-      traditionalMutation.mutate({ name: patriarchName.trim(), tone });
     }
   };
 
@@ -159,44 +132,23 @@ export default function SmartSummaryModal({ isOpen, onClose }: SmartSummaryModal
                   </Select>
                 </div>
 
-                <div className="flex gap-3">
-                  <Button
-                    type="submit"
-                    disabled={!patriarchName.trim() || summaryMutation.isPending}
-                    className="flex-1 py-6 text-lg bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white shadow-lg transform hover:scale-105 transition-all duration-300"
-                  >
-                    {summaryMutation.isPending ? (
-                      <>
-                        <i className="fas fa-spinner fa-spin ml-2"></i>
-                        جاري توليد الملخص...
-                      </>
-                    ) : (
-                      <>
-                        <i className="fas fa-magic ml-2"></i>
-                        إنشاء الملخص الذكي
-                      </>
-                    )}
-                  </Button>
-
-                  <Button
-                    type="button"
-                    onClick={handleTraditionalSummary}
-                    disabled={!patriarchName.trim() || traditionalMutation.isPending}
-                    className="flex-1 py-6 text-lg bg-gradient-to-r from-amber-600 to-orange-600 hover:from-amber-700 hover:to-orange-700 text-white shadow-lg transform hover:scale-105 transition-all duration-300"
-                  >
-                    {traditionalMutation.isPending ? (
-                      <>
-                        <i className="fas fa-spinner fa-spin ml-2"></i>
-                        جاري إنشاء الملخص...
-                      </>
-                    ) : (
-                      <>
-                        <i className="fas fa-book ml-2"></i>
-                        الملخص التقليدي
-                      </>
-                    )}
-                  </Button>
-                </div>
+                <Button
+                  type="submit"
+                  disabled={!patriarchName.trim() || summaryMutation.isPending}
+                  className="w-full py-6 text-lg bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white shadow-lg transform hover:scale-105 transition-all duration-300"
+                >
+                  {summaryMutation.isPending ? (
+                    <>
+                      <i className="fas fa-spinner fa-spin ml-2"></i>
+                      جاري توليد الملخص...
+                    </>
+                  ) : (
+                    <>
+                      <i className="fas fa-magic ml-2"></i>
+                      إنشاء الملخص الذكي
+                    </>
+                  )}
+                </Button>
               </form>
             </CardContent>
           </Card>
@@ -208,17 +160,6 @@ export default function SmartSummaryModal({ isOpen, onClose }: SmartSummaryModal
                 <Loading />
                 <p className="text-center text-gray-600 mt-4">
                   جاري تحليل البيانات وتوليد الملخص الذكي...
-                </p>
-              </CardContent>
-            </Card>
-          )}
-
-          {traditionalMutation.isPending && (
-            <Card className="border-amber-200">
-              <CardContent className="p-8">
-                <Loading />
-                <p className="text-center text-gray-600 mt-4">
-                  جاري إنشاء الملخص التقليدي...
                 </p>
               </CardContent>
             </Card>
@@ -293,19 +234,7 @@ export default function SmartSummaryModal({ isOpen, onClose }: SmartSummaryModal
               <CardContent className="p-6">
                 <div className="text-center text-red-600">
                   <i className="fas fa-exclamation-triangle text-2xl mb-2"></i>
-                  <p className="font-medium">حدث خطأ في توليد الملخص الذكي</p>
-                  <p className="text-sm mt-1">يرجى المحاولة مرة أخرى أو جرب الملخص التقليدي</p>
-                </div>
-              </CardContent>
-            </Card>
-          )}
-
-          {traditionalMutation.isError && (
-            <Card className="border-red-200 bg-red-50">
-              <CardContent className="p-6">
-                <div className="text-center text-red-600">
-                  <i className="fas fa-exclamation-triangle text-2xl mb-2"></i>
-                  <p className="font-medium">حدث خطأ في إنشاء الملخص التقليدي</p>
+                  <p className="font-medium">حدث خطأ في توليد الملخص</p>
                   <p className="text-sm mt-1">يرجى المحاولة مرة أخرى</p>
                 </div>
               </CardContent>
@@ -315,39 +244,10 @@ export default function SmartSummaryModal({ isOpen, onClose }: SmartSummaryModal
           {/* تعليمات الاستخدام */}
           <Card className="bg-gradient-to-br from-amber-50 to-orange-50 border-amber-200">
             <CardContent className="p-4">
-              <h4 className="font-semibold text-amber-800 mb-3">
+              <h4 className="font-semibold text-amber-800 mb-2">
                 <i className="fas fa-lightbulb ml-2"></i>
                 نصائح للاستخدام
               </h4>
-              
-              <div className="grid md:grid-cols-2 gap-4 mb-4">
-                <div className="bg-blue-50 p-3 rounded-lg border border-blue-200">
-                  <h5 className="font-medium text-blue-800 mb-2">
-                    <i className="fas fa-magic ml-1"></i>
-                    الملخص الذكي (AI)
-                  </h5>
-                  <ul className="text-xs text-blue-700 space-y-1">
-                    <li>• يستخدم الذكاء الاصطناعي لتحليل عميق</li>
-                    <li>• معلومات إضافية من مصادر متنوعة</li>
-                    <li>• أسلوب متطور وشامل</li>
-                    <li>• يتطلب اتصال بالإنترنت</li>
-                  </ul>
-                </div>
-                
-                <div className="bg-orange-50 p-3 rounded-lg border border-orange-200">
-                  <h5 className="font-medium text-orange-800 mb-2">
-                    <i className="fas fa-book ml-1"></i>
-                    الملخص التقليدي
-                  </h5>
-                  <ul className="text-xs text-orange-700 space-y-1">
-                    <li>• يعتمد على البيانات المحفوظة فقط</li>
-                    <li>• سريع ولا يتطلب إنترنت قوي</li>
-                    <li>• موجز ومباشر</li>
-                    <li>• مناسب عند تعطل الذكاء الاصطناعي</li>
-                  </ul>
-                </div>
-              </div>
-              
               <ul className="text-sm text-amber-700 space-y-1">
                 <li>• يمكنك البحث بالاسم العربي أو الإنجليزي</li>
                 <li>• جرب أنواع اللغة المختلفة حسب الجمهور المستهدف</li>

@@ -236,55 +236,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Generate traditional summary for a patriarch (without AI)
-  app.post("/api/generate-traditional-summary", async (req, res) => {
-    try {
-      const { name, tone } = req.body;
-
-      if (!name) {
-        return res.status(400).json({ error: "اسم البطريرك مطلوب" });
-      }
-
-      const patriarch = await storage.getPatriarchByName(name);
-
-      if (!patriarch) {
-        return res.status(404).json({ error: "لم يتم العثور على البطريرك" });
-      }
-
-      // Generate traditional summary based on tone
-      const toneStyles = {
-        easy: `
-${patriarch.arabicName || patriarch.name} كان بطريركًا خدم الكنيسة من سنة ${patriarch.startYear} إلى ${patriarch.endYear || "الآن"}. 
-أهم أعماله كانت: ${patriarch.contributions}. وكان يواجه تحديات مثل: ${patriarch.heresiesFought.join('، ')}.
-        `,
-        academic: `
-البطريرك ${patriarch.arabicName || patriarch.name} تولى المنصب في الفترة من ${patriarch.startYear} حتى ${patriarch.endYear || "الآن"}. 
-شارك في: ${patriarch.contributions}. كما تصدى للبدع التالية: ${patriarch.heresiesFought.join('، ')}.
-        `,
-        kids: `
-كان في زمان بطريرك اسمه ${patriarch.arabicName || patriarch.name}. خدم الكنيسة من سنة ${patriarch.startYear} لسنة ${patriarch.endYear || "الآن"}. 
-عمل حاجات جميلة زي: ${patriarch.contributions}، وكمان واجه حاجات غلط زي: ${patriarch.heresiesFought.join('، ')}.
-        `
-      };
-
-      const summary = toneStyles[tone as keyof typeof toneStyles] || toneStyles.easy;
-
-      res.json({
-        summary: summary.trim(),
-        patriarch: {
-          name: patriarch.arabicName || patriarch.name,
-          orderNumber: patriarch.orderNumber,
-          startYear: patriarch.startYear,
-          endYear: patriarch.endYear,
-          era: patriarch.era
-        }
-      });
-    } catch (error) {
-      console.error("Error generating traditional summary:", error);
-      res.status(500).json({ error: "خطأ في الخادم" });
-    }
-  });
-
   // Get all patriarchs with optional filtering
   app.get("/api/patriarchs", async (req, res) => {
     try {
