@@ -1,4 +1,13 @@
 import express, { type Request, Response, NextFunction } from "express";
+import dotenv from "dotenv";
+
+// Load environment variables silently
+dotenv.config({ 
+  path: '.env.local',
+  silent: true,
+  debug: false
+});
+
 import { registerRoutes } from "./routes";
 import { setupVite, serveStatic, log } from "./vite";
 import { seedDatabase } from "./seed-data";
