@@ -43,7 +43,7 @@ export const patriarchs = pgTable("patriarchs", {
   era: text("era").notNull(), // apostolic, golden, councils, persecution, modern
   contributions: text("contributions").notNull(),
   biography: text("biography"),
-  heresiesFought: text("heresiesFought").array().notNull(),
+  heresiesFought: text("heresiesFought").notNull().default(""),
   active: boolean("active").notNull().default(true),
   createdAt: timestamp("createdAt").defaultNow(),
   updatedAt: timestamp("updatedAt").defaultNow(),
