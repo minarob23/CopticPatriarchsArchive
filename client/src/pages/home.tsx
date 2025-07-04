@@ -34,7 +34,7 @@ export default function Home() {
 
 
   const { data: patriarchs, isLoading } = useQuery<Patriarch[]>({
-    queryKey: ["/api/patriarchs", { search: searchQuery, era: selectedEra !== "all" ? selectedEra : undefined }],
+    queryKey: ["/api/patriarchs", { search: searchQuery }],
     retry: false,
   });
 
@@ -51,9 +51,18 @@ export default function Home() {
       (patriarchs || []).flatMap(p => {
         let heresies = [];
         try {
-          heresies = Array.isArray(p.heresiesFought) 
-            ? p.heresiesFought 
-            : JSON.parse(p.heresiesFought || '[]');
+          if (Array.isArray(p.heresiesFought)) {
+            heresies = p.heresiesFought;
+          } else if (typeof p.heresiesFought === 'string') {
+            const heresiesString = p.heresiesFought;
+            if (heresiesString.startsWith('{') && heresiesString.endsWith('}')) {
+              // PostgreSQL array format
+              const cleanString = heresiesString.slice(1, -1);
+              heresies = cleanString.split(',').map(item => item.replace(/"/g, '').trim()).filter(item => item !== '');
+            } else {
+              heresies = JSON.parse(heresiesString || '[]');
+            }
+          }
         } catch (e) {
           heresies = [];
         }
@@ -74,9 +83,18 @@ export default function Home() {
       selectedHeresies.some(heresy => {
         let heresies = [];
         try {
-          heresies = Array.isArray(patriarch.heresiesFought) 
-            ? patriarch.heresiesFought 
-            : JSON.parse(patriarch.heresiesFought || '[]');
+          if (Array.isArray(patriarch.heresiesFought)) {
+            heresies = patriarch.heresiesFought;
+          } else if (typeof patriarch.heresiesFought === 'string') {
+            const heresiesString = patriarch.heresiesFought;
+            if (heresiesString.startsWith('{') && heresiesString.endsWith('}')) {
+              // PostgreSQL array format
+              const cleanString = heresiesString.slice(1, -1);
+              heresies = cleanString.split(',').map(item => item.replace(/"/g, '').trim()).filter(item => item !== '');
+            } else {
+              heresies = JSON.parse(heresiesString || '[]');
+            }
+          }
         } catch (e) {
           heresies = [];
         }
@@ -192,10 +210,13 @@ export default function Home() {
                         <SelectValue placeholder="اختر العصر" />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="all">جميع العصور</SelectItem>
-                        {uniqueEras.map((era) => (
-                          <SelectItem key={era} value={era}>{era}</SelectItem>
-                        ))}
+                        <SelectItem value="all">جميع العصور ({patriarchs?.length || 0})</SelectItem>
+                        {uniqueEras.map((era) => {
+                          const count = patriarchs?.filter(p => p.era === era).length || 0;
+                          return (
+                            <SelectItem key={era} value={era}>{era} ({count})</SelectItem>
+                          );
+                        })}
                       </SelectContent>
                     </Select>
                   </div>
@@ -276,7 +297,25 @@ export default function Home() {
               </div>
               <div className="text-center">
                 <p className="text-3xl font-bold text-purple-600">
-                  {filteredPatriarchs.filter(p => p.heresiesFought.length > 0).length}
+                  {filteredPatriarchs.filter(p => {
+                    let heresies = [];
+                    try {
+                      if (Array.isArray(p.heresiesFought)) {
+                        heresies = p.heresiesFought;
+                      } else if (typeof p.heresiesFought === 'string') {
+                        const heresiesString = p.heresiesFought;
+                        if (heresiesString.startsWith('{') && heresiesString.endsWith('}')) {
+                          const cleanString = heresiesString.slice(1, -1);
+                          heresies = cleanString.split(',').map(item => item.replace(/"/g, '').trim()).filter(item => item !== '');
+                        } else {
+                          heresies = JSON.parse(heresiesString || '[]');
+                        }
+                      }
+                    } catch (e) {
+                      heresies = [];
+                    }
+                    return heresies.length > 0;
+                  }).length}
                 </p>
                 <p className="text-sm text-gray-600">محارب بدع</p>
               </div>
