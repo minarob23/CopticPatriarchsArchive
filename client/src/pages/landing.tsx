@@ -46,23 +46,38 @@ export default function Landing() {
     setSearchQuery(searchInput);
   };
 
-  // Extract unique heresies for filtering
-  const allHeresies = Array.from(
-    new Set(
-      (patriarchs || []).flatMap(p => {
-        let heresies = [];
-        try {
-          heresies = Array.isArray(p.heresiesFought) 
-            ? p.heresiesFought 
-            : JSON.parse(p.heresiesFought || '[]');
-        } catch (e) {
-          console.warn('Failed to parse heresiesFought for patriarch:', p.name);
-          heresies = [];
-        }
-        return heresies;
-      })
-    )
-  ).sort();
+  // Important heresies for filtering (most significant ones only)
+  const importantHeresies = [
+    "الآريوسية",
+    "النسطورية", 
+    "الخلقيدونية",
+    "الغنوصية",
+    "المونوفيزيتية",
+    "الوثنية الرومانية",
+    "المونوثيليتية",
+    "الأبوليناريوسية",
+    "السابيلية",
+    "المانوية",
+    "البيلاجية",
+    "التطرف الإسلامي",
+    "العلمانية",
+    "البروتستانتية"
+  ];
+
+  // Filter to show only important heresies that exist in the database
+  const allHeresies = importantHeresies.filter(heresy => {
+    return (patriarchs || []).some(p => {
+      let heresies = [];
+      try {
+        heresies = Array.isArray(p.heresiesFought) 
+          ? p.heresiesFought 
+          : JSON.parse(p.heresiesFought || '[]');
+      } catch (e) {
+        heresies = [];
+      }
+      return heresies.includes(heresy);
+    });
+  });
 
   // Filter patriarchs based on search criteria
   const filteredPatriarchs = (patriarchs || []).filter(patriarch => {

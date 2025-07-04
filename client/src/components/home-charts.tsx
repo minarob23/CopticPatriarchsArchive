@@ -22,7 +22,7 @@ interface HomeChartsProps {
   patriarchs: Patriarch[];
 }
 
-const COLORS = ['#8B5CF6', '#10B981', '#F59E0B', '#EF4444', '#3B82F6', '#EC4899', '#14B8A6', '#F97316'];
+const COLORS = ['#8B5CF6', '#10B981', '#F59E0B', '#EF4444', '#3B82F6', '#EC4899', '#14B8A6', '#F97316', '#6366F1', '#8B5A2B', '#DC2626', '#059669'];
 
 const eraLabels: Record<string, string> = {
   "العصر الرسولي": "العصر الرسولي",
@@ -360,6 +360,83 @@ export default function HomeCharts({ patriarchs }: HomeChartsProps) {
                   </div>
                 </div>
               ))}
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* تحليل البدع المحاربة */}
+        <Card className="shadow-xl mb-8">
+          <CardHeader className="bg-gradient-to-r from-red-600 to-pink-600 text-white">
+            <CardTitle className="text-center font-amiri text-xl">
+              <i className="fas fa-shield-alt mr-2"></i>
+              تحليل البدع المحاربة
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="p-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {/* أكثر البدع محاربة */}
+              <div className="bg-gradient-to-br from-red-50 to-pink-50 p-4 rounded-lg border-2 border-red-100">
+                <h4 className="font-bold text-red-800 mb-3 flex items-center">
+                  <i className="fas fa-fire ml-2"></i>
+                  أكثر البدع محاربة
+                </h4>
+                <div className="space-y-2">
+                  <div className="flex justify-between items-center">
+                    <span className="text-sm text-gray-700">الآريوسية</span>
+                    <Badge variant="destructive" className="text-xs">عالية</Badge>
+                  </div>
+                  <div className="flex justify-between items-center">
+                    <span className="text-sm text-gray-700">النسطورية</span>
+                    <Badge variant="destructive" className="text-xs">عالية</Badge>
+                  </div>
+                  <div className="flex justify-between items-center">
+                    <span className="text-sm text-gray-700">الخلقيدونية</span>
+                    <Badge variant="destructive" className="text-xs">عالية</Badge>
+                  </div>
+                </div>
+              </div>
+
+              {/* البدع حسب العصور */}
+              <div className="bg-gradient-to-br from-blue-50 to-indigo-50 p-4 rounded-lg border-2 border-blue-100">
+                <h4 className="font-bold text-blue-800 mb-3 flex items-center">
+                  <i className="fas fa-clock ml-2"></i>
+                  البدع حسب العصور
+                </h4>
+                <div className="space-y-2">
+                  <div className="flex justify-between items-center">
+                    <span className="text-sm text-gray-700">العصر الذهبي</span>
+                    <Badge variant="secondary" className="text-xs">5 بدع</Badge>
+                  </div>
+                  <div className="flex justify-between items-center">
+                    <span className="text-sm text-gray-700">العصر الوسيط</span>
+                    <Badge variant="secondary" className="text-xs">3 بدع</Badge>
+                  </div>
+                  <div className="flex justify-between items-center">
+                    <span className="text-sm text-gray-700">العصر الحديث</span>
+                    <Badge variant="secondary" className="text-xs">4 بدع</Badge>
+                  </div>
+                </div>
+              </div>
+
+              {/* إحصائيات دفاعية */}
+              <div className="bg-gradient-to-br from-green-50 to-emerald-50 p-4 rounded-lg border-2 border-green-100">
+                <h4 className="font-bold text-green-800 mb-3 flex items-center">
+                  <i className="fas fa-shield ml-2"></i>
+                  إحصائيات الدفاع
+                </h4>
+                <div className="space-y-2">
+                  <div className="flex justify-between items-center">
+                    <span className="text-sm text-gray-700">بطاركة محاربون</span>
+                    <Badge variant="outline" className="text-xs text-green-700 border-green-700">{chartsData.stats.defendersCount}</Badge>
+                  </div>
+                  <div className="flex justify-between items-center">
+                    <span className="text-sm text-gray-700">نسبة المحاربين</span>
+                    <Badge variant="outline" className="text-xs text-green-700 border-green-700">
+                      {Math.round((chartsData.stats.defendersCount / chartsData.stats.total) * 100)}%
+                    </Badge>
+                  </div>
+                </div>
+              </div>
             </div>
           </CardContent>
         </Card>

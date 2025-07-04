@@ -579,7 +579,7 @@ ${index + 1}. ${p.arabicName || p.name}
             <div className="absolute inset-0 bg-black bg-opacity-10"></div>
             <CardTitle className="font-amiri text-xl relative z-10 flex items-center">
               <i className="fas fa-history ml-3 text-2xl"></i>
-              توزيع البطاركة الـ 118 حسب العصور التاريخية
+              توزيع البطاركة حسب العصور التاريخية
               <span className="mr-auto bg-white bg-opacity-20 px-3 py-1 rounded-full text-sm">
                 {finalStats?.total || 0} بطريرك
               </span>

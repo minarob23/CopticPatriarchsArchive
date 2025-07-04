@@ -180,6 +180,10 @@ Changelog:
 - July 4, 2025. Successfully imported all 118 authentic Coptic Orthodox Patriarchs with complete historical data
 - July 4, 2025. Added comprehensive heresies fought data for all patriarchs including historical accuracy
 - July 4, 2025. Database now contains complete authentic dataset ready for production use
+- July 4, 2025. Updated charts colors to distinguish between different eras properly
+- July 4, 2025. Removed redundant "الـ118" text from admin dashboard titles
+- July 4, 2025. Added comprehensive heresy analysis section with statistics and breakdowns
+- July 4, 2025. Enhanced heresy filter to show only important theological heresies
 
 ## User Preferences
 
