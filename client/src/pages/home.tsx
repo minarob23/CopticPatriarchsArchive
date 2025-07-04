@@ -183,20 +183,15 @@ export default function Home() {
                       }}
                     >
                       <SelectTrigger className="py-4 text-lg bg-white bg-opacity-90 border-none rounded-xl shadow-lg">
-                        <SelectValue placeholder="أهم البدع المحاربة" />
+                        <SelectValue placeholder="البدع المحاربة" />
                       </SelectTrigger>
                       <SelectContent>
                         <SelectItem value="all">جميع البدع</SelectItem>
-                        <SelectItem value="الأريوسية">الأريوسية</SelectItem>
-                        <SelectItem value="النسطورية">النسطورية</SelectItem>
-                        <SelectItem value="الوثنية">الوثنية</SelectItem>
-                        <SelectItem value="العلمانية">العلمانية</SelectItem>
-                        <SelectItem value="الإلحاد">الإلحاد</SelectItem>
-                        <SelectItem value="السابيلية">السابيلية</SelectItem>
-                        <SelectItem value="المونتانية">المونتانية</SelectItem>
-                        <SelectItem value="الأوريجانية">الأوريجانية</SelectItem>
-                        <SelectItem value="الوثنية اليونانية">الوثنية اليونانية</SelectItem>
-                        <SelectItem value="البروتستانتية">البروتستانتية</SelectItem>
+                        {allHeresies.slice(0, 10).map((heresy) => (
+                          <SelectItem key={heresy} value={heresy}>
+                            {getArabicHeresyName(heresy)}
+                          </SelectItem>
+                        ))}
                       </SelectContent>
                     </Select>
                   </div>
@@ -253,29 +248,31 @@ export default function Home() {
                   </Button>
                 </div>
 
-                {/* Quick Heresies Filter - أهم البدع المحاربة */}
-                <div className="mt-4">
-                  <p className="text-white text-sm font-medium mb-3 text-center">
-                    <i className="fas fa-filter ml-2"></i>
-                    أهم البدع المحاربة:
-                  </p>
-                  <div className="flex flex-wrap gap-2 justify-center">
-                    {["الأريوسية", "النسطورية", "الوثنية", "العلمانية", "الإلحاد", "السابيلية", "المونتانية", "الأوريجانية"].map(heresy => (
-                      <Badge
-                        key={heresy}
-                        variant={selectedHeresies.includes(heresy) ? "default" : "outline"}
-                        className={`cursor-pointer transition-all duration-200 ${
-                          selectedHeresies.includes(heresy) 
-                            ? "bg-yellow-400 text-black hover:bg-yellow-500" 
-                            : "bg-white bg-opacity-20 text-white hover:bg-white hover:bg-opacity-30"
-                        }`}
-                        onClick={() => handleHeresyToggle(heresy)}
-                      >
-                        {heresy}
-                      </Badge>
-                    ))}
+                {/* Quick Heresies Filter */}
+                {allHeresies.length > 0 && (
+                  <div className="mt-4">
+                    <p className="text-white text-sm font-medium mb-3 text-center">
+                      <i className="fas fa-filter ml-2"></i>
+                      البدع الأكثر شيوعاً:
+                    </p>
+                    <div className="flex flex-wrap gap-2 justify-center">
+                      {allHeresies.slice(0, 8).map(heresy => (
+                        <Badge
+                          key={heresy}
+                          variant={selectedHeresies.includes(heresy) ? "default" : "outline"}
+                          className={`cursor-pointer transition-all duration-200 ${
+                            selectedHeresies.includes(heresy) 
+                              ? "bg-yellow-400 text-black hover:bg-yellow-500" 
+                              : "bg-white bg-opacity-20 text-white hover:bg-white hover:bg-opacity-30"
+                          }`}
+                          onClick={() => handleHeresyToggle(heresy)}
+                        >
+                          {getArabicHeresyName(heresy)}
+                        </Badge>
+                      ))}
+                    </div>
                   </div>
-                </div>
+                )}
 
                 {/* View Mode Toggle */}
                 <div className="flex justify-center gap-4 mt-6 flex-wrap">

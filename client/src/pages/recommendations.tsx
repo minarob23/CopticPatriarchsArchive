@@ -72,12 +72,12 @@ export default function Recommendations() {
       const userProfile = {
         description: userDescription
       };
-
+      
       const response = await apiRequest("POST", "/api/ai-recommendations", {
         userProfile,
         preferences: criteria
       });
-
+      
       return response.json();
     },
     onSuccess: (data) => {
@@ -137,7 +137,7 @@ export default function Recommendations() {
           patriarchHeresies = patriarch.heresiesFought.split(',').map(h => h.trim()).filter(h => h);
         }
       }
-
+      
       const matchingHeresies = patriarchHeresies.filter(h => 
         criteria.selectedHeresies.includes(h)
       );
@@ -282,7 +282,7 @@ export default function Recommendations() {
               الصفحة الرئيسية
             </Button>
           </div>
-
+          
           <div className="flex items-center justify-center gap-3 mb-4">
             <Brain className="h-8 w-8 text-purple-600" />
             <h1 className="text-4xl font-bold text-gray-800">محرك الاقتراحات الذكي</h1>
@@ -448,7 +448,7 @@ export default function Recommendations() {
                         className="mt-1"
                       />
                     </div>
-
+                    
                     <Button
                       onClick={() => aiRecommendationsMutation.mutate()}
                       disabled={aiRecommendationsMutation.isPending || !userDescription.trim()}
@@ -489,9 +489,9 @@ export default function Recommendations() {
                               AI Score: {rec.score}%
                             </Badge>
                           </div>
-
+                          
                           {rec.patriarch && <PatriarchCard patriarch={rec.patriarch} />}
-
+                          
                           <Card className="mt-2 border-purple-200 bg-purple-50">
                             <CardContent className="p-4">
                               <div className="space-y-3">
@@ -507,7 +507,7 @@ export default function Recommendations() {
                                     ))}
                                   </div>
                                 </div>
-
+                                
                                 {rec.personalAdvice && (
                                   <div className="border-t pt-2">
                                     <p className="text-sm font-medium text-purple-800 mb-1">
@@ -579,9 +579,9 @@ export default function Recommendations() {
                               #{index + 1}
                             </Badge>
                           </div>
-
+                          
                           <PatriarchCard patriarch={rec.patriarch} />
-
+                          
                           {rec.reasons.length > 0 && (
                             <Card className="mt-2 border-amber-200 bg-amber-50">
                               <CardContent className="p-3">
