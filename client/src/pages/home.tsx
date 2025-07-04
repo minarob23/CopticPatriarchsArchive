@@ -15,7 +15,7 @@ import { useAuth } from "@/hooks/useAuth";
 import HomeCharts from "@/components/home-charts";
 import Loading from "@/components/ui/loading";
 import type { Patriarch } from "@shared/schema";
-import { getArabicHeresyName } from "@shared/patriarch-names";
+import { getArabicHeresyName } from "@shared/patriarch_names";
 import { MessageCircle, Crown } from "lucide-react";
 
 const eraLabels: Record<string, string> = {
@@ -81,20 +81,10 @@ export default function Home() {
   const allHeresies = Array.from(
     new Set(
       (patriarchs || []).flatMap(p => {
-        let heresies = [];
-        try {
-          if (Array.isArray(p.heresiesFought)) {
-            heresies = p.heresiesFought;
-          } else if (typeof p.heresiesFought === 'string') {
-            heresies = p.heresiesFought.trim() ? JSON.parse(p.heresiesFought) : [];
-          }
-        } catch (e) {
-          // If parsing fails, try to split by comma as fallback
-          if (typeof p.heresiesFought === 'string') {
-            heresies = p.heresiesFought.split(',').map(h => h.trim()).filter(h => h);
-          }
-        }
-        return heresies.filter(h => h && h.trim());
+        const heresies = Array.isArray(p.heresiesFought) 
+          ? p.heresiesFought 
+          : JSON.parse(p.heresiesFought || '[]');
+        return heresies;
       })
     )
   ).sort();
@@ -103,7 +93,6 @@ export default function Home() {
   const filteredPatriarchs = (patriarchs || []).filter(patriarch => {
     const matchesSearch = !searchQuery || 
       patriarch.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      patriarch.arabicName?.toLowerCase().includes(searchQuery.toLowerCase()) ||
       patriarch.biography?.toLowerCase().includes(searchQuery.toLowerCase());
 
     const matchesEra = selectedEra === "all" || patriarch.era === selectedEra;
@@ -112,20 +101,11 @@ export default function Home() {
       selectedHeresies.some(heresy => {
         let heresies = [];
         try {
-          if (Array.isArray(patriarch.heresiesFought)) {
-            heresies = patriarch.heresiesFought;
-          } else if (typeof patriarch.heresiesFought === 'string') {
-            heresies = patriarch.heresiesFought.trim() ? JSON.parse(patriarch.heresiesFought) : [];
-          } else {
-            heresies = [];
-          }
+          heresies = Array.isArray(patriarch.heresiesFought) 
+            ? patriarch.heresiesFought 
+            : JSON.parse(patriarch.heresiesFought || '[]');
         } catch (e) {
-          // If parsing fails, try to split by comma as fallback
-          if (typeof patriarch.heresiesFought === 'string') {
-            heresies = patriarch.heresiesFought.split(',').map(h => h.trim()).filter(h => h);
-          } else {
-            heresies = [];
-          }
+          heresies = [];
         }
         return heresies.includes(heresy);
       });
