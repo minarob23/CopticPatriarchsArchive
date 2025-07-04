@@ -118,6 +118,15 @@
   text-align: left; 
 }
 
+/* Table headers alignment */
+th {
+  text-align: right !important;
+}
+
+.table-header {
+  text-align: right !important;
+}
+
 [dir="rtl"] .ml-auto { 
   margin-right: auto; 
   margin-left: 0; 
