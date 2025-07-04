@@ -47,7 +47,22 @@ export default function Recommendations() {
 
   // Extract unique eras and heresies for filters
   const uniqueEras = Array.from(new Set(patriarchs.map(p => p.era))).filter(Boolean);
-  const uniqueHeresies = Array.from(new Set(patriarchs.flatMap(p => p.heresiesFought || []))).filter(Boolean);
+  const uniqueHeresies = Array.from(new Set(patriarchs.flatMap(p => {
+    let heresies = [];
+    try {
+      if (Array.isArray(p.heresiesFought)) {
+        heresies = p.heresiesFought;
+      } else if (typeof p.heresiesFought === 'string') {
+        heresies = p.heresiesFought.trim() ? JSON.parse(p.heresiesFought) : [];
+      }
+    } catch (e) {
+      // If parsing fails, try to split by comma as fallback
+      if (typeof p.heresiesFought === 'string') {
+        heresies = p.heresiesFought.split(',').map(h => h.trim()).filter(h => h);
+      }
+    }
+    return heresies.filter(h => h && h.trim());
+  }))).filter(Boolean);
 
   // AI Recommendations mutation
   const aiRecommendationsMutation = useMutation({
@@ -107,9 +122,23 @@ export default function Recommendations() {
       }
 
       // Heresies matching
-      const matchingHeresies = patriarch.heresiesFought?.filter(h => 
+      let patriarchHeresies = [];
+      try {
+        if (Array.isArray(patriarch.heresiesFought)) {
+          patriarchHeresies = patriarch.heresiesFought;
+        } else if (typeof patriarch.heresiesFought === 'string') {
+          patriarchHeresies = patriarch.heresiesFought.trim() ? JSON.parse(patriarch.heresiesFought) : [];
+        }
+      } catch (e) {
+        // If parsing fails, try to split by comma as fallback
+        if (typeof patriarch.heresiesFought === 'string') {
+          patriarchHeresies = patriarch.heresiesFought.split(',').map(h => h.trim()).filter(h => h);
+        }
+      }
+      
+      const matchingHeresies = patriarchHeresies.filter(h => 
         criteria.selectedHeresies.includes(h)
-      ) || [];
+      );
       if (matchingHeresies.length > 0) {
         score += matchingHeresies.length * 20;
         reasons.push(`حارب ${matchingHeresies.join('، ')}`);
