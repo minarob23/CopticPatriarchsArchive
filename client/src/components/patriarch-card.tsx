@@ -80,6 +80,28 @@ const eraColors: Record<string, string> = {
 
 export default function PatriarchCard({ patriarch }: PatriarchCardProps) {
   const displayName = patriarch.arabicName || patriarch.name;
+  
+  // Parse heresies safely
+  const parseHeresies = (heresiesFought: any): string[] => {
+    try {
+      if (Array.isArray(heresiesFought)) {
+        return heresiesFought;
+      }
+      if (typeof heresiesFought === 'string') {
+        if (heresiesFought.trim() === '' || heresiesFought === '[]') {
+          return [];
+        }
+        const parsed = JSON.parse(heresiesFought);
+        return Array.isArray(parsed) ? parsed : [];
+      }
+      return [];
+    } catch (error) {
+      console.warn(`Failed to parse heresiesFought for patriarch: ${patriarch.name}`);
+      return [];
+    }
+  };
+
+  const heresiesList = parseHeresies(patriarch.heresiesFought);
 
   return (
     <Card className="patriarch-card bg-white shadow-lg hover:shadow-2xl border border-gray-200 overflow-hidden group">

@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -9,7 +10,7 @@ import { Badge } from "@/components/ui/badge";
 import { useToast } from "@/hooks/use-toast";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { apiRequest } from "@/lib/queryClient";
-import { Loader2, Plus, X } from "lucide-react";
+import { Loader2, Plus, X, Crown, Calendar, BookOpen, Shield, User, MapPin, Sparkles, Save, RotateCcw } from "lucide-react";
 import type { Patriarch, InsertPatriarch } from "@shared/schema";
 
 interface PatriarchFormProps {
@@ -78,10 +79,15 @@ export default function PatriarchForm({ patriarch, onClose, onSuccess }: Patriar
   useEffect(() => {
     if (patriarch?.heresiesFought) {
       try {
-        const heresies = Array.isArray(patriarch.heresiesFought) 
-          ? patriarch.heresiesFought 
-          : JSON.parse(patriarch.heresiesFought || '[]');
-        setHeresiesList(heresies);
+        let heresies: string[] = [];
+        if (Array.isArray(patriarch.heresiesFought)) {
+          heresies = patriarch.heresiesFought;
+        } else if (typeof patriarch.heresiesFought === 'string') {
+          if (patriarch.heresiesFought.trim() !== '' && patriarch.heresiesFought !== '[]') {
+            heresies = JSON.parse(patriarch.heresiesFought);
+          }
+        }
+        setHeresiesList(Array.isArray(heresies) ? heresies : []);
       } catch (e) {
         console.error('Error parsing heresies:', e);
         setHeresiesList([]);
@@ -96,8 +102,8 @@ export default function PatriarchForm({ patriarch, onClose, onSuccess }: Patriar
     },
     onSuccess: () => {
       toast({
-        title: "تم إنشاء البطريرك",
-        description: "تم إنشاء البطريرك بنجاح",
+        title: "🎉 تم إنشاء البطريرك بنجاح",
+        description: "تم إضافة البطريرك الجديد إلى قاعدة البيانات",
       });
       queryClient.invalidateQueries({ queryKey: ['/api/patriarchs'] });
       queryClient.invalidateQueries({ queryKey: ['/api/admin/stats'] });
@@ -106,7 +112,7 @@ export default function PatriarchForm({ patriarch, onClose, onSuccess }: Patriar
     },
     onError: (error: any) => {
       toast({
-        title: "خطأ في إنشاء البطريرك",
+        title: "❌ خطأ في إنشاء البطريرك",
         description: error.message || "حدث خطأ أثناء إنشاء البطريرك",
         variant: "destructive",
       });
@@ -121,8 +127,8 @@ export default function PatriarchForm({ patriarch, onClose, onSuccess }: Patriar
     },
     onSuccess: () => {
       toast({
-        title: "تم تحديث البطريرك",
-        description: "تم تحديث البطريرك بنجاح",
+        title: "✅ تم تحديث البطريرك بنجاح",
+        description: "تم حفظ جميع التغييرات بنجاح",
       });
       queryClient.invalidateQueries({ queryKey: ['/api/patriarchs'] });
       queryClient.invalidateQueries({ queryKey: ['/api/admin/stats'] });
@@ -131,7 +137,7 @@ export default function PatriarchForm({ patriarch, onClose, onSuccess }: Patriar
     },
     onError: (error: any) => {
       toast({
-        title: "خطأ في تحديث البطريرك",
+        title: "❌ خطأ في تحديث البطريرك",
         description: error.message || "حدث خطأ أثناء تحديث البطريرك",
         variant: "destructive",
       });
@@ -143,8 +149,8 @@ export default function PatriarchForm({ patriarch, onClose, onSuccess }: Patriar
     
     if (!formData.name.trim()) {
       toast({
-        title: "خطأ في النموذج",
-        description: "الاسم مطلوب",
+        title: "⚠️ خطأ في النموذج",
+        description: "الاسم باللغة الإنجليزية مطلوب",
         variant: "destructive",
       });
       return;
@@ -152,7 +158,7 @@ export default function PatriarchForm({ patriarch, onClose, onSuccess }: Patriar
 
     if (!formData.era.trim()) {
       toast({
-        title: "خطأ في النموذج",
+        title: "⚠️ خطأ في النموذج",
         description: "العصر مطلوب",
         variant: "destructive",
       });
@@ -175,6 +181,10 @@ export default function PatriarchForm({ patriarch, onClose, onSuccess }: Patriar
     if (customEra.trim()) {
       setFormData(prev => ({ ...prev, era: customEra.trim() }));
       setCustomEra("");
+      toast({
+        title: "✨ تم إضافة عصر جديد",
+        description: `تم إضافة "${customEra.trim()}" كعصر جديد`,
+      });
     }
   };
 
@@ -183,226 +193,378 @@ export default function PatriarchForm({ patriarch, onClose, onSuccess }: Patriar
       const newList = [...heresiesList, customHeresy.trim()];
       setHeresiesList(newList);
       setCustomHeresy("");
+      toast({
+        title: "🛡️ تم إضافة بدعة جديدة",
+        description: `تم إضافة "${customHeresy.trim()}" إلى قائمة البدع المحاربة`,
+      });
     }
   };
 
   const removeHeresy = (heresy: string) => {
     const newList = heresiesList.filter(h => h !== heresy);
     setHeresiesList(newList);
+    toast({
+      title: "🗑️ تم حذف البدعة",
+      description: `تم حذف "${heresy}" من القائمة`,
+    });
   };
 
   const addPredefinedHeresy = (heresy: string) => {
     if (!heresiesList.includes(heresy)) {
       const newList = [...heresiesList, heresy];
       setHeresiesList(newList);
+      toast({
+        title: "✅ تم إضافة البدعة",
+        description: `تم إضافة "${heresy}" إلى قائمة البدع المحاربة`,
+      });
     }
+  };
+
+  const resetForm = () => {
+    setFormData({
+      name: "",
+      arabicName: "",
+      orderNumber: 1,
+      startYear: new Date().getFullYear(),
+      endYear: undefined,
+      era: "",
+      biography: "",
+      contributions: "",
+      active: true,
+    });
+    setHeresiesList([]);
+    setCustomEra("");
+    setCustomHeresy("");
   };
 
   const isLoading = createMutation.isPending || updateMutation.isPending;
 
   return (
-    <Card className="w-full max-w-4xl mx-auto">
-      <CardHeader>
-        <CardTitle className="text-center text-2xl font-bold">
-          {patriarch ? "تعديل البطريرك" : "إضافة بطريرك جديد"}
-        </CardTitle>
-      </CardHeader>
-      <CardContent>
-        <form onSubmit={handleSubmit} className="space-y-6">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div className="space-y-2">
-              <Label htmlFor="name">الاسم (بالإنجليزية)</Label>
-              <Input
-                id="name"
-                value={formData.name}
-                onChange={(e) => setFormData(prev => ({ ...prev, name: e.target.value }))}
-                placeholder="اسم البطريرك بالإنجليزية"
-                required
-              />
+    <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 z-50">
+      <Card className="w-full max-w-6xl max-h-[90vh] overflow-hidden bg-gradient-to-br from-white via-blue-50/30 to-purple-50/30 border-2 border-blue-200/50 shadow-2xl">
+        {/* Header */}
+        <CardHeader className="bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 text-white relative overflow-hidden">
+          <div className="absolute inset-0 bg-[url('data:image/svg+xml,%3Csvg width="40" height="40" viewBox="0 0 40 40" xmlns="http://www.w3.org/2000/svg"%3E%3Cg fill="white" fill-opacity="0.1"%3E%3Cpath d="M20 20c0 11.046-8.954 20-20 20v20h40V20H20z"/%3E%3C/g%3E%3C/svg%3E')] opacity-30"></div>
+          <div className="relative flex items-center gap-4">
+            <div className="p-3 bg-white/20 rounded-full backdrop-blur-sm">
+              <Crown className="h-8 w-8" />
             </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="arabicName">الاسم (بالعربية)</Label>
-              <Input
-                id="arabicName"
-                value={formData.arabicName}
-                onChange={(e) => setFormData(prev => ({ ...prev, arabicName: e.target.value }))}
-                placeholder="اسم البطريرك بالعربية"
-              />
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="orderNumber">رقم الترتيب</Label>
-              <Input
-                id="orderNumber"
-                type="number"
-                value={formData.orderNumber}
-                onChange={(e) => setFormData(prev => ({ ...prev, orderNumber: parseInt(e.target.value) || 1 }))}
-                placeholder="رقم الترتيب"
-                required
-              />
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="startYear">سنة البداية</Label>
-              <Input
-                id="startYear"
-                type="number"
-                value={formData.startYear}
-                onChange={(e) => setFormData(prev => ({ ...prev, startYear: parseInt(e.target.value) || new Date().getFullYear() }))}
-                placeholder="سنة البداية"
-                required
-              />
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="endYear">سنة النهاية (اختياري)</Label>
-              <Input
-                id="endYear"
-                type="number"
-                value={formData.endYear || ""}
-                onChange={(e) => setFormData(prev => ({ ...prev, endYear: e.target.value ? parseInt(e.target.value) : undefined }))}
-                placeholder="سنة النهاية"
-              />
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="era">العصر</Label>
-              <Select value={formData.era} onValueChange={(value) => setFormData(prev => ({ ...prev, era: value }))}>
-                <SelectTrigger>
-                  <SelectValue placeholder="اختر العصر" />
-                </SelectTrigger>
-                <SelectContent>
-                  {predefinedEras.map((era) => (
-                    <SelectItem key={era} value={era}>
-                      {era}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+            <div>
+              <CardTitle className="text-3xl font-bold">
+                {patriarch ? "✏️ تعديل البطريرك" : "➕ إضافة بطريرك جديد"}
+              </CardTitle>
+              <p className="text-blue-100 mt-2">
+                {patriarch ? "قم بتحديث معلومات البطريرك" : "أضف بطريرك جديد إلى قاعدة البيانات"}
+              </p>
             </div>
           </div>
+        </CardHeader>
+        
+        <CardContent className="overflow-y-auto max-h-[calc(90vh-120px)] p-8">
+          <form onSubmit={handleSubmit} className="space-y-8">
+            {/* Basic Information Section */}
+            <div className="bg-white/70 backdrop-blur-sm rounded-xl p-6 border border-blue-100 shadow-sm">
+              <div className="flex items-center gap-3 mb-6">
+                <div className="p-2 bg-blue-100 rounded-lg">
+                  <User className="h-5 w-5 text-blue-600" />
+                </div>
+                <h3 className="text-xl font-bold text-gray-800">المعلومات الأساسية</h3>
+              </div>
+              
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="space-y-3">
+                  <Label htmlFor="name" className="text-lg font-semibold text-gray-700">
+                    📝 الاسم (بالإنجليزية) *
+                  </Label>
+                  <Input
+                    id="name"
+                    value={formData.name}
+                    onChange={(e) => setFormData(prev => ({ ...prev, name: e.target.value }))}
+                    placeholder="اسم البطريرك بالإنجليزية"
+                    className="text-lg p-4 border-2 border-blue-200 focus:border-blue-500 rounded-lg"
+                    required
+                  />
+                </div>
 
-          {/* Custom Era Input */}
-          <div className="space-y-2">
-            <Label>إضافة عصر جديد</Label>
-            <div className="flex gap-2">
-              <Input
-                value={customEra}
-                onChange={(e) => setCustomEra(e.target.value)}
-                placeholder="اسم العصر الجديد"
-              />
-              <Button type="button" onClick={addCustomEra} variant="outline">
-                <Plus className="h-4 w-4" />
+                <div className="space-y-3">
+                  <Label htmlFor="arabicName" className="text-lg font-semibold text-gray-700">
+                    🇦🇪 الاسم (بالعربية)
+                  </Label>
+                  <Input
+                    id="arabicName"
+                    value={formData.arabicName}
+                    onChange={(e) => setFormData(prev => ({ ...prev, arabicName: e.target.value }))}
+                    placeholder="اسم البطريرك بالعربية"
+                    className="text-lg p-4 border-2 border-blue-200 focus:border-blue-500 rounded-lg"
+                  />
+                </div>
+
+                <div className="space-y-3">
+                  <Label htmlFor="orderNumber" className="text-lg font-semibold text-gray-700">
+                    🔢 رقم الترتيب *
+                  </Label>
+                  <Input
+                    id="orderNumber"
+                    type="number"
+                    value={formData.orderNumber}
+                    onChange={(e) => setFormData(prev => ({ ...prev, orderNumber: parseInt(e.target.value) || 1 }))}
+                    placeholder="رقم الترتيب"
+                    className="text-lg p-4 border-2 border-blue-200 focus:border-blue-500 rounded-lg"
+                    required
+                  />
+                </div>
+
+                <div className="space-y-3">
+                  <Label htmlFor="era" className="text-lg font-semibold text-gray-700">
+                    🏛️ العصر *
+                  </Label>
+                  <Select value={formData.era} onValueChange={(value) => setFormData(prev => ({ ...prev, era: value }))}>
+                    <SelectTrigger className="text-lg p-4 border-2 border-blue-200 focus:border-blue-500 rounded-lg">
+                      <SelectValue placeholder="اختر العصر" />
+                    </SelectTrigger>
+                    <SelectContent className="max-h-60">
+                      {predefinedEras.map((era) => (
+                        <SelectItem key={era} value={era} className="text-lg p-3">
+                          {era}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
+            </div>
+
+            {/* Time Period Section */}
+            <div className="bg-white/70 backdrop-blur-sm rounded-xl p-6 border border-green-100 shadow-sm">
+              <div className="flex items-center gap-3 mb-6">
+                <div className="p-2 bg-green-100 rounded-lg">
+                  <Calendar className="h-5 w-5 text-green-600" />
+                </div>
+                <h3 className="text-xl font-bold text-gray-800">الفترة الزمنية</h3>
+              </div>
+              
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="space-y-3">
+                  <Label htmlFor="startYear" className="text-lg font-semibold text-gray-700">
+                    📅 سنة البداية *
+                  </Label>
+                  <Input
+                    id="startYear"
+                    type="number"
+                    value={formData.startYear}
+                    onChange={(e) => setFormData(prev => ({ ...prev, startYear: parseInt(e.target.value) || new Date().getFullYear() }))}
+                    placeholder="سنة البداية"
+                    className="text-lg p-4 border-2 border-green-200 focus:border-green-500 rounded-lg"
+                    required
+                  />
+                </div>
+
+                <div className="space-y-3">
+                  <Label htmlFor="endYear" className="text-lg font-semibold text-gray-700">
+                    🏁 سنة النهاية (اختياري)
+                  </Label>
+                  <Input
+                    id="endYear"
+                    type="number"
+                    value={formData.endYear || ""}
+                    onChange={(e) => setFormData(prev => ({ ...prev, endYear: e.target.value ? parseInt(e.target.value) : undefined }))}
+                    placeholder="سنة النهاية"
+                    className="text-lg p-4 border-2 border-green-200 focus:border-green-500 rounded-lg"
+                  />
+                </div>
+              </div>
+
+              {/* Custom Era Input */}
+              <div className="mt-6 p-4 bg-gradient-to-r from-yellow-50 to-orange-50 rounded-lg border border-yellow-200">
+                <Label className="text-lg font-semibold text-gray-700 mb-3 block">
+                  ✨ إضافة عصر جديد
+                </Label>
+                <div className="flex gap-3">
+                  <Input
+                    value={customEra}
+                    onChange={(e) => setCustomEra(e.target.value)}
+                    placeholder="اسم العصر الجديد"
+                    className="text-lg p-3 border-2 border-yellow-200 focus:border-yellow-500 rounded-lg"
+                  />
+                  <Button 
+                    type="button" 
+                    onClick={addCustomEra} 
+                    className="bg-gradient-to-r from-yellow-500 to-orange-500 hover:from-yellow-600 hover:to-orange-600 text-white px-6"
+                    disabled={!customEra.trim()}
+                  >
+                    <Plus className="h-5 w-5" />
+                  </Button>
+                </div>
+              </div>
+            </div>
+
+            {/* Biography and Contributions Section */}
+            <div className="bg-white/70 backdrop-blur-sm rounded-xl p-6 border border-purple-100 shadow-sm">
+              <div className="flex items-center gap-3 mb-6">
+                <div className="p-2 bg-purple-100 rounded-lg">
+                  <BookOpen className="h-5 w-5 text-purple-600" />
+                </div>
+                <h3 className="text-xl font-bold text-gray-800">السيرة والإسهامات</h3>
+              </div>
+              
+              <div className="space-y-6">
+                <div className="space-y-3">
+                  <Label htmlFor="biography" className="text-lg font-semibold text-gray-700">
+                    📜 السيرة الذاتية
+                  </Label>
+                  <Textarea
+                    id="biography"
+                    value={formData.biography}
+                    onChange={(e) => setFormData(prev => ({ ...prev, biography: e.target.value }))}
+                    placeholder="السيرة الذاتية للبطريرك"
+                    rows={5}
+                    className="text-lg p-4 border-2 border-purple-200 focus:border-purple-500 rounded-lg resize-none"
+                  />
+                </div>
+
+                <div className="space-y-3">
+                  <Label htmlFor="contributions" className="text-lg font-semibold text-gray-700">
+                    🌟 الإسهامات والإنجازات
+                  </Label>
+                  <Textarea
+                    id="contributions"
+                    value={formData.contributions}
+                    onChange={(e) => setFormData(prev => ({ ...prev, contributions: e.target.value }))}
+                    placeholder="الإسهامات والإنجازات"
+                    rows={5}
+                    className="text-lg p-4 border-2 border-purple-200 focus:border-purple-500 rounded-lg resize-none"
+                  />
+                </div>
+              </div>
+            </div>
+
+            {/* Heresies Section */}
+            <div className="bg-white/70 backdrop-blur-sm rounded-xl p-6 border border-red-100 shadow-sm">
+              <div className="flex items-center gap-3 mb-6">
+                <div className="p-2 bg-red-100 rounded-lg">
+                  <Shield className="h-5 w-5 text-red-600" />
+                </div>
+                <h3 className="text-xl font-bold text-gray-800">البدع المحاربة</h3>
+              </div>
+              
+              {/* Display selected heresies */}
+              {heresiesList.length > 0 && (
+                <div className="mb-6">
+                  <h4 className="text-lg font-semibold text-gray-700 mb-3">البدع المختارة:</h4>
+                  <div className="flex flex-wrap gap-3">
+                    {heresiesList.map((heresy) => (
+                      <Badge 
+                        key={heresy} 
+                        variant="secondary" 
+                        className="flex items-center gap-2 px-4 py-2 text-sm bg-red-100 text-red-800 border border-red-200 rounded-full"
+                      >
+                        <Shield className="h-4 w-4" />
+                        {heresy}
+                        <button
+                          type="button"
+                          onClick={() => removeHeresy(heresy)}
+                          className="ml-2 text-red-600 hover:text-red-800 transition-colors"
+                        >
+                          <X className="h-4 w-4" />
+                        </button>
+                      </Badge>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* Predefined heresies */}
+              <div className="mb-6">
+                <h4 className="text-lg font-semibold text-gray-700 mb-3">البدع المتاحة:</h4>
+                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
+                  {predefinedHeresies.map((heresy) => (
+                    <Button
+                      key={heresy}
+                      type="button"
+                      variant="outline"
+                      size="sm"
+                      onClick={() => addPredefinedHeresy(heresy)}
+                      disabled={heresiesList.includes(heresy)}
+                      className="p-3 border-2 border-red-200 hover:bg-red-50 hover:border-red-300 disabled:opacity-50 disabled:cursor-not-allowed rounded-lg"
+                    >
+                      <Shield className="h-4 w-4 mr-2" />
+                      {heresy}
+                    </Button>
+                  ))}
+                </div>
+              </div>
+
+              {/* Custom heresy input */}
+              <div className="p-4 bg-gradient-to-r from-red-50 to-pink-50 rounded-lg border border-red-200">
+                <Label className="text-lg font-semibold text-gray-700 mb-3 block">
+                  🛡️ إضافة بدعة جديدة
+                </Label>
+                <div className="flex gap-3">
+                  <Input
+                    value={customHeresy}
+                    onChange={(e) => setCustomHeresy(e.target.value)}
+                    placeholder="اسم البدعة الجديدة"
+                    className="text-lg p-3 border-2 border-red-200 focus:border-red-500 rounded-lg"
+                  />
+                  <Button 
+                    type="button" 
+                    onClick={addCustomHeresy} 
+                    className="bg-gradient-to-r from-red-500 to-pink-500 hover:from-red-600 hover:to-pink-600 text-white px-6"
+                    disabled={!customHeresy.trim() || heresiesList.includes(customHeresy.trim())}
+                  >
+                    <Plus className="h-5 w-5" />
+                  </Button>
+                </div>
+              </div>
+            </div>
+
+            {/* Action Buttons */}
+            <div className="flex flex-col sm:flex-row gap-4 pt-6 border-t border-gray-200">
+              <Button 
+                type="submit" 
+                disabled={isLoading}
+                className="flex-1 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white text-lg py-4 rounded-xl shadow-lg transition-all duration-300 transform hover:scale-105"
+              >
+                {isLoading ? (
+                  <>
+                    <Loader2 className="h-5 w-5 animate-spin mr-3" />
+                    {patriarch ? "جاري التحديث..." : "جاري الإنشاء..."}
+                  </>
+                ) : (
+                  <>
+                    <Save className="h-5 w-5 mr-3" />
+                    {patriarch ? "💾 تحديث البطريرك" : "➕ إنشاء البطريرك"}
+                  </>
+                )}
+              </Button>
+              
+              {!patriarch && (
+                <Button 
+                  type="button" 
+                  onClick={resetForm}
+                  disabled={isLoading}
+                  variant="outline"
+                  className="border-2 border-gray-300 hover:bg-gray-50 text-gray-700 text-lg py-4 rounded-xl"
+                >
+                  <RotateCcw className="h-5 w-5 mr-3" />
+                  🔄 إعادة تعيين
+                </Button>
+              )}
+              
+              <Button 
+                type="button" 
+                variant="outline" 
+                onClick={onClose}
+                disabled={isLoading}
+                className="border-2 border-red-300 hover:bg-red-50 text-red-700 text-lg py-4 rounded-xl"
+              >
+                <X className="h-5 w-5 mr-3" />
+                ❌ إلغاء
               </Button>
             </div>
-          </div>
-
-          <div className="space-y-2">
-            <Label htmlFor="biography">السيرة الذاتية</Label>
-            <Textarea
-              id="biography"
-              value={formData.biography}
-              onChange={(e) => setFormData(prev => ({ ...prev, biography: e.target.value }))}
-              placeholder="السيرة الذاتية للبطريرك"
-              rows={4}
-            />
-          </div>
-
-          <div className="space-y-2">
-            <Label htmlFor="contributions">الإسهامات</Label>
-            <Textarea
-              id="contributions"
-              value={formData.contributions}
-              onChange={(e) => setFormData(prev => ({ ...prev, contributions: e.target.value }))}
-              placeholder="الإسهامات والإنجازات"
-              rows={4}
-            />
-          </div>
-
-          {/* Heresies Section */}
-          <div className="space-y-4">
-            <Label>البدع المحاربة</Label>
-            
-            {/* Display selected heresies */}
-            {heresiesList.length > 0 && (
-              <div className="flex flex-wrap gap-2">
-                {heresiesList.map((heresy) => (
-                  <Badge key={heresy} variant="secondary" className="flex items-center gap-1">
-                    {heresy}
-                    <button
-                      type="button"
-                      onClick={() => removeHeresy(heresy)}
-                      className="ml-1 text-red-500 hover:text-red-700"
-                    >
-                      <X className="h-3 w-3" />
-                    </button>
-                  </Badge>
-                ))}
-              </div>
-            )}
-
-            {/* Predefined heresies */}
-            <div className="space-y-2">
-              <Label className="text-sm">البدع المتاحة:</Label>
-              <div className="flex flex-wrap gap-2">
-                {predefinedHeresies.map((heresy) => (
-                  <Button
-                    key={heresy}
-                    type="button"
-                    variant="outline"
-                    size="sm"
-                    onClick={() => addPredefinedHeresy(heresy)}
-                    disabled={heresiesList.includes(heresy)}
-                  >
-                    {heresy}
-                  </Button>
-                ))}
-              </div>
-            </div>
-
-            {/* Custom heresy input */}
-            <div className="space-y-2">
-              <Label>إضافة بدعة جديدة</Label>
-              <div className="flex gap-2">
-                <Input
-                  value={customHeresy}
-                  onChange={(e) => setCustomHeresy(e.target.value)}
-                  placeholder="اسم البدعة الجديدة"
-                />
-                <Button type="button" onClick={addCustomHeresy} variant="outline">
-                  <Plus className="h-4 w-4" />
-                </Button>
-              </div>
-            </div>
-          </div>
-
-          <div className="flex gap-4 pt-4">
-            <Button 
-              type="submit" 
-              disabled={isLoading}
-              className="flex-1"
-            >
-              {isLoading ? (
-                <>
-                  <Loader2 className="h-4 w-4 animate-spin ml-2" />
-                  {patriarch ? "جاري التحديث..." : "جاري الإنشاء..."}
-                </>
-              ) : (
-                patriarch ? "تحديث البطريرك" : "إنشاء البطريرك"
-              )}
-            </Button>
-            <Button 
-              type="button" 
-              variant="outline" 
-              onClick={onClose}
-              disabled={isLoading}
-            >
-              إلغاء
-            </Button>
-          </div>
-        </form>
-      </CardContent>
-    </Card>
+          </form>
+        </CardContent>
+      </Card>
+    </div>
   );
 }
