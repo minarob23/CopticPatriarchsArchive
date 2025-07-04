@@ -9,7 +9,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import PatriarchTable from "@/components/admin/patriarch-table";
-import PatriarchForm from "@/components/admin/patriarch-form";
+import PatriarchForm from "@/components/admin/patriarch-form-new";
 import GeminiSettings from "@/components/admin/gemini-settings";
 import ChartsDashboard from "@/components/admin/charts-dashboard";
 import Loading from "@/components/ui/loading";
@@ -728,7 +728,7 @@ ${index + 1}. ${p.arabicName || p.name}
       {/* Patriarch Form Modal */}
       {showForm && (
         <PatriarchForm
-          patriarch={editingPatriarch}
+          patriarch={editingPatriarch || undefined}
           onClose={handleCloseForm}
         />
       )}
