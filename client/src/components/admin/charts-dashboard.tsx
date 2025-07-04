@@ -27,11 +27,7 @@ interface ChartsDashboardProps {
   patriarchs: Patriarch[];
 }
 
-const COLORS = [
-  '#8B5CF6', '#10B981', '#F59E0B', '#EF4444', '#3B82F6', 
-  '#EC4899', '#14B8A6', '#F97316', '#8B5CF6', '#06B6D4',
-  '#84CC16', '#F59E0B', '#EF4444', '#6366F1', '#8B5CF6'
-];
+const COLORS = ["#3B82F6", "#EF4444", "#10B981", "#F59E0B", "#8B5CF6", "#EC4899", "#06B6D4", "#84CC16", "#F97316", "#14B8A6", "#6366F1", "#D946EF"];
 
 const eraLabels: Record<string, string> = {
   "العصر الرسولي": "العصر الرسولي",
@@ -63,7 +59,7 @@ const eraLabels: Record<string, string> = {
 };
 
 export default function ChartsDashboard({ patriarchs }: ChartsDashboardProps) {
-  
+
   const chartsData = useMemo(() => {
     // توزيع البطاركة حسب العصور
     const eraDistribution = patriarchs.reduce((acc: Record<string, number>, patriarch) => {
@@ -117,7 +113,7 @@ export default function ChartsDashboard({ patriarchs }: ChartsDashboardProps) {
       } catch (e) {
         heresies = [];
       }
-      
+
       heresies.forEach(heresy => {
         acc[heresy] = (acc[heresy] || 0) + 1;
       });
@@ -318,7 +314,7 @@ export default function ChartsDashboard({ patriarchs }: ChartsDashboardProps) {
                 </Bar>
               </BarChart>
             </ResponsiveContainer>
-            
+
             {/* قائمة العصور خارج الرسم البياني */}
             <div className="mt-6 grid grid-cols-2 lg:grid-cols-3 gap-3">
               {chartsData.eraChartData.map((item, index) => (
@@ -439,7 +435,7 @@ export default function ChartsDashboard({ patriarchs }: ChartsDashboardProps) {
                 </Bar>
               </BarChart>
             </ResponsiveContainer>
-            
+
             {/* قائمة البطاركة خارج الرسم البياني */}
             <div className="mt-6 grid grid-cols-1 md:grid-cols-2 gap-3">
               {chartsData.serviceData.slice(0, 8).map((patriarch, index) => (
@@ -516,7 +512,7 @@ export default function ChartsDashboard({ patriarchs }: ChartsDashboardProps) {
                 </Bar>
               </BarChart>
             </ResponsiveContainer>
-            
+
             {/* قائمة البدع خارج الرسم البياني */}
             <div className="mt-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
               {chartsData.heresiesChartData.slice(0, 6).map((heresy, index) => (

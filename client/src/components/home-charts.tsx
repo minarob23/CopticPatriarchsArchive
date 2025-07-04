@@ -22,39 +22,39 @@ interface HomeChartsProps {
   patriarchs: Patriarch[];
 }
 
-const COLORS = ['#8B5CF6', '#10B981', '#F59E0B', '#EF4444', '#3B82F6', '#EC4899', '#14B8A6', '#F97316', '#6366F1', '#8B5A2B', '#DC2626', '#059669'];
+const COLORS = ["#3B82F6", "#EF4444", "#10B981", "#F59E0B", "#8B5CF6", "#EC4899", "#06B6D4", "#84CC16", "#F97316", "#14B8A6", "#6366F1", "#D946EF"];
 
 const eraLabels: Record<string, string> = {
   "العصر الرسولي": "العصر الرسولي",
-  "العصر الذهبي": "العصر الذهبي",
-  "عصر المجامع": "عصر المجامع", 
+  "العصر الذهبي": "العصر الذهبي", 
+  "عصر المجامع": "عصر المجامع",
   "عصر الاضطهاد": "عصر الاضطهاد",
   "العصر الحديث": "العصر الحديث",
-  "العصر الإسلامي المبكر": "العصر الإسلامي المبكر",
-  "العصر العثماني": "العصر العثماني",
-  "العصر الفاطمي": "العصر الفاطمي",
-  "العصر المملوكي المتأخر": "العصر المملوكي المتأخر",
-  "العصر المملوكي": "العصر المملوكي",
   "العصر القبطي المستقل": "العصر القبطي المستقل",
-  "العصر العثماني المتأخر": "العصر العثماني المتأخر",
-  "العصر العباسي المبكر": "العصر العباسي المبكر",
   "العصر البيزنطي": "العصر البيزنطي",
-  "العصر الأيوبي": "العصر الأيوبي",
+  "العصر الإسلامي المبكر": "العصر الإسلامي المبكر",
+  "العصر العباسي المبكر": "العصر العباسي المبكر",
   "العصر العباسي": "العصر العباسي",
-  "العصر الفاطمي المتأخر": "العصر الفاطمي المتأخر",
-  "عصر التحديث": "عصر التحديث",
-  "العصر الحديث المبكر": "العصر الحديث المبكر",
-  "العصر المعاصر": "العصر المعاصر",
-  "العصر الأيوبي المتأخر": "العصر الأيوبي المتأخر",
+  "العصر الفاطمي": "العصر الفاطمي",
+  "العصر الأيوبي": "العصر الأيوبي",
+  "العصر المملوكي": "العصر المملوكي",
+  "العصر العثماني": "العصر العثماني",
+  "العصر الوسيط": "العصر الوسيط",
+  "العصر الوسيط المتأخر": "العصر الوسيط المتأخر",
+  "العصر العثماني المتأخر": "العصر العثماني المتأخر",
   "العصر العثماني المبكر": "العصر العثماني المبكر",
   "العصر الأيوبي المبكر": "العصر الأيوبي المبكر",
   "العصر المملوكي المبكر": "العصر المملوكي المبكر",
   "عصر محمد علي": "عصر محمد علي",
-  "العصر الفاطمي المبكر": "العصر الفاطمي المبكر"
+  "العصر الفاطمي المبكر": "العصر الفاطمي المبكر",
+  "العصر الحديث المبكر": "العصر الحديث المبكر",
+  "العصر المعاصر": "العصر المعاصر",
+  "العصر الأيوبي المتأخر": "العصر الأيوبي المتأخر",
+  "عصر التحديث": "عصر التحديث"
 };
 
 export default function HomeCharts({ patriarchs }: HomeChartsProps) {
-  
+
   const chartsData = useMemo(() => {
     // توزيع البطاركة حسب العصور الرئيسية
     const eraDistribution = patriarchs.reduce((acc: Record<string, number>, patriarch) => {
@@ -129,12 +129,39 @@ export default function HomeCharts({ patriarchs }: HomeChartsProps) {
       ).length
     };
 
-    return {
-      topEras,
-      topCenturies,
-      longestService,
-      stats
-    };
+    // تحليل البدع المحاربة
+    const heresiesCount = patriarchs.reduce((acc: Record<string, number>, patriarch) => {
+      let heresies: string[] = [];
+      try {
+        heresies = Array.isArray(patriarch.heresiesFought) 
+          ? patriarch.heresiesFought 
+          : JSON.parse(patriarch.heresiesFought || '[]');
+      } catch (e) {
+        // If parsing fails, split by semicolon as fallback
+        if (typeof patriarch.heresiesFought === 'string') {
+          heresies = patriarch.heresiesFought.split(';').map(h => h.trim()).filter(h => h);
+        }
+      }
+
+      heresies.forEach(heresy => {
+        if (heresy && heresy.trim()) {
+          acc[heresy.trim()] = (acc[heresy.trim()] || 0) + 1;
+        }
+      });
+      return acc;
+    }, {});
+
+    const topHeresies = Object.entries(heresiesCount)
+      .map(([heresy, count], index) => ({
+        heresy: heresy.length > 20 ? heresy.substring(0, 20) + "..." : heresy,
+        fullHeresy: heresy,
+        count,
+        color: COLORS[index % COLORS.length]
+      }))
+      .sort((a, b) => b.count - a.count)
+      .slice(0, 8);
+
+    return { topEras, topCenturies, longestService, stats, topHeresies };
   }, [patriarchs]);
 
   const CustomTooltip = ({ active, payload, label }: any) => {
@@ -152,6 +179,8 @@ export default function HomeCharts({ patriarchs }: HomeChartsProps) {
     }
     return null;
   };
+
+  const { topEras, topCenturies, longestService, stats, topHeresies } = chartsData;
 
   return (
     <div className="bg-gradient-to-br from-blue-50 to-purple-50 py-16" dir="rtl">
@@ -173,7 +202,7 @@ export default function HomeCharts({ patriarchs }: HomeChartsProps) {
               <div className="w-16 h-16 bg-white bg-opacity-20 rounded-full flex items-center justify-center mx-auto mb-4">
                 <i className="fas fa-users text-3xl"></i>
               </div>
-              <h3 className="text-3xl font-bold mb-2">{chartsData.stats.total}</h3>
+              <h3 className="text-3xl font-bold mb-2">{stats.total}</h3>
               <p className="text-blue-100">إجمالي البطاركة</p>
             </CardContent>
           </Card>
@@ -183,7 +212,7 @@ export default function HomeCharts({ patriarchs }: HomeChartsProps) {
               <div className="w-16 h-16 bg-white bg-opacity-20 rounded-full flex items-center justify-center mx-auto mb-4">
                 <i className="fas fa-clock text-3xl"></i>
               </div>
-              <h3 className="text-3xl font-bold mb-2">{chartsData.stats.averageService}</h3>
+              <h3 className="text-3xl font-bold mb-2">{stats.averageService}</h3>
               <p className="text-green-100">متوسط مدة الخدمة</p>
             </CardContent>
           </Card>
@@ -193,7 +222,7 @@ export default function HomeCharts({ patriarchs }: HomeChartsProps) {
               <div className="w-16 h-16 bg-white bg-opacity-20 rounded-full flex items-center justify-center mx-auto mb-4">
                 <i className="fas fa-shield-alt text-3xl"></i>
               </div>
-              <h3 className="text-3xl font-bold mb-2">{chartsData.stats.defendersCount}</h3>
+              <h3 className="text-3xl font-bold mb-2">{stats.defendersCount}</h3>
               <p className="text-purple-100">محاربو البدع</p>
             </CardContent>
           </Card>
@@ -203,7 +232,7 @@ export default function HomeCharts({ patriarchs }: HomeChartsProps) {
               <div className="w-16 h-16 bg-white bg-opacity-20 rounded-full flex items-center justify-center mx-auto mb-4">
                 <i className="fas fa-calendar-alt text-3xl"></i>
               </div>
-              <h3 className="text-3xl font-bold mb-2">{chartsData.stats.modernEra}</h3>
+              <h3 className="text-3xl font-bold mb-2">{stats.modernEra}</h3>
               <p className="text-orange-100">العصر الحديث</p>
             </CardContent>
           </Card>
@@ -222,7 +251,7 @@ export default function HomeCharts({ patriarchs }: HomeChartsProps) {
             <CardContent className="p-6">
               <ResponsiveContainer width="100%" height={400}>
                 <BarChart
-                  data={chartsData.topEras}
+                  data={topEras}
                   margin={{ top: 20, right: 30, left: 20, bottom: 100 }}
                 >
                   <CartesianGrid strokeDasharray="3 3" stroke="#e0e0e0" />
@@ -241,7 +270,7 @@ export default function HomeCharts({ patriarchs }: HomeChartsProps) {
                   />
                   <Tooltip 
                     formatter={(value) => [`${value} بطريرك`, 'العدد']}
-                    labelFormatter={(label) => chartsData.topEras.find(d => d.era === label)?.fullEra || label}
+                    labelFormatter={(label) => topEras.find(d => d.era === label)?.fullEra || label}
                     contentStyle={{
                       backgroundColor: 'rgba(255, 255, 255, 0.98)',
                       border: '2px solid #3b82f6',
@@ -253,16 +282,16 @@ export default function HomeCharts({ patriarchs }: HomeChartsProps) {
                     }}
                   />
                   <Bar dataKey="count" radius={[8, 8, 0, 0]}>
-                    {chartsData.topEras.map((entry, index) => (
+                    {topEras.map((entry, index) => (
                       <Cell key={`cell-${index}`} fill={entry.color} />
                     ))}
                   </Bar>
                 </BarChart>
               </ResponsiveContainer>
-              
+
               {/* قائمة العصور خارج الرسم البياني */}
               <div className="mt-6 grid grid-cols-2 lg:grid-cols-3 gap-3">
-                {chartsData.topEras.map((item, index) => (
+                {topEras.map((item, index) => (
                   <div key={index} className="flex items-center space-x-reverse space-x-2 p-3 bg-gradient-to-r from-gray-50 to-blue-50 rounded-lg border hover:shadow-md transition-all duration-200">
                     <div 
                       className="w-5 h-5 rounded-full shadow-sm"
@@ -288,7 +317,7 @@ export default function HomeCharts({ patriarchs }: HomeChartsProps) {
             </CardHeader>
             <CardContent className="p-6">
               <ResponsiveContainer width="100%" height={400}>
-                <AreaChart data={chartsData.topCenturies} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
+                <AreaChart data={topCenturies} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
                   <defs>
                     <linearGradient id="colorCenturyHome" x1="0" y1="0" x2="0" y2="1">
                       <stop offset="5%" stopColor="#10B981" stopOpacity={0.8}/>
@@ -340,7 +369,7 @@ export default function HomeCharts({ patriarchs }: HomeChartsProps) {
           </CardHeader>
           <CardContent className="p-6">
             <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
-              {chartsData.longestService.map((patriarch, index) => (
+              {longestService.map((patriarch, index) => (
                 <div key={`${patriarch.fullName}-${index}`} className="bg-gradient-to-br from-gray-50 to-white p-4 rounded-lg border-2 border-gray-100 hover:border-yellow-300 transition-all duration-300">
                   <div className="text-center">
                     <div className={`w-12 h-12 rounded-full flex items-center justify-center text-white font-bold mx-auto mb-3 ${
@@ -427,13 +456,106 @@ export default function HomeCharts({ patriarchs }: HomeChartsProps) {
                 <div className="space-y-2">
                   <div className="flex justify-between items-center">
                     <span className="text-sm text-gray-700">بطاركة محاربون</span>
-                    <Badge variant="outline" className="text-xs text-green-700 border-green-700">{chartsData.stats.defendersCount}</Badge>
+                    <Badge variant="outline" className="text-xs text-green-700 border-green-700">{stats.defendersCount}</Badge>
                   </div>
                   <div className="flex justify-between items-center">
                     <span className="text-sm text-gray-700">نسبة المحاربين</span>
                     <Badge variant="outline" className="text-xs text-green-700 border-green-700">
-                      {Math.round((chartsData.stats.defendersCount / chartsData.stats.total) * 100)}%
+                      {Math.round((stats.defendersCount / stats.total) * 100)}%
                     </Badge>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* البدع المحاربة */}
+        <Card className="shadow-lg">
+          <CardHeader className="text-center">
+            <CardTitle className="text-2xl font-amiri text-blue-600 mb-2">
+              <i className="fas fa-shield-alt ml-2"></i>
+              البدع المحاربة
+            </CardTitle>
+            <p className="text-gray-600">أهم البدع التي واجهتها الكنيسة عبر التاريخ</p>
+          </CardHeader>
+          <CardContent>
+            <div className="h-80">
+              <ResponsiveContainer width="100%" height="100%">
+                <BarChart data={topHeresies} margin={{ top: 20, right: 30, left: 20, bottom: 60 }}>
+                  <CartesianGrid strokeDasharray="3 3" />
+                  <XAxis 
+                    dataKey="heresy" 
+                    angle={-45}
+                    textAnchor="end"
+                    height={80}
+                    fontSize={12}
+                  />
+                  <YAxis />
+                  <Tooltip 
+                    formatter={(value, name, props) => [
+                      `${value} بطريرك`,
+                      `محاربة ${props.payload?.fullHeresy || props.payload?.heresy}`
+                    ]}
+                    labelFormatter={(label) => `البدعة: ${label}`}
+                  />
+                  <Bar dataKey="count" radius={[4, 4, 0, 0]}>
+                    {topHeresies.map((entry, index) => (
+                      <Cell key={`cell-${index}`} fill={entry.color} />
+                    ))}
+                  </Bar>
+                </BarChart>
+              </ResponsiveContainer>
+            </div>
+
+            <div className="mt-6 grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="bg-blue-50 p-4 rounded-lg">
+                <h4 className="font-semibold text-blue-700 mb-2">
+                  <i className="fas fa-exclamation-triangle ml-2"></i>
+                  أكثر البدع تكراراً
+                </h4>
+                <div className="space-y-2">
+                  {topHeresies.slice(0, 3).map((item, index) => (
+                    <div key={index} className="flex justify-between items-center">
+                      <span className="text-sm text-gray-700">{item.fullHeresy}</span>
+                      <Badge style={{ backgroundColor: item.color, color: 'white' }}>
+                        {item.count} بطريرك
+                      </Badge>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              <div className="bg-green-50 p-4 rounded-lg">
+                <h4 className="font-semibold text-green-700 mb-2">
+                  <i className="fas fa-info-circle ml-2"></i>
+                  إحصائيات مهمة
+                </h4>
+                <div className="space-y-2 text-sm">
+                  <div className="flex justify-between">
+                    <span>إجمالي البدع المحاربة:</span>
+                    <span className="font-bold">{topHeresies.length}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span>البطاركة المحاربون للبدع:</span>
+                    <span className="font-bold">
+                      {patriarchs.filter(p => {
+                        try {
+                          const heresies = Array.isArray(p.heresiesFought) 
+                            ? p.heresiesFought 
+                            : JSON.parse(p.heresiesFought || '[]');
+                          return heresies.length > 0;
+                        } catch {
+                          return false;
+                        }
+                      }).length}
+                    </span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span>متوسط البدع لكل بطريرك:</span>
+                    <span className="font-bold">
+                      {(Object.values(heresiesCount).reduce((a, b) => a + b, 0) / patriarchs.length).toFixed(1)}
+                    </span>
                   </div>
                 </div>
               </div>
@@ -451,7 +573,7 @@ export default function HomeCharts({ patriarchs }: HomeChartsProps) {
           </CardHeader>
           <CardContent className="p-6">
             <ResponsiveContainer width="100%" height={300}>
-              <AreaChart data={chartsData.topCenturies}>
+              <AreaChart data={topCenturies}>
                 <CartesianGrid strokeDasharray="3 3" />
                 <XAxis dataKey="century" />
                 <YAxis />
@@ -479,10 +601,10 @@ export default function HomeCharts({ patriarchs }: HomeChartsProps) {
             </p>
             <div className="flex justify-center space-x-reverse space-x-4">
               <Badge variant="outline" className="text-blue-600 border-blue-600">
-                {chartsData.stats.total} بطريرك
+                {stats.total} بطريرك
               </Badge>
               <Badge variant="outline" className="text-green-600 border-green-600">
-                {Math.max(...chartsData.longestService.map(p => p.duration))} سنة أطول خدمة
+                {Math.max(...longestService.map(p => p.duration))} سنة أطول خدمة
               </Badge>
               <Badge variant="outline" className="text-purple-600 border-purple-600">
                 1950+ سنة من التاريخ
