@@ -15,7 +15,7 @@ import { useAuth } from "@/hooks/useAuth";
 import HomeCharts from "@/components/home-charts";
 import Loading from "@/components/ui/loading";
 import type { Patriarch } from "@shared/schema";
-import { getArabicHeresyName } from "@shared/patriarch_names";
+import { getArabicHeresyName } from "@shared/patriarch-names";
 import { MessageCircle, Crown } from "lucide-react";
 
 const eraLabels: Record<string, string> = {
@@ -191,7 +191,7 @@ export default function Home() {
                         </>
                       )}
                     </Button>
-
+                    
                     <Button
                       onClick={() => {
                         setShowChatbot(true);
@@ -220,14 +220,9 @@ export default function Home() {
                       </SelectTrigger>
                       <SelectContent>
                         <SelectItem value="all">جميع العصور</SelectItem>
-                        {Array.from(new Set((patriarchs || []).map(p => p.era)))
-                          .filter(era => era && era.trim())
-                          .sort()
-                          .map(era => (
-                            <SelectItem key={era} value={era}>
-                              {eraLabels[era] || era}
-                            </SelectItem>
-                          ))}
+                        {Object.entries(eraLabels).map(([value, label]) => (
+                          <SelectItem key={value} value={value}>{label}</SelectItem>
+                        ))}
                       </SelectContent>
                     </Select>
                   </div>
@@ -289,7 +284,7 @@ export default function Home() {
                   </Button>
                 </div>
 
-
+                
               </CardContent>
             </Card>
           </div>
@@ -360,7 +355,7 @@ export default function Home() {
                 اسأل البطريرك
               </Button>
 
-
+              
             </div>
 
             {/* Authentication Buttons */}
