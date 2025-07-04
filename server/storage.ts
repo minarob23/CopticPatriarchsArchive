@@ -115,49 +115,63 @@ export class DatabaseStorage implements IStorage {
   }
 
   async createPatriarch(patriarch: InsertPatriarch): Promise<Patriarch> {
-    const values = {
-      name: patriarch.name,
-      arabicName: patriarch.arabicName,
-      orderNumber: patriarch.orderNumber,
-      startYear: patriarch.startYear,
-      endYear: patriarch.endYear,
-      era: patriarch.era,
-      contributions: patriarch.contributions,
-      biography: patriarch.biography,
-      heresiesFought: patriarch.heresiesFought || "",
-      active: patriarch.active ?? true
-    };
-
-    const [created] = await db
-      .insert(patriarchs)
-      .values(values)
-      .returning();
-    return created;
+    try {
+      const values = {
+        name: patriarch.name,
+        arabicName: patriarch.arabicName,
+        orderNumber: patriarch.orderNumber,
+        startYear: patriarch.startYear,
+        endYear: patriarch.endYear,
+        era: patriarch.era,
+        contributions: patriarch.contributions,
+        biography: patriarch.biography,
+        heresiesFought: patriarch.heresiesFought || "",
+        active: patriarch.active ?? true
+      };
+      const [created] = await db
+        .insert(patriarchs)
+        .values(values)
+        .returning();
+      return created;
+    } catch (error) {
+      console.error('Error creating patriarch:', error);
+      throw new Error('Failed to create patriarch');
+    }
   }
 
   async updatePatriarch(id: number, patriarch: UpdatePatriarch): Promise<Patriarch | undefined> {
-    // Ensure heresiesFought is properly formatted
-    const updateData = {
-      ...patriarch,
-      heresiesFought: patriarch.heresiesFought || "",
-      updatedAt: new Date()
-    };
+    try {
+      // Ensure heresiesFought is properly formatted
+      const updateData = {
+        ...patriarch,
+        heresiesFought: patriarch.heresiesFought || "",
+        updatedAt: new Date()
+      };
 
-    const [updated] = await db
-      .update(patriarchs)
-      .set(updateData)
-      .where(and(eq(patriarchs.id, id), eq(patriarchs.active, true)))
-      .returning();
-    return updated;
+      const [updated] = await db
+        .update(patriarchs)
+        .set(updateData)
+        .where(and(eq(patriarchs.id, id), eq(patriarchs.active, true)))
+        .returning();
+      return updated;
+    } catch (error) {
+      console.error('Error updating patriarch:', error);
+      throw new Error('Failed to update patriarch');
+    }
   }
 
   async deletePatriarch(id: number): Promise<boolean> {
-    const [deleted] = await db
-      .update(patriarchs)
-      .set({ active: false, updatedAt: new Date() })
-      .where(eq(patriarchs.id, id))
-      .returning();
-    return !!deleted;
+    try {
+      const [deleted] = await db
+        .update(patriarchs)
+        .set({ active: false, updatedAt: new Date() })
+        .where(eq(patriarchs.id, id))
+        .returning();
+      return !!deleted;
+    } catch (error) {
+      console.error('Error deleting patriarch:', error);
+      throw new Error('Failed to delete patriarch');
+    }
   }
 
   async getPatriarchByName(name: string): Promise<Patriarch | undefined> {
@@ -235,7 +249,7 @@ export class DatabaseStorage implements IStorage {
           }
         })
         .returning();
-      
+
       return result;
     } catch (error) {
       console.error('Error in setSetting:', error);
