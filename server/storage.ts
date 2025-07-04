@@ -170,7 +170,7 @@ export class DatabaseStorage implements IStorage {
     } catch (error) {
       console.error('Error creating patriarch:', error);
       console.error('Insert data:', patriarch);
-      throw new Error(`Failed to create patriarch: ${error.message}`);
+      throw new Error(`Failed to create patriarch: ${error instanceof Error ? error.message : String(error)}`);
     }
   }
 
@@ -225,7 +225,7 @@ export class DatabaseStorage implements IStorage {
     } catch (error) {
       console.error('Error updating patriarch:', error);
       console.error('Update data:', patriarch);
-      throw new Error(`Failed to update patriarch: ${error.message}`);
+      throw new Error(`Failed to update patriarch: ${error instanceof Error ? error.message : String(error)}`);
     }
   }
 
