@@ -159,19 +159,19 @@ export default function PatriarchTable({ patriarchs, onEdit }: PatriarchTablePro
         <table className="w-full">
           <thead className="bg-gray-50">
             <tr>
-              <th className="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">البطريرك</th>
-              <th className="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">فترة الخدمة</th>
-              <th className="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">المساهمات الرئيسية</th>
-              <th className="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">العصر التاريخي</th>
-              <th className="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">البدع المحاربة</th>
-              <th className="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">الإجراءات</th>
+              <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">البطريرك</th>
+              <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">فترة الخدمة</th>
+              <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">المساهمات الرئيسية</th>
+              <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">العصر التاريخي</th>
+              <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">البدع المحاربة</th>
+              <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">الإجراءات</th>
             </tr>
           </thead>
           <tbody className="bg-white divide-y divide-gray-200">
             {sortedPatriarchs.map((patriarch, index) => (
               <tr key={patriarch.id} className="hover:bg-gray-50 transition-colors duration-200">
                 <td className="px-6 py-4 whitespace-nowrap">
-                  <div className="flex items-center justify-center">
+                  <div className="flex items-center justify-end">
                     <div className="flex-shrink-0 h-10 w-10">
                       <div className="h-10 w-10 rounded-full bg-gradient-to-br from-yellow-400 to-yellow-600 flex items-center justify-center">
                         <i className="fas fa-user text-white"></i>
@@ -183,19 +183,19 @@ export default function PatriarchTable({ patriarchs, onEdit }: PatriarchTablePro
                     </div>
                   </div>
                 </td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 text-center">
+                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 text-right">
                   {patriarch.startYear} - {patriarch.endYear || "الآن"} م
                 </td>
-                <td className="px-6 py-4 text-sm text-gray-900 max-w-xs truncate text-center">
+                <td className="px-6 py-4 text-sm text-gray-900 max-w-xs truncate text-right">
                   {patriarch.contributions}
                 </td>
-                <td className="px-6 py-4 whitespace-nowrap text-center">
+                <td className="px-6 py-4 whitespace-nowrap text-right">
                   <Badge className={eraColors[patriarch.era] || "bg-gray-100 text-gray-800"}>
                     {eraLabels[patriarch.era] || patriarch.era}
                   </Badge>
                 </td>
-                <td className="px-6 py-4 text-sm text-gray-900 text-center">
-                  <div className="flex flex-wrap gap-1">
+                <td className="px-6 py-4 text-sm text-gray-900 text-right">
+                  <div className="flex flex-wrap gap-1 justify-end">
                     {(() => {
                       let heresies = [];
                       try {
@@ -239,7 +239,7 @@ export default function PatriarchTable({ patriarchs, onEdit }: PatriarchTablePro
                   </div>
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                  <div className="flex space-x-reverse space-x-2 justify-center">
+                  <div className="flex space-x-reverse space-x-2 justify-end">
                     {/* Swap Up Button */}
                     <Button
                       size="sm"
