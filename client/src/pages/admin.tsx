@@ -61,22 +61,56 @@ const eraLabels: Record<string, string> = {
   "العصر الفاطمي المبكر": "العصر الفاطمي المبكر"
 };
 
+// العصور الفعلية الموجودة في قاعدة البيانات مع عدد البطاركة
 const eras = [
-  { value: "all", label: "جميع العصور" },
-  { value: "العصر الرسولي", label: "العصر الرسولي" },
-  { value: "العصر الذهبي", label: "العصر الذهبي" },
-  { value: "عصر المجامع", label: "عصر المجامع" },
-  { value: "عصر الاضطهاد", label: "عصر الاضطهاد" },
-  { value: "العصر الحديث", label: "العصر الحديث" },
-  { value: "العصر الإسلامي المبكر", label: "العصر الإسلامي المبكر" },
-  { value: "العصر العثماني", label: "العصر العثماني" },
-  { value: "العصر الفاطمي", label: "العصر الفاطمي" },
-  { value: "العصر المملوكي", label: "العصر المملوكي" },
-  { value: "العصر القبطي المستقل", label: "العصر القبطي المستقل" },
-  { value: "العصر العباسي", label: "العصر العباسي" },
-  { value: "العصر البيزنطي", label: "العصر البيزنطي" },
-  { value: "العصر الأيوبي", label: "العصر الأيوبي" },
-  { value: "العصر المعاصر", label: "العصر المعاصر" },
+  { value: "all", label: "جميع العصور (118)" },
+  { value: "العصر الرسولي", label: "العصر الرسولي (11)" },
+  { value: "العصر الإسلامي المبكر", label: "العصر الإسلامي المبكر (10)" },
+  { value: "العصر العثماني", label: "العصر العثماني (9)" },
+  { value: "العصر الفاطمي", label: "العصر الفاطمي (8)" },
+  { value: "العصر المملوكي", label: "العصر المملوكي (8)" },
+  { value: "العصر المملوكي المتأخر", label: "العصر المملوكي المتأخر (8)" },
+  { value: "عصر المجامع", label: "عصر المجامع (7)" },
+  { value: "العصر الحديث", label: "العصر الحديث (6)" },
+  { value: "العصر العثماني المتأخر", label: "العصر العثماني المتأخر (6)" },
+  { value: "العصر القبطي المستقل", label: "العصر القبطي المستقل (6)" },
+  { value: "العصر الذهبي", label: "العصر الذهبي (5)" },
+  { value: "العصر العباسي المبكر", label: "العصر العباسي المبكر (5)" },
+  { value: "العصر الأيوبي", label: "العصر الأيوبي (4)" },
+  { value: "العصر البيزنطي", label: "العصر البيزنطي (4)" },
+  { value: "العصر العباسي", label: "العصر العباسي (3)" },
+  { value: "العصر الفاطمي المتأخر", label: "العصر الفاطمي المتأخر (3)" },
+  { value: "العصر الأيوبي المتأخر", label: "العصر الأيوبي المتأخر (2)" },
+  { value: "العصر الحديث المبكر", label: "العصر الحديث المبكر (2)" },
+  { value: "العصر المعاصر", label: "العصر المعاصر (2)" },
+  { value: "عصر الاضطهاد", label: "عصر الاضطهاد (2)" },
+  { value: "عصر التحديث", label: "عصر التحديث (2)" },
+  { value: "العصر الأيوبي المبكر", label: "العصر الأيوبي المبكر (1)" },
+  { value: "العصر العثماني المبكر", label: "العصر العثماني المبكر (1)" },
+  { value: "العصر الفاطمي المبكر", label: "العصر الفاطمي المبكر (1)" },
+  { value: "العصر المملوكي المبكر", label: "العصر المملوكي المبكر (1)" },
+  { value: "عصر محمد علي", label: "عصر محمد علي (1)" },
+];
+
+// البدع المحاربة الفعلية مع عدد المرات
+const heresiesList = [
+  { value: "all", label: "جميع البدع" },
+  { value: "الخلقيدونية", label: "الخلقيدونية (94)" },
+  { value: "الوثنية الرومانية", label: "الوثنية الرومانية (8)" },
+  { value: "البروتستانتية", label: "البروتستانتية (8)" },
+  { value: "الغنوسية", label: "الغنوسية (7)" },
+  { value: "الأريوسية", label: "الأريوسية (4)" },
+  { value: "المانوية", label: "المانوية (2)" },
+  { value: "العلمانية", label: "العلمانية (2)" },
+  { value: "الأوريجانية", label: "الأوريجانية (1)" },
+  { value: "الوثنية", label: "الوثنية (1)" },
+  { value: "النسطورية", label: "النسطورية (1)" },
+  { value: "الأريوسية المبكرة", label: "الأريوسية المبكرة (1)" },
+  { value: "الثالوثية الجديدة", label: "الثالوثية الجديدة (1)" },
+  { value: "السابيلية", label: "السابيلية (1)" },
+  { value: "المونتانية", label: "المونتانية (1)" },
+  { value: "الإلحاد", label: "الإلحاد (1)" },
+  { value: "الوثنية اليونانية", label: "الوثنية اليونانية (1)" },
 ];
 
 export default function Admin() {
@@ -85,6 +119,7 @@ export default function Admin() {
   const { toast } = useToast();
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedEra, setSelectedEra] = useState("all");
+  const [selectedHeresy, setSelectedHeresy] = useState("all");
   const [showForm, setShowForm] = useState(false);
   const [editingPatriarch, setEditingPatriarch] = useState<Patriarch | null>(null);
   const [showGeminiModal, setShowGeminiModal] = useState(false);
@@ -114,7 +149,7 @@ export default function Admin() {
     enabled: !!isAuthenticated,
   });
 
-  // Filter patriarchs based on search and era
+  // Filter patriarchs based on search, era, and heresy
   const patriarchs = allPatriarchs?.filter(patriarch => {
     const matchesSearch = !searchQuery || 
       patriarch.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -122,7 +157,32 @@ export default function Admin() {
 
     const matchesEra = selectedEra === "all" || patriarch.era === selectedEra;
 
-    return matchesSearch && matchesEra;
+    // Check if patriarch fought against selected heresy
+    const matchesHeresy = selectedHeresy === "all" || (() => {
+      if (!patriarch.heresiesFought) return false;
+      
+      let heresies = [];
+      try {
+        if (Array.isArray(patriarch.heresiesFought)) {
+          heresies = patriarch.heresiesFought;
+        } else if (typeof patriarch.heresiesFought === 'string') {
+          const heresiesString = patriarch.heresiesFought;
+          if (heresiesString.startsWith('{') && heresiesString.endsWith('}')) {
+            // PostgreSQL array format
+            const cleanString = heresiesString.slice(1, -1);
+            heresies = cleanString.split(',').map(item => item.replace(/"/g, '').trim()).filter(item => item !== '');
+          } else {
+            heresies = JSON.parse(heresiesString || '[]');
+          }
+        }
+      } catch (error) {
+        return false;
+      }
+      
+      return heresies.includes(selectedHeresy);
+    })();
+
+    return matchesSearch && matchesEra && matchesHeresy;
   }) || [];
 
   // Calculate stats from all patriarchs data (not filtered)
@@ -690,15 +750,16 @@ ${index + 1}. ${p.arabicName || p.name}
                   ))}
                 </SelectContent>
               </Select>
-              <Select defaultValue="all">
+              <Select value={selectedHeresy} onValueChange={setSelectedHeresy}>
                 <SelectTrigger>
-                  <SelectValue placeholder="جميع المساهمات" />
+                  <SelectValue placeholder="اختر البدعة المحاربة" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="all">جميع المساهمات</SelectItem>
-                  <SelectItem value="arianism">محاربة الآريوسية</SelectItem>
-                  <SelectItem value="nestorianism">محاربة النسطورية</SelectItem>
-                  <SelectItem value="monophysitism">محاربة المونوفيزية</SelectItem>
+                  {heresiesList.map(heresy => (
+                    <SelectItem key={heresy.value} value={heresy.value}>
+                      {heresy.label}
+                    </SelectItem>
+                  ))}
                 </SelectContent>
               </Select>
             </div>

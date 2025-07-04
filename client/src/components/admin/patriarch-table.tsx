@@ -199,24 +199,39 @@ export default function PatriarchTable({ patriarchs, onEdit }: PatriarchTablePro
                     {(() => {
                       let heresies = [];
                       try {
-                        heresies = Array.isArray(patriarch.heresiesFought) 
-                          ? patriarch.heresiesFought 
-                          : JSON.parse(patriarch.heresiesFought || '[]');
+                        // Handle PostgreSQL array format: {"value1","value2"}
+                        if (Array.isArray(patriarch.heresiesFought)) {
+                          heresies = patriarch.heresiesFought;
+                        } else if (typeof patriarch.heresiesFought === 'string') {
+                          const heresiesString = patriarch.heresiesFought;
+                          if (heresiesString.startsWith('{') && heresiesString.endsWith('}')) {
+                            // PostgreSQL array format
+                            const cleanString = heresiesString.slice(1, -1); // Remove { }
+                            heresies = cleanString.split(',').map(item => item.replace(/"/g, '').trim()).filter(item => item !== '');
+                          } else {
+                            // Try JSON parse
+                            heresies = JSON.parse(heresiesString || '[]');
+                          }
+                        }
                       } catch (error) {
                         console.warn('Failed to parse heresiesFought for patriarch:', patriarch.name);
                         heresies = [];
                       }
+                      
                       return (
                         <>
                           {heresies.slice(0, 2).map((heresy: string, index: number) => (
-                            <Badge key={index} variant="outline" className="text-xs">
-                              {getArabicHeresyName(heresy)}
+                            <Badge key={index} variant="outline" className="text-xs bg-red-100 text-red-800">
+                              {heresy}
                             </Badge>
                           ))}
                           {heresies.length > 2 && (
-                            <Badge variant="outline" className="text-xs">
+                            <Badge variant="outline" className="text-xs bg-gray-100 text-gray-600">
                               +{heresies.length - 2}
                             </Badge>
+                          )}
+                          {heresies.length === 0 && (
+                            <span className="text-gray-400 text-xs">لا توجد بدع محاربة</span>
                           )}
                         </>
                       );
