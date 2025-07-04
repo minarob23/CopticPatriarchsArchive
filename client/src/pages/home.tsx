@@ -51,13 +51,18 @@ export default function Home() {
       (patriarchs || []).flatMap(p => {
         let heresies = [];
         try {
-          heresies = Array.isArray(p.heresiesFought) 
-            ? p.heresiesFought 
-            : JSON.parse(p.heresiesFought || '[]');
+          if (Array.isArray(p.heresiesFought)) {
+            heresies = p.heresiesFought;
+          } else if (typeof p.heresiesFought === 'string') {
+            heresies = p.heresiesFought.trim() ? JSON.parse(p.heresiesFought) : [];
+          }
         } catch (e) {
-          heresies = [];
+          // If parsing fails, try to split by comma as fallback
+          if (typeof p.heresiesFought === 'string') {
+            heresies = p.heresiesFought.split(',').map(h => h.trim()).filter(h => h);
+          }
         }
-        return heresies;
+        return heresies.filter(h => h && h.trim());
       })
     )
   ).filter(Boolean).sort();
@@ -74,11 +79,16 @@ export default function Home() {
       selectedHeresies.some(heresy => {
         let heresies = [];
         try {
-          heresies = Array.isArray(patriarch.heresiesFought) 
-            ? patriarch.heresiesFought 
-            : JSON.parse(patriarch.heresiesFought || '[]');
+          if (Array.isArray(patriarch.heresiesFought)) {
+            heresies = patriarch.heresiesFought;
+          } else if (typeof patriarch.heresiesFought === 'string') {
+            heresies = patriarch.heresiesFought.trim() ? JSON.parse(patriarch.heresiesFought) : [];
+          }
         } catch (e) {
-          heresies = [];
+          // If parsing fails, try to split by comma as fallback
+          if (typeof patriarch.heresiesFought === 'string') {
+            heresies = patriarch.heresiesFought.split(',').map(h => h.trim()).filter(h => h);
+          }
         }
         return heresies.includes(heresy);
       });
@@ -129,7 +139,7 @@ export default function Home() {
             {/* Search Section */}
             <Card className="bg-white bg-opacity-10 backdrop-blur-md border-white border-opacity-20 shadow-2xl">
               <CardContent className="p-8">
-                <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+                <div className="grid grid-cols-1 md:grid-cols-5 gap-6">
                   {/* Main Search */}
                   <div className="md:col-span-2">
                     <div className="relative">
@@ -143,46 +153,6 @@ export default function Home() {
                         className="pl-4 pr-12 py-4 text-lg bg-white bg-opacity-90 border-none rounded-xl shadow-lg focus:shadow-xl transition-all duration-300"
                       />
                     </div>
-                  </div>
-
-                  {/* Search Buttons */}
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                    <Button
-                      onClick={handleSearch}
-                      className="w-full py-4 text-lg bg-gradient-to-r from-yellow-500 to-orange-500 hover:from-yellow-600 hover:to-orange-600 text-white rounded-xl shadow-lg transform hover:scale-105 transition-all duration-300 flex items-center justify-center"
-                      disabled={isLoading}
-                    >
-                      {isLoading ? (
-                        <>
-                          <i className="fas fa-spinner fa-spin mr-2"></i>
-                          جاري البحث...
-                        </>
-                      ) : (
-                        <>
-                          <i className="fas fa-search mr-2"></i>
-                          بحث
-                        </>
-                      )}
-                    </Button>
-                    
-                    <Button
-                      onClick={() => {
-                        setShowChatbot(true);
-                        // Send search input to chatbot if available
-                        if (searchInput.trim()) {
-                          setTimeout(() => {
-                            const event = new CustomEvent('sendToChatbot', { 
-                              detail: { message: searchInput.trim() } 
-                            });
-                            window.dispatchEvent(event);
-                          }, 500);
-                        }
-                      }}
-                      className="w-full py-4 text-lg bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white rounded-xl shadow-lg transform hover:scale-105 transition-all duration-300 flex items-center justify-center"
-                    >
-                      <i className="fas fa-brain mr-2"></i>
-                      بحث
-                    </Button>
                   </div>
 
                   {/* Era Filter */}
@@ -199,17 +169,94 @@ export default function Home() {
                       </SelectContent>
                     </Select>
                   </div>
+
+                  {/* Heresies Filter */}
+                  <div>
+                    <Select 
+                      value={selectedHeresies.length > 0 ? selectedHeresies[0] : "all"} 
+                      onValueChange={(value) => {
+                        if (value === "all") {
+                          setSelectedHeresies([]);
+                        } else {
+                          setSelectedHeresies([value]);
+                        }
+                      }}
+                    >
+                      <SelectTrigger className="py-4 text-lg bg-white bg-opacity-90 border-none rounded-xl shadow-lg">
+                        <SelectValue placeholder="البدع المحاربة" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="all">جميع البدع</SelectItem>
+                        {allHeresies.slice(0, 10).map((heresy) => (
+                          <SelectItem key={heresy} value={heresy}>
+                            {getArabicHeresyName(heresy)}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+
+                  {/* Search Button */}
+                  <div>
+                    <Button
+                      onClick={handleSearch}
+                      className="w-full py-4 text-lg bg-gradient-to-r from-yellow-500 to-orange-500 hover:from-yellow-600 hover:to-orange-600 text-white rounded-xl shadow-lg transform hover:scale-105 transition-all duration-300 flex items-center justify-center"
+                      disabled={isLoading}
+                    >
+                      {isLoading ? (
+                        <>
+                          <i className="fas fa-spinner fa-spin mr-2"></i>
+                          جاري...
+                        </>
+                      ) : (
+                        <>
+                          <i className="fas fa-search mr-2"></i>
+                          بحث
+                        </>
+                      )}
+                    </Button>
+                  </div>
                 </div>
 
-                {/* Advanced Filters */}
+                {/* Advanced Filters - Quick Action Buttons */}
+                <div className="mt-6 flex flex-wrap gap-3 justify-center">
+                  <Button
+                    onClick={() => {
+                      setShowChatbot(true);
+                      // Send search input to chatbot if available
+                      if (searchInput.trim()) {
+                        setTimeout(() => {
+                          const event = new CustomEvent('sendToChatbot', { 
+                            detail: { message: searchInput.trim() } 
+                          });
+                          window.dispatchEvent(event);
+                        }, 500);
+                      }
+                    }}
+                    className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white px-6 py-3 rounded-xl shadow-lg transform hover:scale-105 transition-all duration-300"
+                  >
+                    <i className="fas fa-brain mr-2"></i>
+                    بحث ذكي بالذكاء الاصطناعي
+                  </Button>
+
+                  <Button
+                    onClick={() => setLocation("/recommendations")}
+                    className="bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white px-6 py-3 rounded-xl shadow-lg transform hover:scale-105 transition-all duration-300"
+                  >
+                    <i className="fas fa-lightbulb mr-2"></i>
+                    اقتراحات ذكية
+                  </Button>
+                </div>
+
+                {/* Quick Heresies Filter */}
                 {allHeresies.length > 0 && (
-                  <div className="mt-6">
-                    <p className="text-white text-sm font-medium mb-3">
+                  <div className="mt-4">
+                    <p className="text-white text-sm font-medium mb-3 text-center">
                       <i className="fas fa-filter ml-2"></i>
-                      تصفية حسب البدع المحاربة:
+                      البدع الأكثر شيوعاً:
                     </p>
-                    <div className="flex flex-wrap gap-2">
-                      {allHeresies.slice(0, 6).map(heresy => (
+                    <div className="flex flex-wrap gap-2 justify-center">
+                      {allHeresies.slice(0, 8).map(heresy => (
                         <Badge
                           key={heresy}
                           variant={selectedHeresies.includes(heresy) ? "default" : "outline"}
