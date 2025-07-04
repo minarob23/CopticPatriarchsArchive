@@ -18,6 +18,10 @@ export default function GeminiSettings() {
   // Check current API key status
   const { data: status, isLoading } = useQuery({
     queryKey: ['/api/admin/gemini-status'],
+    queryFn: async () => {
+      const response = await apiRequest('GET', '/api/admin/gemini-status');
+      return response;
+    }
   });
 
   // Save API key mutation
@@ -51,8 +55,8 @@ export default function GeminiSettings() {
       const response = await apiRequest('POST', '/api/admin/test-gemini');
       return response;
     },
-    onSuccess: (data) => {
-      if (data.connected) {
+    onSuccess: (data: any) => {
+      if (data?.connected) {
         toast({
           title: "الاتصال ناجح",
           description: "تم اختبار اتصال Gemini API بنجاح",
@@ -118,7 +122,7 @@ export default function GeminiSettings() {
             </span>
             {isLoading ? (
               <Loader2 className="h-4 w-4 animate-spin" />
-            ) : status?.hasApiKey ? (
+            ) : (status as any)?.hasApiKey ? (
               <Badge variant="default" className="bg-green-600 hover:bg-green-700">
                 <CheckCircle className="h-3 w-3 mr-1" />
                 مُكوَّن
@@ -131,7 +135,7 @@ export default function GeminiSettings() {
             )}
           </div>
           
-          {status?.hasApiKey && (
+          {(status as any)?.hasApiKey && (
             <Button
               onClick={handleTestConnection}
               disabled={testConnectionMutation.isPending}
