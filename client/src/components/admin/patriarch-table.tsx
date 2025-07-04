@@ -55,7 +55,7 @@ export default function PatriarchTable({ patriarchs, onEdit }: PatriarchTablePro
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/patriarchs"] });
       toast({
-        title: "تم الحذف",
+        title: "🗑️ تم الحذف",
         description: "تم حذف البطريرك بنجاح",
       });
       setDeleteId(null);
