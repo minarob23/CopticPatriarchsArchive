@@ -122,16 +122,31 @@ export class DatabaseStorage implements IStorage {
       // Format heresiesFought based on environment
       let heresiesFought = patriarch.heresiesFought || "";
       
-      if (isLocal && Array.isArray(patriarch.heresiesFought)) {
-        // For local PostgreSQL, keep it as JSON string if it's an array
-        heresiesFought = JSON.stringify(patriarch.heresiesFought);
-      } else if (isLocal && typeof patriarch.heresiesFought === 'string') {
-        // For local PostgreSQL, ensure it's properly formatted JSON string
-        try {
-          JSON.parse(patriarch.heresiesFought);
-          heresiesFought = patriarch.heresiesFought;
-        } catch (e) {
-          heresiesFought = JSON.stringify([patriarch.heresiesFought]);
+      if (isLocal) {
+        // For local PostgreSQL, convert to PostgreSQL array format
+        if (Array.isArray(patriarch.heresiesFought)) {
+          // Convert array to PostgreSQL array format: {"item1","item2"}
+          heresiesFought = `{${patriarch.heresiesFought.map(h => `"${h.replace(/"/g, '\\"')}"`).join(',')}}`;
+        } else if (typeof patriarch.heresiesFought === 'string') {
+          try {
+            // Try to parse as JSON first
+            const parsed = JSON.parse(patriarch.heresiesFought);
+            if (Array.isArray(parsed)) {
+              heresiesFought = `{${parsed.map(h => `"${h.replace(/"/g, '\\"')}"`).join(',')}}`;
+            } else {
+              heresiesFought = `{"${patriarch.heresiesFought.replace(/"/g, '\\"')}"}`;
+            }
+          } catch (e) {
+            // If not JSON, treat as single string
+            heresiesFought = `{"${patriarch.heresiesFought.replace(/"/g, '\\"')}"}`;
+          }
+        }
+      } else {
+        // For Replit/Neon, keep as JSON string
+        if (Array.isArray(patriarch.heresiesFought)) {
+          heresiesFought = JSON.stringify(patriarch.heresiesFought);
+        } else {
+          heresiesFought = patriarch.heresiesFought || "";
         }
       }
 
@@ -167,16 +182,31 @@ export class DatabaseStorage implements IStorage {
       // Format heresiesFought based on environment
       let heresiesFought = patriarch.heresiesFought || "";
       
-      if (isLocal && Array.isArray(patriarch.heresiesFought)) {
-        // For local PostgreSQL, keep it as JSON string if it's an array
-        heresiesFought = JSON.stringify(patriarch.heresiesFought);
-      } else if (isLocal && typeof patriarch.heresiesFought === 'string') {
-        // For local PostgreSQL, ensure it's properly formatted JSON string
-        try {
-          JSON.parse(patriarch.heresiesFought);
-          heresiesFought = patriarch.heresiesFought;
-        } catch (e) {
-          heresiesFought = JSON.stringify([patriarch.heresiesFought]);
+      if (isLocal) {
+        // For local PostgreSQL, convert to PostgreSQL array format
+        if (Array.isArray(patriarch.heresiesFought)) {
+          // Convert array to PostgreSQL array format: {"item1","item2"}
+          heresiesFought = `{${patriarch.heresiesFought.map(h => `"${h.replace(/"/g, '\\"')}"`).join(',')}}`;
+        } else if (typeof patriarch.heresiesFought === 'string') {
+          try {
+            // Try to parse as JSON first
+            const parsed = JSON.parse(patriarch.heresiesFought);
+            if (Array.isArray(parsed)) {
+              heresiesFought = `{${parsed.map(h => `"${h.replace(/"/g, '\\"')}"`).join(',')}}`;
+            } else {
+              heresiesFought = `{"${patriarch.heresiesFought.replace(/"/g, '\\"')}"}`;
+            }
+          } catch (e) {
+            // If not JSON, treat as single string
+            heresiesFought = `{"${patriarch.heresiesFought.replace(/"/g, '\\"')}"}`;
+          }
+        }
+      } else {
+        // For Replit/Neon, keep as JSON string
+        if (Array.isArray(patriarch.heresiesFought)) {
+          heresiesFought = JSON.stringify(patriarch.heresiesFought);
+        } else {
+          heresiesFought = patriarch.heresiesFought || "";
         }
       }
 
