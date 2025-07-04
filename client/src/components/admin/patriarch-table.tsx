@@ -217,7 +217,7 @@ export default function PatriarchTable({ patriarchs, onEdit }: PatriarchTablePro
                         console.warn('Failed to parse heresiesFought for patriarch:', patriarch.name);
                         heresies = [];
                       }
-                      
+
                       return (
                         <>
                           {heresies.slice(0, 2).map((heresy: string, index: number) => (
