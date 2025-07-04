@@ -111,15 +111,10 @@ export default function ChartsDashboard({ patriarchs }: ChartsDashboardProps) {
     const heresiesCount = patriarchs.reduce((acc: Record<string, number>, patriarch) => {
       let heresies: string[] = [];
       try {
-        if (Array.isArray(patriarch.heresiesFought)) {
-          heresies = patriarch.heresiesFought;
-        } else if (typeof patriarch.heresiesFought === 'string') {
-          if (patriarch.heresiesFought.trim() !== '' && patriarch.heresiesFought !== '[]') {
-            heresies = JSON.parse(patriarch.heresiesFought);
-          }
-        }
+        heresies = Array.isArray(patriarch.heresiesFought) 
+          ? patriarch.heresiesFought 
+          : JSON.parse(patriarch.heresiesFought || '[]');
       } catch (e) {
-        console.warn(`Failed to parse heresiesFought for patriarch: ${patriarch.name}`);
         heresies = [];
       }
       

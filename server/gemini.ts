@@ -171,16 +171,12 @@ export async function generateSmartSummary(patriarch: any, tone: string): Promis
         return patriarch.heresiesFought.join(', ');
       }
       if (typeof patriarch.heresiesFought === 'string') {
-        if (patriarch.heresiesFought.trim() === '' || patriarch.heresiesFought === '[]') {
-          return 'غير متوفر';
-        }
         const parsed = JSON.parse(patriarch.heresiesFought);
         return Array.isArray(parsed) ? parsed.join(', ') : patriarch.heresiesFought;
       }
       return 'غير متوفر';
     } catch (error) {
-      console.warn(`Failed to parse heresiesFought for patriarch: ${patriarch.name}`);
-      return 'غير متوفر';h.heresiesFought || 'غير متوفر';
+      return patriarch.heresiesFought || 'غير متوفر';
     }
   })();
 
