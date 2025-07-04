@@ -9,7 +9,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import PatriarchTable from "@/components/admin/patriarch-table";
-import PatriarchForm from "@/components/admin/patriarch-form-new";
+import PatriarchForm from "@/components/admin/patriarch-form-simple";
 import GeminiSettings from "@/components/admin/gemini-settings";
 import ChartsDashboard from "@/components/admin/charts-dashboard";
 import Loading from "@/components/ui/loading";
@@ -727,10 +727,17 @@ ${index + 1}. ${p.arabicName || p.name}
 
       {/* Patriarch Form Modal */}
       {showForm && (
-        <PatriarchForm
-          patriarch={editingPatriarch || undefined}
-          onClose={handleCloseForm}
-        />
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-lg max-w-4xl w-full max-h-[90vh] overflow-y-auto">
+            <PatriarchForm
+              patriarch={editingPatriarch || undefined}
+              onClose={handleCloseForm}
+              onSuccess={() => {
+                handleCloseForm();
+              }}
+            />
+          </div>
+        </div>
       )}
     </div>
   );
