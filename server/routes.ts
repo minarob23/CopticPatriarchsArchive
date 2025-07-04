@@ -75,6 +75,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(400).json({ message: "Invalid patriarch ID" });
       }
 
+      console.log(`Updating patriarch ${id} with data:`, req.body);
       const validatedData = updatePatriarchSchema.parse(req.body);
       const patriarch = await storage.updatePatriarch(id, validatedData);
 
@@ -85,13 +86,19 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.json(patriarch);
     } catch (error) {
       if (error instanceof z.ZodError) {
+        console.error("Validation error:", error.errors);
         return res.status(400).json({ 
           message: "Validation error", 
           errors: error.errors 
         });
       }
       console.error("Error updating patriarch:", error);
-      res.status(500).json({ message: "Failed to update patriarch" });
+      console.error("Stack trace:", error.stack);
+      res.status(500).json({ 
+        message: "Failed to update patriarch",
+        error: error.message,
+        details: process.env.NODE_ENV === 'development' ? error.stack : undefined
+      });
     }
   });
 

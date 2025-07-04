@@ -116,6 +116,25 @@ export class DatabaseStorage implements IStorage {
 
   async createPatriarch(patriarch: InsertPatriarch): Promise<Patriarch> {
     try {
+      // Check if we're dealing with PostgreSQL local setup
+      const isLocal = process.env.NODE_ENV === 'development' && process.env.DATABASE_URL?.includes('localhost');
+      
+      // Format heresiesFought based on environment
+      let heresiesFought = patriarch.heresiesFought || "";
+      
+      if (isLocal && Array.isArray(patriarch.heresiesFought)) {
+        // For local PostgreSQL, keep it as JSON string if it's an array
+        heresiesFought = JSON.stringify(patriarch.heresiesFought);
+      } else if (isLocal && typeof patriarch.heresiesFought === 'string') {
+        // For local PostgreSQL, ensure it's properly formatted JSON string
+        try {
+          JSON.parse(patriarch.heresiesFought);
+          heresiesFought = patriarch.heresiesFought;
+        } catch (e) {
+          heresiesFought = JSON.stringify([patriarch.heresiesFought]);
+        }
+      }
+
       const values = {
         name: patriarch.name,
         arabicName: patriarch.arabicName,
@@ -125,7 +144,7 @@ export class DatabaseStorage implements IStorage {
         era: patriarch.era,
         contributions: patriarch.contributions,
         biography: patriarch.biography,
-        heresiesFought: patriarch.heresiesFought || "",
+        heresiesFought,
         active: patriarch.active ?? true
       };
       const [created] = await db
@@ -135,16 +154,35 @@ export class DatabaseStorage implements IStorage {
       return created;
     } catch (error) {
       console.error('Error creating patriarch:', error);
-      throw new Error('Failed to create patriarch');
+      console.error('Insert data:', patriarch);
+      throw new Error(`Failed to create patriarch: ${error.message}`);
     }
   }
 
   async updatePatriarch(id: number, patriarch: UpdatePatriarch): Promise<Patriarch | undefined> {
     try {
-      // Ensure heresiesFought is properly formatted
+      // Check if we're dealing with PostgreSQL local setup
+      const isLocal = process.env.NODE_ENV === 'development' && process.env.DATABASE_URL?.includes('localhost');
+      
+      // Format heresiesFought based on environment
+      let heresiesFought = patriarch.heresiesFought || "";
+      
+      if (isLocal && Array.isArray(patriarch.heresiesFought)) {
+        // For local PostgreSQL, keep it as JSON string if it's an array
+        heresiesFought = JSON.stringify(patriarch.heresiesFought);
+      } else if (isLocal && typeof patriarch.heresiesFought === 'string') {
+        // For local PostgreSQL, ensure it's properly formatted JSON string
+        try {
+          JSON.parse(patriarch.heresiesFought);
+          heresiesFought = patriarch.heresiesFought;
+        } catch (e) {
+          heresiesFought = JSON.stringify([patriarch.heresiesFought]);
+        }
+      }
+
       const updateData = {
         ...patriarch,
-        heresiesFought: patriarch.heresiesFought || "",
+        heresiesFought,
         updatedAt: new Date()
       };
 
@@ -156,7 +194,8 @@ export class DatabaseStorage implements IStorage {
       return updated;
     } catch (error) {
       console.error('Error updating patriarch:', error);
-      throw new Error('Failed to update patriarch');
+      console.error('Update data:', patriarch);
+      throw new Error(`Failed to update patriarch: ${error.message}`);
     }
   }
 
