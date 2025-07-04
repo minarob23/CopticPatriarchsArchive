@@ -171,7 +171,7 @@ export default function PatriarchTable({ patriarchs, onEdit }: PatriarchTablePro
             {sortedPatriarchs.map((patriarch, index) => (
               <tr key={patriarch.id} className="hover:bg-gray-50 transition-colors duration-200">
                 <td className="px-6 py-4 whitespace-nowrap">
-                  <div className="flex items-center justify-end">
+                  <div className="flex items-center">
                     <div className="flex-shrink-0 h-10 w-10">
                       <div className="h-10 w-10 rounded-full bg-gradient-to-br from-yellow-400 to-yellow-600 flex items-center justify-center">
                         <i className="fas fa-user text-white"></i>
@@ -183,19 +183,19 @@ export default function PatriarchTable({ patriarchs, onEdit }: PatriarchTablePro
                     </div>
                   </div>
                 </td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 text-right">
+                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                   {patriarch.startYear} - {patriarch.endYear || "الآن"} م
                 </td>
-                <td className="px-6 py-4 text-sm text-gray-900 max-w-xs truncate text-right">
+                <td className="px-6 py-4 text-sm text-gray-900 max-w-xs truncate">
                   {patriarch.contributions}
                 </td>
-                <td className="px-6 py-4 whitespace-nowrap text-right">
+                <td className="px-6 py-4 whitespace-nowrap">
                   <Badge className={eraColors[patriarch.era] || "bg-gray-100 text-gray-800"}>
                     {eraLabels[patriarch.era] || patriarch.era}
                   </Badge>
                 </td>
-                <td className="px-6 py-4 text-sm text-gray-900 text-right">
-                  <div className="flex flex-wrap gap-1 justify-end">
+                <td className="px-6 py-4 text-sm text-gray-900">
+                  <div className="flex flex-wrap gap-1">
                     {(() => {
                       let heresies = [];
                       try {
@@ -239,7 +239,7 @@ export default function PatriarchTable({ patriarchs, onEdit }: PatriarchTablePro
                   </div>
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                  <div className="flex space-x-reverse space-x-2 justify-end">
+                  <div className="flex space-x-reverse space-x-2">
                     {/* Swap Up Button */}
                     <Button
                       size="sm"
