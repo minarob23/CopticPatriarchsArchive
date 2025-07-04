@@ -92,13 +92,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
           errors: error.errors 
         });
       }
-      console.error("Error updating patriarch:", error);
-      console.error("Stack trace:", error.stack);
-      res.status(500).json({ 
-        message: "Failed to update patriarch",
-        error: error.message,
-        details: process.env.NODE_ENV === 'development' ? error.stack : undefined
-      });
+     
     }
   });
 
