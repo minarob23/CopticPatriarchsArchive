@@ -17,13 +17,16 @@ import type { Patriarch } from "@shared/schema";
 import { getArabicHeresyName } from "@shared/patriarch-names";
 import { MessageCircle, Crown } from "lucide-react";
 
-const eraLabels: Record<string, string> = {
-  apostolic: "العصر الرسولي",
-  golden: "العصر الذهبي", 
-  councils: "عصر المجامع",
-  persecution: "عصر الاضطهاد",
-  modern: "العصر الحديث",
-};
+// Era values as they exist in the database
+const arabicEras = [
+  "العصر الرسولي",
+  "العصر الذهبي", 
+  "العصر الوسيط",
+  "العصر الإسلامي المبكر",
+  "العصر الوسيط المتأخر",
+  "العصر العثماني المبكر",
+  "العصر الحديث"
+];
 
 export default function Landing() {
   const { isAuthenticated } = useAuth();
@@ -203,8 +206,8 @@ export default function Landing() {
                       </SelectTrigger>
                       <SelectContent>
                         <SelectItem value="all">جميع العصور</SelectItem>
-                        {Object.entries(eraLabels).map(([value, label]) => (
-                          <SelectItem key={value} value={value}>{label}</SelectItem>
+                        {arabicEras.map((era) => (
+                          <SelectItem key={era} value={era}>{era}</SelectItem>
                         ))}
                       </SelectContent>
                     </Select>
