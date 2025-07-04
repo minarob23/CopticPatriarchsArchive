@@ -18,7 +18,42 @@ import type { Patriarch } from "@shared/schema";
 import { getArabicHeresyName } from "@shared/patriarch-names";
 import { MessageCircle, Crown } from "lucide-react";
 
-// No need for era labels mapping - use actual database values directly
+const eraLabels: Record<string, string> = {
+  // English keys (for backwards compatibility)
+  apostolic: "العصر الرسولي",
+  golden: "العصر الذهبي", 
+  councils: "عصر المجامع",
+  persecution: "عصر الاضطهاد",
+  modern: "العصر الحديث",
+
+  // Arabic keys (actual database values)
+  "العصر الرسولي": "العصر الرسولي",
+  "العصر الذهبي": "العصر الذهبي",
+  "عصر المجامع": "عصر المجامع", 
+  "عصر الاضطهاد": "عصر الاضطهاد",
+  "العصر الحديث": "العصر الحديث",
+  "العصر الإسلامي المبكر": "العصر الإسلامي المبكر",
+  "العصر العثماني": "العصر العثماني",
+  "العصر الفاطمي": "العصر الفاطمي",
+  "العصر المملوكي المتأخر": "العصر المملوكي المتأخر",
+  "العصر المملوكي": "العصر المملوكي",
+  "العصر القبطي المستقل": "العصر القبطي المستقل",
+  "العصر العثماني المتأخر": "العصر العثماني المتأخر",
+  "العصر العباسي المبكر": "العصر العباسي المبكر",
+  "العصر البيزنطي": "العصر البيزنطي",
+  "العصر الأيوبي": "العصر الأيوبي",
+  "العصر العباسي": "العصر العباسي",
+  "العصر الفاطمي المتأخر": "العصر الفاطمي المتأخر",
+  "عصر التحديث": "عصر التحديث",
+  "العصر الحديث المبكر": "العصر الحديث المبكر",
+  "العصر المعاصر": "العصر المعاصر",
+  "العصر الأيوبي المتأخر": "العصر الأيوبي المتأخر",
+  "العصر العثماني المبكر": "العصر العثماني المبكر",
+  "العصر الأيوبي المبكر": "العصر الأيوبي المبكر",
+  "العصر المملوكي المبكر": "العصر المملوكي المبكر",
+  "عصر محمد علي": "عصر محمد علي",
+  "العصر الفاطمي المبكر": "العصر الفاطمي المبكر"
+};
 
 export default function Home() {
   const { isAuthenticated } = useAuth();
@@ -42,25 +77,17 @@ export default function Home() {
     setSearchQuery(searchInput);
   };
 
-  // Extract unique eras from database
-  const uniqueEras = Array.from(new Set((patriarchs || []).map(p => p.era))).filter(Boolean).sort();
-
   // Extract unique heresies for filtering
   const allHeresies = Array.from(
     new Set(
       (patriarchs || []).flatMap(p => {
-        let heresies = [];
-        try {
-          heresies = Array.isArray(p.heresiesFought) 
-            ? p.heresiesFought 
-            : JSON.parse(p.heresiesFought || '[]');
-        } catch (e) {
-          heresies = [];
-        }
+        const heresies = Array.isArray(p.heresiesFought) 
+          ? p.heresiesFought 
+          : JSON.parse(p.heresiesFought || '[]');
         return heresies;
       })
     )
-  ).filter(Boolean).sort();
+  ).sort();
 
   // Filter patriarchs based on search criteria
   const filteredPatriarchs = (patriarchs || []).filter(patriarch => {
@@ -193,8 +220,8 @@ export default function Home() {
                       </SelectTrigger>
                       <SelectContent>
                         <SelectItem value="all">جميع العصور</SelectItem>
-                        {uniqueEras.map((era) => (
-                          <SelectItem key={era} value={era}>{era}</SelectItem>
+                        {Object.entries(eraLabels).map(([value, label]) => (
+                          <SelectItem key={value} value={value}>{label}</SelectItem>
                         ))}
                       </SelectContent>
                     </Select>

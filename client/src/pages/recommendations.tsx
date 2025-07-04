@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
 import { useQuery, useMutation } from "@tanstack/react-query";
-import { useLocation } from "wouter";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -11,7 +10,7 @@ import { Separator } from "@/components/ui/separator";
 import { Textarea } from "@/components/ui/textarea";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import PatriarchCard from "@/components/patriarch-card";
-import { Search, Sparkles, Clock, BookOpen, Shield, Brain, Zap, Home } from "lucide-react";
+import { Search, Sparkles, Clock, BookOpen, Shield, Brain, Zap } from "lucide-react";
 import { apiRequest } from "@/lib/queryClient";
 import type { Patriarch } from "@/../../shared/schema";
 
@@ -30,7 +29,6 @@ interface RecommendationResult {
 }
 
 export default function Recommendations() {
-  const [, setLocation] = useLocation();
   const [criteria, setCriteria] = useState<RecommendationCriteria>({
     selectedEras: [],
     selectedHeresies: [],
@@ -271,18 +269,7 @@ export default function Recommendations() {
     <div className="min-h-screen bg-gradient-to-br from-amber-50 to-orange-100" dir="rtl">
       <div className="container mx-auto px-4 py-8">
         {/* Header */}
-        <div className="text-center mb-8 relative">
-          {/* Home Button */}
-          <div className="absolute top-0 right-0">
-            <Button
-              onClick={() => setLocation("/")}
-              className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white px-6 py-3 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 flex items-center gap-2"
-            >
-              <Home className="h-5 w-5" />
-              الصفحة الرئيسية
-            </Button>
-          </div>
-          
+        <div className="text-center mb-8">
           <div className="flex items-center justify-center gap-3 mb-4">
             <Brain className="h-8 w-8 text-purple-600" />
             <h1 className="text-4xl font-bold text-gray-800">محرك الاقتراحات الذكي</h1>
@@ -317,54 +304,6 @@ export default function Recommendations() {
                     onChange={(e) => setSearchTerm(e.target.value)}
                     className="mt-1"
                   />
-                </div>
-
-                <Separator />
-
-                {/* Era Filter */}
-                <div>
-                  <Label className="text-sm font-medium flex items-center gap-2">
-                    <Clock className="h-4 w-4" />
-                    العصور التاريخية
-                  </Label>
-                  <div className="mt-2 space-y-2 max-h-40 overflow-y-auto">
-                    {uniqueEras.map((era) => (
-                      <div key={era} className="flex items-center space-x-2">
-                        <Checkbox
-                          id={`era-${era}`}
-                          checked={criteria.selectedEras.includes(era)}
-                          onCheckedChange={(checked) => handleEraChange(era, checked as boolean)}
-                        />
-                        <Label htmlFor={`era-${era}`} className="text-sm cursor-pointer">
-                          {era}
-                        </Label>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-
-                <Separator />
-
-                {/* Heresies Filter */}
-                <div>
-                  <Label className="text-sm font-medium flex items-center gap-2">
-                    <Shield className="h-4 w-4" />
-                    البدع المحاربة
-                  </Label>
-                  <div className="mt-2 space-y-2 max-h-40 overflow-y-auto">
-                    {uniqueHeresies.slice(0, 10).map((heresy) => (
-                      <div key={heresy} className="flex items-center space-x-2">
-                        <Checkbox
-                          id={`heresy-${heresy}`}
-                          checked={criteria.selectedHeresies.includes(heresy)}
-                          onCheckedChange={(checked) => handleHeresyChange(heresy, checked as boolean)}
-                        />
-                        <Label htmlFor={`heresy-${heresy}`} className="text-sm cursor-pointer">
-                          {heresy}
-                        </Label>
-                      </div>
-                    ))}
-                  </div>
                 </div>
 
                 <Separator />
